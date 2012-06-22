@@ -1,0 +1,6 @@
+
+- version 0.0.37 released on 22.06.2012  
+  active are the Workspace and File menus entirely
+
+
+
