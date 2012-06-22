@@ -1,0 +1,22 @@
+	;--- warning utf8 encoded ßüäö"
+	version:64h
+	flags:1111h
+	cdate:"xxxx"
+	adate:"yyyy"
+	fshow:2222h
+	flog:3333h
+	fsplash:4444h
+	update:5555h
+	session:6666h
+	owner:"marcßüäö"
+	pos:0320'02BCh
+	wspace:"E:\x64lab\develop\project\testproject.x64lab"
+	cons:(
+		bkcol:0AABBCCh 
+		pos:0Ah
+	)
+
+	tree:(
+		bkcol:0D9FFFFh
+		pos:0Bh
+	)
