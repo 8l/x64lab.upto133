@@ -1,9 +1,12 @@
 
-;#---------------------------------------------ü
-;|         x32lab  (BSD License)               |
-;| Copyright (c) 2009-2010, Marc Rainer Kranz. |
-;|         All rights reserved.                |
-;ä---------------------------------------------ö
+	;#-------------------------------------------------ü
+	;|          x64lab  MPL 2.0 License                |
+	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+	;|            All rights reserved.                 |
+	;|-------------------------------------------------|
+	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
+	;ä-------------------------------------------------ö
+
 
 struc db [data]	{
 	common
@@ -77,17 +80,6 @@ macro @frame arg{
 	mov rax,rsp
 	}
 
-;--- align rsp to argalign
-;macro @rsp argalign, argval {
-;	sub rsp,(argval + argalign-1) and -argalign
-;}
-
-macro @qpackpush argreg,arghi,arglo{
-	mov argreg,arghi
-	shl argreg,32
-	or argreg,arglo
-	push argreg
-}
 
 macro @wpro argptf,arguses {
 	count@wpro = 28h
@@ -162,212 +154,6 @@ macro @wepi{
 	restore .wparam
 	restore .lparam
 }
-
-
-;macro @wpro argptf,[argregs] {
-;	common
-;	push argptf
-;	mov argptf,rsp
-;	.hwnd 	equ argptf+10h
-;	.msg		equ argptf+18h
-;	.wparam equ argptf+20h
-;	.lparam equ argptf+28h
-;	.stackv	equ argptf-10h
-;	forward
-;	push argregs
-;	sub rsp,30h
-;	mov [.hwnd],rcx
-;	mov [.msg],rdx
-;	mov [.wparam],r8
-;	mov [.lparam],r9
-;}
-
-;macro @wepi argptf {
-;	mov rsp,argptf
-;	pop argptf
-;	ret 0
-;}
-
-;struc GUID def {
-;	;--- example:
-;	;--- iFileOpenDialog GUID DC1C5A9C-E88A-4dde-A5A1-60F82A20AEF7
-
-;  match d1-d2-d3-d4-d5, def  \{
-;	 .Data1 dd 0x\#d1
-;	 .Data2 dw 0x\#d2
-;	 .Data3 dw 0x\#d3
-;	 .Data4 db \
-;			0x\#d4 shr 8,\
-;			0x\#d4 and 0FFh
-;	 .Data5 db \
-;			0x\#d5 shr 40,\
-;			0x\#d5 shr 32 and 0FFh,\
-;			0x\#d5 shr 24 and 0FFh,\
-;			0x\#d5 shr 16 and 0FFh,\
-;			0x\#d5 shr 8 and 0FFh,\
-;			0x\#d5 and 0FFh
-;   \}
-; } 
-
-;macro @interface name,[proc]{
-;	common
-;	define status 0
-;	virtual at 0
-;	match =0 n implements rest,status name\{
-;	 struc n \\{
-;		irps arg,rest \\\{
-;				display \\\`arg
-;			.#\\\arg \\\arg
-;		\\\}
-;	forward
-;		.#proc dq ?
-;	common
-;	\\} n n
-;	sizeof.#n = $-$$
-;	define status 1
-;	\}
-;	match =0,status\{
-;		struc name \\{
-;		forward
-;			.#proc dq ?
-;	common
-;	\\} name name
-;	sizeof.#name = $-$$
-;	\}
-;	end virtual
-;}
-
-;	match =0 n <implements rest>,status name\{
-
-
-;macro @comptr [argcall,arginter] {
-;	define status 0
-;	match =0 name at reg,status argcall\{
-;	local ..tmpi
-;	tmpname equ reg
-;	virtual at reg
-;		..tmpi arginter
-;	end virtual
-;	name equ ..tmpi
-;	define status 1
-;	\}
-;	match =0,status\{
-;		virtual at $
-;			argcall arginter
-;		end virtual
-;				dq 0
-;	define status 1
-;	\}
-;}
-
-;macro @interface name,[proc]{
-;	common
-;	virtual at 0
-;	struc name\{
-;	forward
-;		.#proc dq ?
-;	common
-;	\} name name
-;	sizeof.#name = $-name
-;	end virtual
-;}
-
-;macro @comcall argmeth{
-;	match p->meth,argmeth\{
-;;		display \`p
-;;		display \`meth
-;;		display_decimal iFileOpenDialog\#.\#meth
-;;		display_decimal .ppIn.Unadvise
-;;	  display_decimal \.ppIn\#.\#meth
-;		mov rcx,[p]
-;		mov rax,[rcx]
-;		call [rax+p\#.\#meth-p]
-;	\} 
-;}
-
-;macro @interface name,[proc]{
-;	common
-;	local tmpoffs
-;	tmpoffs equ 0
-;	define status 0
-;	;--- you are building an interface
-;	;--- whose layout is to be exported
-;	match build n,name\{
-;		struc n \\{
-;			forward
-;			.#proc dq ?
-;		common
-;		\\} n n
-;		define status 1
-;	\}
-;	;--- you are using an interface
-;	;--- from an object
-;	match =0,status\{
-;		struc name \\{
-;			forward
-;			.#proc equ tmpoffs
-;			;	display \\`proc," -> "
-;			;	display_hex 16,tmpoffs
-;			;	display 13,10
-;			macro .#proc \\\{
-;				mov rax,[rcx]
-;				call qword[rax+.#proc]
-;				\\\}
-;			tmpoffs equ tmpoffs+8
-;			common
-;		\\}
-;		virtual at rax
-;				name name
-;		end virtual
-;		define status 1
-;	\}
-;	tmpoffs equ
-;}
-
-
-;macro @guid argname,arg1,arg2,arg3,arg4 {
-;	;--- example
-;	;---	@guid	FileOpenDialog,\
-;	;			0DC1C5A9Ch,0E88Ah,04ddeh,0A5A160F82A20AEF7h
-;	;--- DECLSPEC_UUID("DC1C5A9C-E88A-4dde-A5A1-60F82A20AEF7")
-;	align 16
-;	local resval,locval
-;	label clsid_#argname
-;	dd arg1
-;	dw arg2
-;	dw arg3
-;	resval equ arg4
-;	locval equ arg4
-;	rept 7 count\{
-;		;display_decimal 8-count
-;		resval equ resval shr ((8-count)*8)
-;		;display_hex 64,resval
-;		;display 13,10
-;		db (resval and 0FFh)
-;		resval equ locval
-;	\}
-;		db (resval and 0FFh)
-;}
-
-;macro @menuitem string,id,resinfo,status,type
-; { dd MFT_STRING or type+0,status+0,id
-;   dw resinfo+0
-;	 p_#string du string
-;	 string#.size = $-p_#string
-;	 du 0
-;   align 4
-;   if ~ resinfo eq
-;    if resinfo and MFR_END
-;     menu_level = menu_level - 1
-;    end if
-;    if resinfo and MFR_POPUP
-;     menu_level = menu_level + 1
-;     dd 0
-;    end if
-;   end if
-;   if menu_level = 0
-;    menu_size
-;   end if }
 
 
 include "unsupported.inc"
@@ -668,27 +454,27 @@ macro display_list value {
 	\}
 }
 
-macro @log_str strname {
-	local ..tmpstring,size@true
-	virtual at logdata + incr@du 
-		..tmpstring	du `strname,0
-		size@true = $ - ..tmpstring
-	end virtual
-	define status 0
-	
-	match =0 strname,status list@du
-	\{
-		add_to_list list@ok, uz_log_#strname du \`strname 0
-		uz_log_#strname = ..tmpstring
-		incr@du = incr@du + size@true
-		define status 1
-	\}
-	match =0,status
-	\{
-		add_to_list list@du,strname
-		define status 1
-	\}
-}
+;macro @log_str strname {
+;	local ..tmpstring,size@true
+;	virtual at logdata + incr@du 
+;		..tmpstring	du `strname,0
+;		size@true = $ - ..tmpstring
+;	end virtual
+;	define status 0
+;	
+;	match =0 strname,status list@du
+;	\{
+;		add_to_list list@ok, uz_log_#strname du \`strname 0
+;		uz_log_#strname = ..tmpstring
+;		incr@du = incr@du + size@true
+;		define status 1
+;	\}
+;	match =0,status
+;	\{
+;		add_to_list list@du,strname
+;		define status 1
+;	\}
+;}
 
 ;macro @log_str strname {
 ;	local ..tmpstring,size@true
@@ -712,25 +498,25 @@ macro @log_str strname {
 ;	\}
 ;}
 
-macro @log_explode_item [anitem] {
-	;sz_dbg_#anitem db `anitem,0
-	match a b c d,anitem	\{
-		du \`c ,0
-	\}
-}
+;macro @log_explode_item [anitem] {
+;	;sz_dbg_#anitem db `anitem,0
+;	match a b c d,anitem	\{
+;		du \`c ,0
+;	\}
+;}
 
-macro @log_explode {
- match items,list@ok	\{
-	@log_explode_item items
-	\}
-}
+;macro @log_explode {
+; match items,list@ok	\{
+;	@log_explode_item items
+;	\}
+;}
 
-macro @log_foot	 {
-;	@align 4,0
-	if incr@du > 0
-		@log_explode
-	end if
-}
+;macro @log_foot	 {
+;;	@align 4,0
+;	if incr@du > 0
+;		@log_explode
+;	end if
+;}
 
 
 ;;------------------------------ on debug ----------------
@@ -888,9 +674,6 @@ macro @hiword reg,arg {
 	end if
 }
 
-
-
-
 	;#---------------------------------------------------ö
 	;|               @xsdbm hash	(my method)            |
 	;ö---------------------------------------------------ü
@@ -912,7 +695,10 @@ macro @xsdbm argname,argresult,argprime {
 
 		repeat $
 			load char byte from % - 1
-			result = (char and 0x000000FF) + (result shl 6) + (result shl 17) - result
+			result = (char and 0x000000FF) + \
+				(result shl 6) + \
+				(result shl 17) - \
+				result
 		end repeat
 	end virtual
 argresult equ (result and 0xffffffff)
@@ -934,11 +720,11 @@ macro @make_version argmod,packver,argver {
 	@align 8,0CCh
 		@xsdbm argmod,result
 		result equ (result shl 32) or %t
-	;--- get_version
-	;--- RET RAX hashname(HI) OR tstamp (LO)
-	;--- RET RCX packvers(HI) OR version
-	;--- RET RDX POPCOUNT(HI) OR CRC
-	;--- RET R8,R9 0 not used
+		;--- get_version
+		;--- RET RAX hashname(HI) OR tstamp (LO)
+		;--- RET RCX packvers(HI) OR version
+		;--- RET RDX POPCOUNT(HI) OR CRC
+		;--- RET R8,R9 0 not used
 	get_version:
 		mov rax,result	;48B8+HASHNAME or TSTAMP
 		mov rcx,(packver shl 32) or	argver	;48B9+SETVERS or VERSION
@@ -950,13 +736,13 @@ macro @make_version argmod,packver,argver {
 		dq 0
 		ret 0
 		nop
-;	display "---@ "
-;	display_hex 64,result
-;	display "h " ;9,"RAX -> HASHNAME(HI) TSTAMP(LO)",13,10
-;	display_hex 64,(packver shl 32) or	argver
-;	display "h ";9,"RCX -> PACKVERSION (HI) VERSION(LO)",13,10
-;	display `argmod,13,10
-;	display "---  HNAME   TSTAMP       PACKV  VERS",13,10
+	;	display "---@ "
+	;	display_hex 64,result
+	;	display "h " ;9,"RAX -> HASHNAME(HI) TSTAMP(LO)",13,10
+	;	display_hex 64,(packver shl 32) or	argver
+	;	display "h ";9,"RCX -> PACKVERSION (HI) VERSION(LO)",13,10
+	;	display `argmod,13,10
+	;	display "---  HNAME   TSTAMP       PACKV  VERS",13,10
 	}
 
 
@@ -993,37 +779,19 @@ macro @top_pack argreg,argname,arglevel {
 ;}
 
 ;;----------------- MACRo for shared.asm -----------------
-macro @using [name] {
-	composit equ (used name)
-forward
-	composit equ composit |(used name)
-common
-	if composit
-	align 2
-}
+	macro @using [name] {
+		composit equ (used name)
+	forward
+		composit equ composit |(used name)
+	common
+		if composit
+		align 2
+	}
 
-;;if used name
-;;	match =TRUE,VERBOSE \{
-;;	display "... using shared", `name,13,10
-;;	@align 4,0CCh
-;;	\}
-;;	align 2
-;}
-;macro @using [name] {
-;	if used name
-;	align 2
-;}
-
-;macro @using name {
-;	if used name
-;	align 2
-;}
-
-macro @endusing {
-	align 2
-	;@align 4,0CCh
-end if
-}
+	macro @endusing {
+		align 2
+	end if
+	}
 
 
 macro @accels [argflag,argkey,argcmd,argdescr]
@@ -1090,43 +858,6 @@ macro @i_rva modname,[name] {
 }
 
 
-;macro @topitem name,[argname,arglev,initval] {
-;	common
-;		align 4
-;	forward
-;		define status 0
-;	match =0 n,status name \{
-;		@xsdbm name#.#argname,result
-;		name#.#argname#.hash 		= result
-;		name#.#argname#.level		= arglev
-;		name#.#argname#.info	dd 0
-;		name#.#argname#.param	dd initval
-;		define status 1
-;		\}
-;	match =0,status\{
-;		@xsdbm argname,result
-;		argname#.hash 		= result
-;		argname#.level 		= arglev
-;		argname#.info		dd 0
-;		argname#.param	dd initval
-;		define status 1
-;		\}
-;	common
-;		dd 90909090h
-;	match n,name \{	
-;		utf8_#name	db `name,0	
-;	\}
-;	forward
-;	define status 0
-;	match =0 n,status name \{
-;		utf8_#name#.#argname	db `argname,0	
-;		define status 1
-;	\}
-;	match =0,status\{
-;		utf8_#argname	db `argname,0	
-;		define status 1
-;	\}
-;}
 macro @topitem name,[argname,arglev,initval] {
 	common
 		align 4
@@ -1166,77 +897,6 @@ macro @topitem name,[argname,arglev,initval] {
 	\}
 }
 
-;macro @topmenu argstart,name,[argname] {
-;	common
-;		name#.count = argstart
-
-;		@xsdbm MI_SEP,result
-;		MI_SEP.hash = result
-;		;	MI_SEP.id   = count -1
-
-;		@xsdbm name,result
-;;								dq 0
-;		name#.hash 	= result
-;		name#.id		= name#.count
-
-;	;	display_hex 16,MI_SEP.id
-;	;	display 9,`MI_SEP
-;	;	display 13,10
-;		@align 16,0
-;		name#.base 	= $
-;	forward
-;		;@xsdbm name#.#argname,result
-;		@xsdbm argname,result
-;		name#.#argname#.hash 	= result
-;			dw (result and 0FFFFh)
-;	common
-;		@align 16,0
-;		name#.ids = $
-;	forward
-;		name#.#argname#.id	dw name#.count
-;		name#.count = name#.count + 1
-;	; display_hex 8,name#.#argname#.id
-;	; display 9
-;	; display_decimal ((name#.#argname#.hash shr 8 )and 31)
-;	;	display_hex 8,name#.#argname#.hash and 31
-;	;	display 9,`name#"."#`argname
-;	;	display 13,10
-;	common
-;		@align 16,0
-;		name#.loops = (name#.ids - name#.base ) / 16
-;}
-
-;;------------------REGISTER MACROS-------------
-;macro @make_set arg,argname
-;{
-;	@make_hash arg,argresult
-;	match =TRUE,VERBOSE \{
-;		display `argname," = "
-;		display_hex 32,argresult
-;		display "h",13,10
-;	\}
-;	;tmpvalue equ argresult
-;;	repeat 8
-;;		d = '0' + tmpvalue shr (32-%*4) and 0Fh
-;;		if d > "9"
-;;			d = d + "A"-"9"-1
-;;		end if
-;;		db d
-;;	end repeat
-;;		db "h",0
-;	argname = argresult
-;}
-
-
-;macro make@name argname {
-;		label sz_#argname
-;			db `argname,0
-;		@align 4,0
-;  	label val_#argname
-; }
-
-;;------------------------------------------
-
 
 ;;--- set constant in reg if reg=0 (FALSE) or reg#0 (TRUE)
 ;;--- thanks to 
@@ -1261,7 +921,6 @@ macro @topitem name,[argname,arglev,initval] {
 ;		inc ecx
 ;	\}
 ;}
-
 
 ;macro minor reg,arg1,arg2
 ; {
@@ -1339,57 +998,57 @@ macro @topitem name,[argname,arglev,initval] {
 ;		\}
 ;	}
 
-;;----------------------------------
-;;macro include_it aPath,flags,[value] 
-;;{ 
-;;	EXTFLAGS equ flags
-;;	DEFCCONV equ invoke
-;;	include aPath#`value#'.inc'
-;;}
+;----------------------------------
+;macro include_it aPath,flags,[value] 
+;{ 
+;	EXTFLAGS equ flags
+;	DEFCCONV equ invoke
+;	include aPath#`value#'.inc'
+;}
 
-;;macro @idata path,[libnames]
-;; {
-;;	common
-;;		liblist equ
-;;		inclib	equ
-;;		incext	equ
+;macro @idata path,[libnames]
+; {
+;	common
+;		liblist equ
+;		inclib	equ
+;		incext	equ
 
-;;	section '.idata' import data readable writeable
-;;	forward
-;;	define status 0				
-;;	match =0 modimp aName,status libnames
-;;	\{
-;;	define fmod 0				
-;;	
-;;	;define \use_\#aName TRUE
-;;	append liblist,aName 		
-;;	append liblist,\`aName\#'.dll'
-;;		
-;;	match =0 =manual,fmod modimp
-;;	\\{	define fmod 1	
-;;			define status 1 \\}
-;;		
-;;	match =0 =apicon,fmod modimp
-;;	\\{	append inclib,\\`aName	
-;;			define fmod 1
-;;			define status 1	\\}
+;	section '.idata' import data readable writeable
+;	forward
+;	define status 0				
+;	match =0 modimp aName,status libnames
+;	\{
+;	define fmod 0				
+;	
+;	;define \use_\#aName TRUE
+;	append liblist,aName 		
+;	append liblist,\`aName\#'.dll'
+;		
+;	match =0 =manual,fmod modimp
+;	\\{	define fmod 1	
+;			define status 1 \\}
+;		
+;	match =0 =apicon,fmod modimp
+;	\\{	append inclib,\\`aName	
+;			define fmod 1
+;			define status 1	\\}
 
-;;	match =0 =extend,fmod modimp
-;;	\\{	append incext,\\`aName	
-;;			define fmod 1
-;;			define status 1	\\}
-;;		
-;;	match =0,fmod
-;;		\\{	display ":ERR: need <extend/apicon/manual> for <", \`libnames,">",13,10		\\}	
-;;	\}
-;;	match =0,status
-;;	\{	display ":ERR: invalid @idata declare",13,10	\}
+;	match =0 =extend,fmod modimp
+;	\\{	append incext,\\`aName	
+;			define fmod 1
+;			define status 1	\\}
+;		
+;	match =0,fmod
+;		\\{	display ":ERR: need <extend/apicon/manual> for <", \`libnames,">",13,10		\\}	
+;	\}
+;	match =0,status
+;	\{	display ":ERR: invalid @idata declare",13,10	\}
 
-;;common
-;;	match items, liblist	\{	library items	\}
-;;	match items, inclib	\{	include_it path,apicon,items	\}
-;;	match items, incext	\{	include_it path,extend,items	\}
-;;}
+;common
+;	match items, liblist	\{	library items	\}
+;	match items, inclib	\{	include_it path,apicon,items	\}
+;	match items, incext	\{	include_it path,extend,items	\}
+;}
 
 ;;-------------------------------------------------------
 
@@ -1638,62 +1297,6 @@ macro @topitem name,[argname,arglev,initval] {
 ;;  purge exitselect
 ;; }
 
-
-
-;;----------- scintilla hashes to properties file in hili\name.cfg
-;macro @topsci name,[argname,arglev,initval,argfunc] {
-;	common
-;	count_#name equ 0
-;		align 4
-;		label topsci_#name
-;	forward
-;	@make_hash argname,result
-;		argname#.hash 		= result
-;		argname#.level 		= arglev
-;										dd result
-;										dd argfunc
-;		argname#.param	dd initval
-;		count_#name equ count_#name + 1
-;}
-
-
-;macro @make_getset [argname] {
-;	common
-;	forward
-;		@make_hash argname,result
-;		argname#_HASH 		= result
-;	common
-;}
-
-
-;; ---------------- top write macros ------------
-
-
-
-;;macro @do_comma {
-;;	mov al,","
-;;	stosb
-;;}
-
-;;macro @do_name name,argname {
-;;	push esi
-;;	xor ecx,ecx
-;;	match n,name \{
-;;		mov esi,sz_#name
-;;		mov cl,sz_#name#.size-1
-;;		rep movsb
-;;		mov al,"."
-;;		stosb
-;;		\}
-;;	mov esi,sz_#argname
-;;	mov cl,sz_#argname#.size-1
-;;	rep movsb
-;;	mov al,20h
-;;	stosb
-;;	pop esi
-;;}	
-
-
 	macro @do_eol {
 		mov ax,0A0Dh
 		stosw
@@ -1703,71 +1306,3 @@ macro @topitem name,[argname,arglev,initval] {
 		mov al,09h
 		rep stosb
 	}
-
-;;macro @do_openobj {
-;;	mov al,20h
-;;	stosb
-;;	mov al,"("
-;;	stosb
-;;}
-
-;;macro @do_closeobj {
-;;	mov al,")"
-;;	stosb
-;;}
-
-;;macro @do_write argval{
-;;	push ebp
-;;	mov ecx,edi
-;;	mov ebp,argval
-;;	xor eax,eax
-;;	stosb
-;;	mov edx,ebp
-;;	sub ecx,edx
-;;	call shared.fwrite
-;;	mov edi,ebp
-;;	pop ebp
-;;}
-
-;;macro @do_anon {
-;;	mov al,"."
-;;	stosb
-;;	mov al,20h
-;;	stosb
-;;}
-
-;;macro @do_comment argval {
-;;	mov esi,argval
-;;	mov al,09
-;;	stosb
-;;	mov al,09
-;;	stosb
-;;	mov al,";"
-;;	stosb
-;;@@:
-;;	lodsb
-;;	stosb	
-;;	test al,al
-;;	jnz	@b
-;;	dec edi
-;;}
-
-;;macro @do_quote argval {
-;;	mov esi,argval
-;;	mov al,"'"
-;;	stosb
-;;@@:
-;;	lodsb
-;;	stosb	
-;;	test al,al
-;;	jnz	@b
-;;	dec edi
-;;	mov al,"'"
-;;	stosb
-;;}
-
-;;macro @do_num argval {
-;;	mov eax,argval
-;;	call shared.dd2ah	
-;;	}
-

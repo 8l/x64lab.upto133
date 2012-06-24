@@ -1,12 +1,11 @@
 
-  ;#-------------------------------------------------ü
-  ;|          x64lab  MPL 2.0 License                |
-  ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
-  ;|            All rights reserved.                 |
-  ;|-------------------------------------------------|
-  ;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
-  ;|      main.asm                                   |
-  ;ä-------------------------------------------------ö
+	;#-------------------------------------------------ü
+	;|          x64lab  MPL 2.0 License                |
+	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+	;|            All rights reserved.                 |
+	;|-------------------------------------------------|
+	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
+	;ä-------------------------------------------------ö
 
 display "- infos: ",13,10
 
@@ -73,25 +72,6 @@ section '.code' code readable executable
 	include "sciwrap.asm"
 	include "wspace.asm"
 	include "iodlg.asm"
-
-	;	include "xcomp.asm"
-	;	include "ext.asm"
-	;	include "tab.asm"
-	; include "text.asm"
-	;	include "accels.asm"
-	;	include "child.asm"
-
-	;--- get_version
-	;--- RET RAX hashname(HI) OR tstamp (LO)
-	;--- RET RCX packvers(HI) OR version
-	;--- RET RDX POPCOUNT(HI) OR CRC
-	;--- RET R8,R9 0 not used
-
-;	match m,RAWMOD {
-;		@make_version \
-;			m#.exe,\
-;			PACKVERSION,\
-;			PACKVERSION }
 
 start:
 	;	call get_version
@@ -496,6 +476,7 @@ winproc:
 	call tree.get_sel
 	test eax,eax
 	jnz .mi_fi_impA
+
 	;--- please,choose an item in treeview
 	jmp	.ret0
 
@@ -598,6 +579,7 @@ winproc:
 
 	cmp r12,.mi_fi_openI
 	jnz .mi_fi_openE
+
 	mov rbx,[pLabfWsp]
 	or [.labf.type],\
 		LF_MODIF
@@ -696,6 +678,11 @@ winproc:
 	xor esi,esi
 
 .mi_ws_newA:
+	mov rcx,ASK_SAVE
+	call wspace.save_docs
+	test rax,rax
+	jle .exit
+
 	call wspace.check
 	test eax,eax
 	jle .exit
@@ -712,7 +699,13 @@ winproc:
 	call win.controls
 
 	mov rax,[pConf]
+
+	sub rsp,\
+		FILE_BUFLEN*2
 	lea rcx,[rax+CONFIG.wsp]
+	mov rdx,rsp
+	call apiw.exp_env
+	mov rcx,rdx
 
 ;	xor rcx,rcx
 .wm_createA:
@@ -785,7 +778,6 @@ winproc:
 
 .wm_notifyE:
 	jmp	.ret0
-
 
 .wm_drawitem:
 	virtual at rbx

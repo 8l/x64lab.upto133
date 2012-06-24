@@ -1,10 +1,11 @@
 
-  ;#-------------------------------------------------ü
-  ;|          x64lab  MPL 2.0 License                |
-  ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
-  ;|            All rights reserved.                 |
-  ;|-------------------------------------------------|
-  ;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
+	;#-------------------------------------------------ü
+	;|          x64lab  MPL 2.0 License                |
+	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+	;|            All rights reserved.                 |
+	;|-------------------------------------------------|
+	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
+	;ä-------------------------------------------------ö
 
 
 config:
@@ -23,6 +24,11 @@ config:
 	push rbx
 	push rdi
 	mov rbx,rcx
+
+	;--- may be X64LABD or X64LAB ----
+	lea rdx,[.dir.dir]
+	mov rcx,uzClass
+	call apiw.set_env
 
 	mov rdi,appDir
 	mov rbp,-DEF_DIRS
@@ -321,9 +327,10 @@ config:
 	call utf8.to16
 	mov r12,rax
 	;--- CF error
-	lea rcx,[rsp+FILE_BUFLEN]
-	call art.is_file
-	jz	.openB
+
+;	lea rcx,[rsp+FILE_BUFLEN]
+;	call art.is_file
+;	jz	.openB
 
 	mov r8,r12
 	lea rcx,[rsp+FILE_BUFLEN]

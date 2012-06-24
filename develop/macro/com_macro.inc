@@ -1,4 +1,14 @@
 
+
+	;#-------------------------------------------------ü
+	;|          x64lab  MPL 2.0 License                |
+	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+	;|            All rights reserved.                 |
+	;|-------------------------------------------------|
+	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
+	;ä-------------------------------------------------ö
+
+
 	struc GUID def {
 	;--- example:
 	;--- iFileOpenDialog GUID DC1C5A9C-E88A-4dde-A5A1-60F82A20AEF7

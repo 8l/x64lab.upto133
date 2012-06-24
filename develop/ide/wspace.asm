@@ -1,12 +1,12 @@
 
-  ;#-------------------------------------------------ü
-  ;|          x64lab  MPL 2.0 License                |
-  ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
-  ;|            All rights reserved.                 |
-  ;|-------------------------------------------------|
-  ;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
-	;| wspace.asm                                      |
+	;#-------------------------------------------------ü
+	;|          x64lab  MPL 2.0 License                |
+	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+	;|            All rights reserved.                 |
+	;|-------------------------------------------------|
+	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
 	;ä-------------------------------------------------ö
+
 
 
 wspace:
@@ -51,6 +51,7 @@ wspace:
 	mov rcx,\
 		.close_asksave
 	call .list
+
 	test eax,eax
 	jle .checkE
 
@@ -58,7 +59,7 @@ wspace:
 
 	test [.labf.type],\
 		LF_MODIF
-	jz	.checkA
+	jz	.checkB;.checkA
 
 	mov rax,[.labf.dir]
 	lea rcx,[rax+DIR.dir]
@@ -204,7 +205,6 @@ wspace:
 
 	mov rbx,rcx
 	mov r12,rdx
-;@break
 
 	movzx eax,\
 		[.labf.type]
@@ -221,6 +221,7 @@ wspace:
 	mov rdx,r12
 	mov rcx,rbx
 	call wspace.save_file
+
 	test eax,eax
 	jle .close_fileE
 
@@ -352,10 +353,16 @@ wspace:
 
 	mov r8,rsp
 	mov rax,[.labf.dir]
-	lea rcx,[rax+DIR.dir]
 	lea rdx,[rbx+\
 		sizeof.LABFILE]
+	lea rcx,[rax+DIR.dir]
+	mov r9,[rax+DIR.rdir]
 
+	test [rax+DIR.type],\
+		DIR_HASREF
+	jz	@f
+	lea rcx,[r9+DIR.dir]
+@@:
 	push 0
 	push rdx
 	push uzSlash
@@ -366,6 +373,7 @@ wspace:
 
 	mov eax,edi
 	mov rdi,rsp
+
 	test eax,LF_BLANK
 	jnz .save_fileBT
 
@@ -446,6 +454,7 @@ wspace:
 	mov rdx,rdi
 	mov rcx,[.labf.hView]
 	call sci.save
+
 	test eax,eax
 	jz .save_fileF
 
@@ -550,9 +559,21 @@ wspace:
 	;--- list to close items in treeview
 	;--- ASK save ---------------------
 .askscC:
+	xor eax,eax
 	test [.labf.type],\
 		LF_OPENED
 	jz	.close_asksave
+
+	;--- because treeitems have been 
+  ;--- already asked/saved from wspace.save_docs
+	cmp rax,[.labf.hItem]
+	jnz	.close_asksave
+
+	test [.labf.type],\
+		LF_MODIF
+	jz	.close_asksave
+
+.close_asksaveA:
 	mov edx,ASK_SAVE
 	call .close_file
 	test eax,eax
@@ -570,10 +591,13 @@ wspace:
 	mov r9,TVI_ROOT
 	mov rcx,[hTree]
 	call tree.del_item
+
 	xor eax,eax
 	mov rcx,[pConf]
+
 	mov [hRootWsp],rax
 	mov [pLabfWsp],rax
+
 	mov qword[rcx+\
 		CONFIG.wsp],rax	;--- reset pConf.wsp
 	jmp	.discardD
@@ -700,7 +724,8 @@ wspace:
 .save_wspA:
 	mov rcx,[hTree]
 	call tree.countall
-	xor ebx,ebx				;--- RBX later for data size
+
+	xor ebx,ebx			;--- RBX later for data size
 	mov r12,rax
 	test eax,eax
 	jz .save_wspE		;--- err cannot be no items
@@ -740,6 +765,7 @@ wspace:
 	mov rax,[r8]
 	test rax,rax
 	jnz	.save_wspK3
+
 	inc r12
 	push rdx
 	add ebx,[rdx+\
@@ -879,6 +905,7 @@ wspace:
 	test [.labf.type],\
 		LF_FILE
 	jnz	.save_wspI2
+
 	mov al,"("
 	stosb
 	cmp [.labf.flags],1
@@ -939,6 +966,7 @@ wspace:
 	mov rcx,[rax+DIR.hash]
 	mov rdx,rdi
 	call art.qword2a
+
 	add rdi,rax
 	mov ax,"h,"
 	stosw
@@ -957,14 +985,21 @@ wspace:
 	;--- 1) check wsp newblank/existent
 	mov rsp,r14
 
-;	test [.labf.type],\
-;		LF_MODIF
-
+;@break
 	mov rdx,[pConf]
 	lea rcx,[rdx+\
 		CONFIG.wsp]
+
+	sub rsp,\
+		FILE_BUFLEN*2
+
+	mov rdx,rsp
+	call apiw.exp_env
+	
+	mov rcx,rdx
 	call art.fcreate_rw
 
+	mov rsp,r14
 	test rax,rax
 	jle	.save_wspE
 	mov rbx,rax				;--- file handle
@@ -979,17 +1014,17 @@ wspace:
 	mov rcx,rbx
 	call art.fclose
 
-	xor eax,eax
-	inc eax
-
 	mov rbx,[pLabfWsp]
+
+	and [.labf.type],\
+			not LF_MODIF
+
 	test [.labf.type],\
 		LF_BLANK
 	jz .save_wspE
 
 	and [.labf.type],\
-		not (LF_BLANK \
-			or LF_MODIF)
+		not LF_BLANK
 
 	mov rsi,[pIo]
 	mov rax,[.io.ldir]
@@ -1007,6 +1042,7 @@ wspace:
 
 	lea rax,[rbx+\
 		sizeof.LABFILE]
+
 	mov [r9+TVITEMW.pszText],\
 		LPSTR_TEXTCALLBACK
 	mov rax,[.labf.hItem]
@@ -1371,13 +1407,11 @@ wspace:
 .load_wspD:
 	;--- load default wsp
 	mov r8,\
-		LF_BLANK or \
-		LF_MODIF
+		LF_BLANK
 	xor ecx,ecx
 	xor edx,edx
 
 .load_wspD2:
-
 	or r8,LF_WSP
 	call .new_labf
 	mov r13,rax
@@ -1502,6 +1536,7 @@ wspace:
 	lea rdx,[rdi+16]
 	lea rcx,[r9+DIR.dir]
 	call .new_labf
+
 	test eax,eax
 	jz	.load_itemsE
 
@@ -1653,6 +1688,7 @@ wspace:
 	lea rcx,[rsi+\
 		TITEM.value]
 	call utf8.to16
+
 	jnc	.load_descrE1
 
 .load_descrE:
@@ -1719,7 +1755,6 @@ wspace:
 	mov rdx,rdi
 	call utf8.to16
 
-;@break
 	xor r8,r8
 	xor edx,edx
 	mov rcx,rdi
@@ -1810,6 +1845,7 @@ wspace:
 	mov rdx,rsp
 	mov rcx,rsi
 	call apiw.exp_env
+
 	test eax,eax
 	jz	.set_dirF
 	cmp eax,\
@@ -1826,6 +1862,7 @@ wspace:
 	mov rdi,r9
 	mov rsi,r10
 	jnz	.set_dirC1
+
 	;--- dir matches exp
 	test edi,edi
 	jz	.set_dirF
@@ -1852,8 +1889,10 @@ wspace:
 	xor edx,edx
 	mov r8,rdi
 	call .set_dir
+
 	mov edx,[rax+DIR.iIcon]
 	mov [.dir.rdir],rax
+
 	or [.dir.type],DIR_HASREF
 	mov [.dir.iIcon],edx
 	jmp	.set_dirB1
@@ -1885,15 +1924,18 @@ wspace:
 .set_dirB1:
 	mov rcx,rsi
 	call .dir2hash
+
 	mov r12,rax
 	jc	.set_dirE
 	mov [.dir.hash],r9
+
 	;--- in R8 len
 	;--- in R9 hash
 	;--- in RAX field/hashtable/lastvalid
 	mov rsi,rax
 	mov ecx,[.dir.len]
 	call art.a16malloc
+
 	xor r12,r12
 	test rax,rax
 	jz	.set_dirF
@@ -2024,6 +2066,7 @@ wspace:
 	xor eax,eax
 	test rdi,rdi
 	jz	.new_labfE
+
 	test rsi,rsi
 	jz	.new_labfE
 
@@ -2031,6 +2074,7 @@ wspace:
 	xor edx,edx
 	mov rcx,rdi
 	call .set_dir
+
 	test rax,rax
 	jz	.new_labfE
 
@@ -2056,6 +2100,7 @@ wspace:
 	xor r8,r8
 	xor edx,edx
 	call .set_dir
+
 	test rax,rax
 	jz	.new_labfE
 	mov rcx,rax
@@ -2097,6 +2142,7 @@ wspace:
 	xor edx,edx
 	mov rcx,rdi
 	call .set_dir
+
 	test rax,rax
 	jz	.new_labfE
 	mov rcx,rax
@@ -2649,232 +2695,3 @@ wspace:
 	mov rcx,[.labf.dir]
 	call mnu.set_dir
 	jmp	winproc.ret0
-
-
-;	cmp rsi,NOASK_SAVE
-;	jz	.save_docsA1
-
-;	;---  having to ASK SAVE ------
-;	test [.labf.type],\
-;		LF_MODIF
-;	jz	.save_docsA
-
-;	test [.labf.type],\
-;		LF_BLANK
-;	jnz	.save_docsA1
-
-;@break
-;	lea r8,[rsp+\
-;		sizea16.LVITEMW]
-;	mov edx,U16
-;	mov ecx,UZ_FSAVE
-;	call [lang.get_uz]
-
-;	lea r8,[rsp+\
-;		sizea16.LVITEMW]
-;	lea rdx,[rbx+rdi
-;	mov rcx,[hMain]
-;	call apiw.msg_ync
-
-;	;--- user choice OVERWRITE FILE ----------
-;	cmp eax,IDNO
-;	jz .save_fileBT
-;	cmp eax,IDCANCEL
-;	jz .save_fileE
-;	xor edx,edx
-;	test [.labf.type],\
-;		LF_BLANK
-;	jnz	.save_docsA
-;@break
-;	cmp rdx,[.labf.hItem]
-;	jz	.save_docsA
-
-;@break	
-;	sub rsp,\
-;		sizeof.TVDISPINFOW
-;	mov r9,rsp
-;	lea rax,[rbx+sizeof.LABFILE]
-;	mov [r9+TVDISPINFOW.item+TVITEMW.pszText],LPSTR_TEXTCALLBACK
-;	mov rax,[.labf.hItem]
-;	mov [r9+TVDISPINFOW.item+TVITEMW.hItem],rax
-;	mov [r9+TVDISPINFOW.item+TVITEMW.lParam],rbx
-;	mov [r9+TVDISPINFOW.item+TVITEMW.mask],TVIF_TEXT or TVIF_HANDLE	 or TVIF_PARAM
-;	mov [r9+TVDISPINFOW.hdr+NMHDR.code],TVN_ENDLABELEDITW;TVN_SETDISPINFOW
-;	mov rax,[hTree]
-;	mov [r9+TVDISPINFOW.hdr+NMHDR.hwndFrom],rax
-
-;	mov r8,rax
-;	mov edx,WM_NOTIFY
-;	mov rcx,[hMain]
-;	call apiw.sms
-;@break	
-
-;;;.wm_activate:
-;;;;	and r8,0FFFFh
-;;;;	cmp r8,WA_CLICKACTIVE	
-;;;;	jnz	.ret0
-;;;	
-;;;	push r9
-;;;	mov r8,r9
-;;;	mov rdx,rcx
-;;;	call art.cout2XX
-;;;	pop r9
-;;;	jmp	.ret0
-
-	;#---------------------------------------------------ö
-	;|                   WSPACE.INFO                     |
-	;ö---------------------------------------------------ü
-
-;.info:
-;	;--- in RCX 0/labfile
-;	;--- set Workspace info
-;	push rbx
-;	xor eax,eax
-;	test rcx,rcx
-;	jnz	.infoM
-;	mov rcx,[wsp.labf]
-
-;.infoM:
-;	;--- set menu first ---------
-;	mov rbx,rcx
-;	cmp rax,[.labf.dir]
-;	jnz	.infoM1
-;	mov rax,[appDir]
-
-;.infoM1:
-;	mov rcx,rax
-;	call mnu.set_dir
-
-;	
-;	pop rbx
-;	ret 0
-
-
-
-
-;	test [.labf.type],LF_OPENED
-;	jz	.schgedB
-;;@break
-;;	mov r9,[.labf.hItem]
-;;	mov rcx,[pWsp.hTree]
-;;	call tree.sel_item
-
-;	xor r9,r9
-;	mov r8,[.labf.hChild]
-;	mov rdx,WM_MDIACTIVATE
-;	mov rcx,[hClient]
-;	call apiw.sms
-
-;.schgedB:
-;	jmp	.ret1
-;.tree_exped:
-;;@break
-;	mov eax,\
-;		[r9+NMTREEVIEWW.action]
-;	and eax,TVE_TOGGLE
-;	mov rbx,[r9+\
-;		NMTREEVIEWW.itemNew.lParam]
-;	test rbx,rbx
-;	jz	.ret0
-;	mov [.labf.state],al
-;	mov rdx,[wsp.labf]
-;	or [edx+LABFILE.type],\
-;		LF_MODIF
-;	;TVE_COLLAPSE			= 0001h
-;	;TVE_EXPAND	  		= 0002h
-;	;TVE_EXPANDPARTIAL = 4000h
-;	;TVE_COLLAPSERESET = 8000h
-;	jmp	.ret1
-
-
-
-
-;	mov rdx,WSP_LVW
-;	mov rcx,[.hwnd]
-;	call apiw.get_dlgitem
-;	mov [wsp.hLvw],rax
-
-
-
-;	mov r8,uzCourierNew
-;	mov r9,FIXED_PITCH
-;	xor edx,edx
-;	mov ecx,812h
-;	call apiw.cfonti
-
-;	mov r9,TRUE
-;	mov r8,rax
-;	mov rdx,WM_SETFONT
-;	mov rcx,[wsp.hLvw]
-;	call apiw.sms
-
-;@break
-;	mov rcx,[wsp.hLvw]
-;	call apiw.get_dc
-;	mov r12,rax
-
-
-
-
-;;		case NM_DBLCLK
-;;;@break
-;;			call tree.gethit
-;;			test eax,eax
-;;			jz	.ret0
-;;			mov ebx,edx		;in ebx labfile
-;;			mov esi,eax		;in esi hItem
-;;	;		call tree.selectitem
-
-;;;			call tree.getselected
-;;;			test eax,eax
-;;;			jz	.closefileC
-;;;			call tree.getlparam
-;;;			test edx,edx
-;;;			jz	.closefileC
-
-;;;			mov esi,eax		; hItem
-;;;			mov ebx,edx		; plabfile
-;;			mov eax,[labfile.flags]
-;;			test al,FLAGS_PROJECT
-;;			jnz	.closefileC			;nix with project
-;;			test al,FLAGS_SECTION
-;;			jnz	.closefileC			;nix with section
-;;			test al,FLAGS_FILEISOPEN
-;;			jnz	.closefile
-
-;;;; --- if file has been marked bad --------------------------
-;;;	test eax,FLAGS_ERR
-;;;	jnz	.closefileB		; doesnt exist or general error
-;;		
-;;		.openfile:
-;;			mov eax,esi
-;;			lea edx,[.buffer512]
-;;			call tree.gettext
-;;			call child.create
-;;			mov edx,[labfile.flags]
-;;			test edx,FLAGS_ERR
-;;			jnz	.closefileA
-;;			test eax,eax
-;;			jnz .closefileC
-
-;;		.closefileA:
-;;			mov edx,szErrCreate
-;;			mov ecx,szErrClose
-;;			mov eax,[hMain]
-;;			call shared.message_err
-
-;;		.closefile:
-;;			call child.destroy
-
-;;		.closefileC:
-;;			jmp	.ret0
-
-;;		;--- if file has been marked bad --------------------------
-;;		.closefileB:
-;;			mov edx,szErrCreate
-;;			mov ecx,szErrBadItem
-;;			mov eax,[hMain]
-;;			call shared.message_err
-;;			jmp	.closefileC
-
-

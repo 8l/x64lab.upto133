@@ -1,12 +1,12 @@
 
 	;#-------------------------------------------------ü
-	;| x64lab  MPL 2.2 License                         |
-	;| Copyright (c) 2009-2012, Marc Rainer Kranz.     |
-	;| All rights reserved.                            |
-	;|                       .                         |
-	;| Dienstag] - 19.Juni.2012 - 10:51:19             |
-	;| ART.INC                                         |
+	;|          x64lab  MPL 2.0 License                |
+	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+	;|            All rights reserved.                 |
+	;|-------------------------------------------------|
+	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
 	;ä-------------------------------------------------ö
+
 
 
 	align 2

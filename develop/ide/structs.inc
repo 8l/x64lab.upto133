@@ -1,12 +1,12 @@
 
-  ;#-------------------------------------------------ü
-  ;|          x64lab  MPL 2.0 License                |
-  ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
-  ;|            All rights reserved.                 |
-  ;|-------------------------------------------------|
-  ;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
-	;| structs.inc                                     |
+	;#-------------------------------------------------ü
+	;|          x64lab  MPL 2.0 License                |
+	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+	;|            All rights reserved.                 |
+	;|-------------------------------------------------|
+	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
 	;ä-------------------------------------------------ö
+
 
 	MAX_NUMTOOLS equ 255
 	MAX_MNUCPTS	 = 80h
@@ -270,7 +270,7 @@ ends
 		cons.pos	RECT 0,0,0,0
 		tree.pos	RECT 0,0,0,0
 		;-------------------------
-		wsp		db FILE_BUFLEN dup (?)
+		wsp		dw FILE_BUFLEN dup (?)
 	ends
 
 	

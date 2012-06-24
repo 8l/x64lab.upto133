@@ -15,7 +15,7 @@
 	define UNICODE TRUE
 	define TITLE "x64lab"
 
-	define MAINCLASS X64LABR
+	define MAINCLASS X64LAB
 	include "version.inc"
 
 	define COPYRIGHT "Copyright (c) Marc Rainer Kranz 2009-2012"
