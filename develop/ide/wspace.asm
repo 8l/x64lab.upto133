@@ -985,7 +985,6 @@ wspace:
 	;--- 1) check wsp newblank/existent
 	mov rsp,r14
 
-;@break
 	mov rdx,[pConf]
 	lea rcx,[rdx+\
 		CONFIG.wsp]

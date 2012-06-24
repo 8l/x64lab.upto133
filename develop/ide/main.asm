@@ -687,6 +687,15 @@ winproc:
 	test eax,eax
 	jle .exit
 
+	test rsi,rsi
+	mov rcx,rsi
+	jz	.wm_createA
+
+	mov rax,[pConf]
+	lea rdx,[rax+CONFIG.wsp]
+	mov rsi,rdx
+	call utf16.copyz
+
 	mov rcx,rsi
 	jmp	.wm_createA
 
