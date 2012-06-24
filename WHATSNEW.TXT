@@ -1,5 +1,5 @@
 
-- version 0.0.53 (released on 24.06.2012 ) 
+- version 0.0.54 (released on 24.06.2012 ) 
   + edit and clean
   + corrected save/new/load workspace
 
