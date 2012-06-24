@@ -1,5 +1,9 @@
 
-- version 0.0.37 released on 22.06.2012  
+- version 0.0.53 (released on 24.06.2012 ) 
+  + edit and clean
+  + corrected save/new/load workspace
+
+- version 0.0.37 (released on 22.06.2012)
   active are the Workspace and File menus entirely
 
 

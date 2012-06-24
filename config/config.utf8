@@ -9,7 +9,7 @@
 	session:6666h
 	owner:"marcßüäö"
 	pos:0320'02BCh
-	wspace:"E:\x64lab\project\working.x64lab"
+	wspace:"%X64LAB%\project\welcome.x64lab"
 	
 	cons:(
 		bkcol:0AABBCCh 
