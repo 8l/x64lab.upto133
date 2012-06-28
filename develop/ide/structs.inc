@@ -1,11 +1,15 @@
+  
+  ;#-------------------------------------------------ß
+  ;|          x64lab  MPL 2.0 License                |
+  ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+  ;|            All rights reserved.                 |
+  ;ö-------------------------------------------------ä
 
-	;#-------------------------------------------------�
-	;|          x64lab  MPL 2.0 License                |
-	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
-	;|            All rights reserved.                 |
-	;|-------------------------------------------------|
-	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
-	;�-------------------------------------------------�
+  ;#-------------------------------------------------ß
+  ;| uft-8 encoded üäöß
+  ;| update:
+  ;| filename:
+  ;ö-------------------------------------------------ä
 
 
 	MAX_NUMTOOLS equ 255
@@ -149,25 +153,28 @@
 	PROJ_MODIFIED	= 1
 
 	struct LABFILE
-						dq 0
+					dq 0
 		union
 			hItem	dq 0	;--- treeitem
 			hRoot	dq 0	;--- treeroot
 		ends
 									
 		union
-			hSci		dq 0	;--- scintilla win
-			hBin		dq 0	;--- hex container
-			hView		dq 0	;--- generic view window
+			hSci	dq 0	;--- scintilla win
+			hBin	dq 0	;--- hex container
+			hView	dq 0	;--- generic view window
 		ends
-		dir			dq 0	;--- slot dir
+		dir		dq 0	;--- slot dir
 
 		alen		dw 0	;--- total available following len
 		cpts		dw 0	;--- cpts, text following item
-		idx			dw 0	;--- index slot,
+		idx		dw 0	;--- index slot,
 		level		db 0	;--- BY SAVING level
-						db 0
-		ext			dq 0	;--- extension slot
+		state		db 0	;--- treitem state 
+							;--- TVE_COLLAPSE	= 0001h
+							;--- TVE_EXPAND  	= 0002h
+
+		ext		dq 0	;--- extension slot
 
 		type		dw 0	;--- LF_?
 		flags		db 0	;--- states /children/ by saving
@@ -265,8 +272,13 @@ ends
 		session			dd 0
 		tree.bkcol	dd 0D9FFFFh
 		cons.bkcol	dd 0AABBCCh
+
+		docs.bkcol	dd 0CCBBAAh
+		prop.bkcol  dd	0DADADAh
+						dd 0
+						dd 0
 		;-------------------------
-		pos				RECT 0,0,320h,2BCh
+		pos		RECT 0,0,320h,2BCh
 		cons.pos	RECT 0,0,0,0
 		tree.pos	RECT 0,0,0,0
 		;-------------------------

@@ -218,9 +218,9 @@ ends
 
 struct NMHDR
  hwndFrom dq ?
- idFrom 	dq ?
- code 		dd ?
-					dd ?
+ idFrom	dq ?
+ code		dd ?
+			dd ?
 ends
 
 

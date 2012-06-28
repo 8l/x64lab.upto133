@@ -1,15 +1,19 @@
+  
+  ;#-------------------------------------------------ß
+  ;|          x64lab  MPL 2.0 License                |
+  ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+  ;|            All rights reserved.                 |
+  ;ö-------------------------------------------------ä
 
-	;#-------------------------------------------------�
-	;|          x64lab  MPL 2.0 License                |
-	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
-	;|            All rights reserved.                 |
-	;|-------------------------------------------------|
-	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
-	;�-------------------------------------------------�
+  ;#-------------------------------------------------ß
+  ;| uft-8 encoded üäöß
+  ;| update:
+  ;| filename:
+  ;ö-------------------------------------------------ä
+
 
 
 	;--- from resource.h x64lab.res ---------------------------
-
 	define IDC_STATIC (-1)
 	define ICO_X64LAB                              3
 	define BMP_X64LAB                              4
@@ -139,7 +143,24 @@
 		UZ_OVERWFILE,\
 		UZ_COURNEW,\
 		UZ_IO_NEWWSP,\
-		UZ_IO_SAVEWSP
+		UZ_IO_SAVEWSP,\
+		BB_NULL,\
+		BB_WSP,\
+		BB_FOLDER,\
+		BB_CODE,\
+		BB_CALL,\
+		BB_COMMENT,\
+		BB_DATA,\
+		BB_EXPORT,\
+		BB_FLOW,\
+		BB_IMM,\
+		BB_IMPORT,\
+		BB_LABEL,\
+		BB_MACRO,\
+		BB_PROC,\
+		BB_REG,\
+		BB_RET
+
 
 		;--- hash equ for config/config.utf8 items
 		macro @cfg_hash [argid]{
@@ -153,6 +174,8 @@
 			wspace,\
 			version,\
 			cons,\
+			docs,\
+			prop,\
 			pos,\
 			tree,\
 			bkcol
@@ -165,6 +188,8 @@
 		CFG_CONS_LTRB		equ 0
 		CFG_CONS_BKCOL	equ 0AABBCCh
 		CFG_TREE_BKCOL 	equ 0D9FFFFh
+		CFG_DOCS_BKCOL 	equ 00DADCD6h
+		CFG_PROP_BKCOL 	equ 00DADADAh
 		CFG_TREE_LTRB		equ 0
 			
 

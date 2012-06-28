@@ -1,11 +1,16 @@
+  
+  ;#-------------------------------------------------ÃŸ
+  ;|          x64lab  MPL 2.0 License                |
+  ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+  ;|            All rights reserved.                 |
+  ;Ã¶-------------------------------------------------Ã¤
 
-	;#-------------------------------------------------ü
-	;|          x64lab  MPL 2.0 License                |
-	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
-	;|            All rights reserved.                 |
-	;|-------------------------------------------------|
-	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
-	;ä-------------------------------------------------ö
+  ;#-------------------------------------------------ÃŸ
+  ;| uft-8 encoded Ã¼Ã¤Ã¶ÃŸ
+  ;| update:
+  ;| filename:
+  ;Ã¶-------------------------------------------------Ã¤
+
 
 
 config:
@@ -63,9 +68,9 @@ config:
 	pop rbp
 	ret 0
 
-	;ü-----------------------------------------ö
+	;Ã¼-----------------------------------------Ã¶
 	;|     setup_gui                           |
-	;#-----------------------------------------ä
+	;#-----------------------------------------Ã¤
 .setup_gui:
 	push rbx
 
@@ -80,7 +85,9 @@ config:
 
 	mov r10,60
 	mov r9,30
-	mov r8,ILC_MASK or ILC_COLOR16
+	mov r8,\
+		ILC_MASK or \
+		ILC_COLOR16
 	mov edx,16
 	mov ecx,16
 	call iml.create	
@@ -103,9 +110,9 @@ config:
 	ret 0
 
 
-	;ü-----------------------------------------ö
+	;Ã¼-----------------------------------------Ã¶
 	;|     setup_files                         |
-	;#-----------------------------------------ä
+	;#-----------------------------------------Ã¤
 .setup_files:
 	;--- ret RCX datalen
 	;--- ret RDX numitems
@@ -138,9 +145,9 @@ config:
 .unset_files:
 	ret 0
 
-	;ü-----------------------------------------ö
+	;Ã¼-----------------------------------------Ã¶
 	;|     setup_libs                          |
-	;#-----------------------------------------ä
+	;#-----------------------------------------Ã¤
 
 .setup_libs:
 	push rdi
@@ -213,9 +220,9 @@ config:
 ;	mov rcx,rsp
 
 
-	;ü-----------------------------------------ö
+	;Ã¼-----------------------------------------Ã¶
 	;|     unset_libs                          |
-	;#-----------------------------------------ä
+	;#-----------------------------------------Ã¤
 
 .unset_libs:
 	push rdi
@@ -242,9 +249,9 @@ config:
 	pop rdi
 	ret 0
 
-	;#---------------------------------------------------ö
+	;#---------------------------------------------------Ã¶
 	;|                   OPEN CONFIG config.utf8         |
-	;ö---------------------------------------------------ü
+	;Ã¶---------------------------------------------------Ã¼
 .open:
 	push rbp
 	push rbx
@@ -259,6 +266,7 @@ config:
 		FILE_BUFLEN*2
 
 	;--- set default value ------
+
 	mov rdi,[pConf]
 ;	mov eax,VERSION
 ;	mov [.conf.version],ax
@@ -270,16 +278,27 @@ config:
 
 	mov [.conf.fshow],\
 		CFG_FSHOW
+
 	mov [.conf.flog],\
 		CFG_FLOG
+
 	mov [.conf.fsplash],\
 		CFG_FSPLASH
+
 	mov [.conf.update],\
 		CFG_UPDATE
+
 	mov [.conf.cons.bkcol],\
 		CFG_CONS_BKCOL
+
 	mov [.conf.tree.bkcol],\
 		CFG_TREE_BKCOL
+
+	mov [.conf.docs.bkcol],\
+		CFG_DOCS_BKCOL
+
+	mov [.conf.prop.bkcol],\
+		CFG_PROP_BKCOL
 
 	xor eax,eax
 	mov edx,uzConfName
@@ -379,8 +398,6 @@ config:
 ;	mov rbx,rax
 ;	mov rsi,rax
 
-
-
 ;.openV:
 ;	;--- version ------
 ;	mov eax,[rdx+TITEM.lo_dword]
@@ -409,9 +426,9 @@ config:
 ;	ret 0
 	
 
-;	;ü------------------------------------------ö
+;	;Ã¼------------------------------------------Ã¶
 ;	;|     DISCARD                              |
-;	;#------------------------------------------ä
+;	;#------------------------------------------Ã¤
 
 ;.discard:
 ;	push rbp
@@ -579,9 +596,6 @@ config:
 ;;	mov qword[rdi+CFG.pos],rax
 ;;	mov qword[rdi+CFG.pos+8],rdx
 
-
-
-
 ;;	mov rcx,rax
 ;;	call [top64.getnum]
 ;;	jc	.openB
@@ -692,9 +706,10 @@ config:
 ;;;	cmp [rax],rcx
 ;;;	jnz .err_setupB3
 
-;	;#---------------------------------------------------ö
+
+;	;#---------------------------------------------------Ã¶
 ;	;|                   WRITE CONFIG x64lab             |
-;	;ö---------------------------------------------------ü
+;	;Ã¶---------------------------------------------------Ã¼
 
 ;.write:
 ;	push rbp
@@ -738,9 +753,9 @@ config:
 
 
 
-;	;ü------------------------------------------ö
+;	;Ã¼------------------------------------------Ã¶
 ;	;|     CREATEFONT                           |
-;	;#------------------------------------------ä
+;	;#------------------------------------------Ã¤
 ;.createfont:
 ;	;--- in RCX bold-wi-hi
 ;	;--- in RDX st-un-it-ch
@@ -791,1055 +806,4 @@ config:
 ;	ret 0
 
 
-;	;#---------------------------------------------------ö
-;	;|                   WRITE CONFIG FASMLAB            |
-;	;ö---------------------------------------------------ü
-;proc .write
-;	local .buffer512[512]:BYTE
-;	local .buffer4096[4096]:BYTE
-
-;	push ebx
-;	push edi
-;	push esi
-
-;	lea eax,[.buffer512]
-;	call .cat_config
-;	call shared.open_AfileRW
-;	test eax,eax
-;	jz	.err_write
-;	mov ebx,eax
-;	lea edi,[.buffer4096]
-;	
-;	;1) --- version 
-;	@do_indent 1
-;	@do_name lab,lab.version
-;	@do_num [lab.version.param]
-;	@do_endl
-
-;	;2) --- session
-;	@do_indent 1
-;	@do_name lab,lab.session
-;	@do_num [lab.session.param]
-;	@do_endl
-
-;	;3) --- create
-;	@do_indent 1
-;	@do_name lab,lab.create
-
-;;@break
-;	mov eax,[lab.create.param]
-;	test eax,eax
-;	jnz	@f
-;	mov eax,[lab.access.param]
-;@@:
-;	@do_quote eax
-;	@do_endl
-
-;	;4) --- access
-;	@do_indent 1
-;	@do_name lab,lab.access
-;	@do_quote [lab.access.param]
-;	@do_endl
-;	@do_endl
-
-;	;3) --- descript
-;	@do_indent 1
-;	@do_name lab,lab.descript
-;	@do_quote [lab.descript.param]
-;	@do_endl
-
-;	;4) --- copyright
-;	@do_indent 1
-;	@do_name lab,lab.copyright
-;	@do_quote [lab.copyright.param]
-;	@do_endl
-;	
-;	;5) --- note
-;	@do_indent 1
-;	@do_name lab,lab.note
-;	@do_quote [lab.note.param]
-;	@do_endl
-;	@do_endl
-
-;	;6) --- commenting
-;	@do_indent 1
-;	@do_name lab,lab.commenting
-;	@do_num [lab.commenting.param]
-;	@do_comment szNotYet
-;	@do_endl
-
-;	;10) --- showsplash
-;	@do_indent 1
-;	@do_name lab,lab.showsplash
-;	@do_num [lab.showsplash.param]
-;	@do_comment szNotYet
-;	@do_endl
-
-;	;10) --- reop_lastproj
-;	@do_indent 1
-;	@do_name lab,lab.reop_lastproj
-;	@do_num [lab.reop_lastproj.param]
-;	@do_endl
-
-;	;7) --- dir
-;	@do_indent 1
-;	@do_name lab,lab.dir
-;	mov edx,[pDirTable]
-;	@do_quote [edx+DEF_DIRS.pLabDir.pdir]
-;	@do_endl
-
-;	;8) --- host
-;	@do_indent 1
-;	@do_name lab,lab.host
-;	@do_quote [lab.host.param]
-;	@do_comment szNotYet
-;	@do_endl
-
-;	;9) --- port
-;	@do_indent 1
-;	@do_name lab,lab.port
-;	@do_num [lab.port.param]
-;	@do_comment szNotYet
-;	@do_endl
-;;@break
-;	mov eax,[lab.lastproj.param]
-;	test eax,eax
-;	jz .skip_writeA
-
-;	mov edx,[eax]		;temporary patch: to review no security!!!
-;	test edx,edx
-;	jz	.skip_writeA
-
-;	;8) --- lastproj
-;	@do_indent 1
-;	@do_name lab,lab.lastproj
-;	@do_quote [lab.lastproj.param]
-;	@do_endl
-
-;.skip_writeA:
-;	@do_endl
-
-;	;6) --- cons.bkcol
-;	@do_indent 1
-;	@do_name lab,lab.cons.bkcol
-;	@do_num [lab.cons.bkcol.param]
-;	@do_endl
-
-;	;6) --- tree.bkcol
-;	@do_indent 1
-;	@do_name lab,lab.tree.bkcol
-;	call tree.getbkcolor
-;	@do_num eax
-;	@do_endl
-
-;	;6) --- splitH1
-;	@do_indent 1
-;	@do_name lab,lab.splith1
-;	push [hSplitH1]
-;	call [split.getpos]
-;	@do_num eax
-;	@do_endl
-
-;	;6) --- splitV1
-;	@do_indent 1
-;	@do_name lab,lab.splitv1
-;	push [hSplitV1]
-;	call [split.getpos]
-;	@do_num eax
-;	@do_endl
-
-;	;6) --- splitV2
-;	@do_indent 1
-;	@do_name lab,lab.splitv2
-;	push [hSplitV2]
-;	call [split.getpos]
-;	@do_num eax
-;	@do_endl
-
-;;@break
-;	@do_indent 1
-;	@do_name lab,lab.position
-;	movzx eax,[def_show]
-;	@do_num eax
-;	@do_comma
-;;@break
-;	@do_num [def_pos.left]
-;	@do_comma
-
-;	@do_num [def_pos.top]
-;	@do_comma
-
-;	@do_num [def_pos.right]
-;	@do_comma
-
-;	@do_num [def_pos.bottom]
-;	@do_endl
-
-;	lea eax,[.buffer4096]
-;	@do_write eax
-
-;	;6) --- lab.devtool
-;	lea edi,[.buffer4096]
-;	@do_endl
-;	@do_indent 1
-;	@do_name lab,lab.devtool
-;	@do_openobj
-;	@do_endl
-
-;		mov edx,[lab.devtool.param]
-;		test edx,edx
-;		jz	.skip_writeB
-;		
-;	.next_devtool:
-;		push [edx+DEVTOOL.pnexttool]
-;		push edx
-
-;		push eax
-;		push edx
-;		push ecx
-;		mov eax,[edx+DEVTOOL.hIcon]
-;		test eax,eax
-;		jz	@f
-;		push eax
-;		DestroyIcon
-;	@@:
-;		pop ecx
-;		pop edx
-;		pop eax
-
-;		push edx
-;		push edx
-;		@do_indent 2
-;		@do_anon
-;		pop edx
-;		@do_num [edx+DEVTOOL.flags]
-;		mov al,","
-;		stosb
-;		pop eax
-;		add eax,sizeof.DEVTOOL
-;		@do_quote eax
-;		@do_endl
-;		lea eax,[.buffer4096]
-;		@do_write eax
-
-;		pop eax
-;		call shared.free
-;		lea edi,[.buffer4096]
-;		pop edx
-;		test edx,edx
-;		jnz	.next_devtool
-
-;.skip_writeB:
-;	@do_indent 1
-;	@do_closeobj
-;	lea eax,[.buffer4096]
-;	@do_write eax
-
-;	
-;;	logo,0,0,\
-;;	logaction,0,0,\
-;;	logfile,0,0,\
-;;	reop_files,0,0,\
-;;	reop_multi,0,0,\
-;;	exit_autosave,0,0,\
-;;	zip_onstart,0,0,\
-;;	back_onstart,0,0,\
-;;	maxim,0,1,\
-;;	rect,0,0,\
-;;	numtools,0,MAX_NUMTOOLS
-
-;	call shared.fend
-;	mov eax,ebx
-;	call shared.fclose
-;	clc
-;	jmp	.ok_write
-
-;.err_write:
-;	stc
-;.ok_write:
-;	pop esi
-;	pop edi
-;	pop ebx
-;	ret
-;endp
-
-;proc .read
-;	local .buffer512[512]:BYTE
-
-;	push ebx
-;	push edi
-;	push esi
-
-;	mov eax,128
-;	call shared.malloc
-;	mov [lab.access.param],eax	;set access datetime
-;	push eax
-;	call shared.get_datetime
-
-;	lea eax,[.buffer512]
-;	call .cat_config
-;	lea eax,[.buffer512]
-;	push eax
-;	call [top.parse]	
-;	mov [pConfig],eax
-;	test eax,eax
-;	jz	.err_open
-;	mov ebx,eax
-
-;	mov eax,[pConfig]
-;	@cfg_locate lab.reop_lastproj
-;	test eax,eax
-;	jz	.read_lastproj
-;	call .get_nextnum
-;	mov [lab.reop_lastproj.param],eax
-;	test eax,eax
-;	jz .read_create
-
-;.read_lastproj:
-;	;3) --- locate lastproj ----------------------			
-;;@break
-;	xor eax,eax
-;	mov [lab.lastproj.param],eax ;temporary patch: to review no security!!!see 368
-;	mov eax,[pConfig]
-;	@cfg_getnode lab.lastproj
-;	test eax,eax
-;	jz	.read_create
-;	call .get_nextansi
-;	test ecx,ecx
-;	jz	.read_create
-;	push eax						;--save pointer to filename only
-;	mov edx,[pDirTable]
-;	mov ebx,ecx					;--len of filename only --------
-
-;	mov esi,[edx+DEF_DIRS.pProjDir.pdir]
-;	lea edi,[.buffer512]
-;	movzx edx,[edx+DEF_DIRS.pProjDir.nsize]
-;	inc ebx			;zero char
-;	push ebx		;save len
-;	inc ebx			;slash
-;	add ebx,edx
-
-;	push 0
-;	push eax
-;	push szSlash		
-;	push esi
-;	push edi
-;	push 0
-;	call shared.catstr	
-;		
-;	mov eax,edi
-;	call shared.is_file
-;	pop ebx
-;	pop esi									;--restore pointer to only filename
-;	jc	.read_create
-
-;	mov eax,ebx
-;	call shared.malloc
-
-;	dec ebx
-;	mov [lab.lastproj.param],eax
-;	mov ecx,ebx
-;	mov edi,eax
-;	rep movsb
-
-;.read_create:
-;	mov eax,[pConfig]
-;	@cfg_getnode lab.create
-;	test eax,eax
-;	jz	.read_session
-
-;	push eax
-;	mov eax,128
-;	call shared.malloc
-;	mov [lab.create.param],eax
-;	push eax
-;	call shared.get_datetime
-;	pop eax
-;	call .get_nextansi
-;	mov edi,[lab.create.param]
-;	mov esi,eax
-;	rep movsb
-
-;.read_session:
-;	mov eax,[pConfig]
-;	@cfg_getnode lab.session
-;	test eax,eax
-;	jz	.read_splith1
-;	call .get_nextnum
-;	inc eax
-;	mov [lab.session.param],eax
-
-;.read_splith1:
-;	mov eax,[pConfig]
-;	@cfg_getnode lab.splith1
-;	test eax,eax
-;	jz	.read_splitv1
-;	call .get_nextnum
-;	mov [lab.splith1.param],eax
-
-;.read_splitv1:
-;	mov eax,[pConfig]
-;	@cfg_getnode lab.splitv1
-;	test eax,eax
-;	jz	.read_splitv2
-;	call .get_nextnum
-;	mov [lab.splitv1.param],eax
-
-;.read_splitv2:
-;	mov eax,[pConfig]
-;	@cfg_getnode lab.splitv2
-;	test eax,eax
-;	jz	.read_tree_bkcol
-;	call .get_nextnum
-;	mov [lab.splitv2.param],eax
-
-;.read_tree_bkcol:
-;	mov eax,[pConfig]
-;	@cfg_getnode lab.tree.bkcol
-;	test eax,eax
-;	jz	.read_cons_bkcol
-;	call .get_nextnum
-;	mov [lab.tree.bkcol.param],eax
-
-;.read_cons_bkcol:
-;	mov eax,[pConfig]
-;	@cfg_getnode lab.cons.bkcol
-;	test eax,eax
-;	jz	.read_position
-;	call .get_nextnum
-;	mov [lab.cons.bkcol.param],eax
-
-;.read_position:
-;	mov eax,[pConfig]
-;	@cfg_locate lab.position
-;	test eax,eax
-;	jz	.read_devtool
-;	push ebx
-;	mov ebx,eax
-;	call .get_nextnum
-;	jc	.exit_rp
-
-;	;1) --- acquire show status ----------------
-;	cmp [edx+TOBJECT.type],VAL_NUMBER
-;	jnz	.exit_rp
-;	cmp [edx+TOBJECT.parent],ebx
-;	jnz	.exit_rp
-;	and al,SW_SHOWMAXIMIZED	;3=1+2
-;	xor ecx,ecx
-;	mov [def_show],al
-
-;;@break
-;	;2) --- acquire left pos ----------------
-;	add edx,sizeof.TOBJECT
-;	cmp [edx+TOBJECT.type],VAL_NUMBER
-;	jnz	.exit_rp
-;	cmp [edx+TOBJECT.parent],ebx
-;	jnz	.exit_rp
-;	mov eax,[edx+TOBJECT.dword1]
-;	and eax,0FFFh
-;	mov [def_pos.left],eax
-
-;	;2) --- acquire top pos ----------------
-;	add edx,sizeof.TOBJECT
-;	cmp [edx+TOBJECT.type],VAL_NUMBER
-;	jnz	.exit_rp
-;	cmp [edx+TOBJECT.parent],ebx
-;	jnz	.exit_rp
-;	mov eax,[edx+TOBJECT.dword1]
-;	and eax,0FFFh
-;	mov [def_pos.top],eax
-
-;	;3) --- acquire right pos ----------------
-;	add edx,sizeof.TOBJECT
-;	cmp [edx+TOBJECT.type],VAL_NUMBER
-;	jnz	.exit_rp
-;	cmp [edx+TOBJECT.parent],ebx
-;	jnz	.exit_rp
-;	mov eax,[edx+TOBJECT.dword1]
-;	and eax,0FFFh
-;	sub eax,[def_pos.left]
-;	mov [def_pos.right],eax
-
-;	;4) --- acquire bottom pos ----------------
-;	add edx,sizeof.TOBJECT
-;	cmp [edx+TOBJECT.type],VAL_NUMBER
-;	jnz	.exit_rp
-;	cmp [edx+TOBJECT.parent],ebx
-;	jnz	.exit_rp
-;	mov eax,[edx+TOBJECT.dword1]
-;	and eax,0FFFh
-;	sub eax,[def_pos.top]
-;	mov [def_pos.bottom],eax
-
-;.exit_rp:
-;	pop ebx
-
-;.read_devtool:
-;	mov eax,[pConfig]
-;	@cfg_locate lab.devtool
-;	test eax,eax
-;	jz	.ok_readA
-;	call .load_devtool
-;	
-;.ok_readA:		
-;	push pConfig
-;	call shared.vfree
-;	clc
-;	jmp	.ok_read
-;	
-;.err_open:
-;	stc
-;.ok_read:
-;	pop esi
-;	pop edi
-;	pop ebx
-;	ret
-;endp
-
-
-
-;proc .load_devtool
-;	;IN EAX=parent lab.devtool
-;	local .flags:DWORD
-;	local .filename:DWORD
-;	local .pslot:DWORD
-;	local .buffer512[512]:BYTE
-
-;	push ebx
-;	push edi
-;	push esi
-;	mov ebx,eax		;parent lab.devtool
-
-;.next_ldt:
-;	push TOP_ANON
-;	push eax
-;	call [top.next]
-;	test eax,eax
-;	jz	.exit_ldt
-
-;	cmp [eax+TOBJECT.parent],ebx
-;	jnz	.exit_ldt
-
-;	mov edx,eax
-;	push edx
-
-;	;1) --- take flags of devtool -----------
-;	add eax,sizeof.TOBJECT
-;	cmp [eax+TOBJECT.type],VAL_NUMBER
-;	jnz	.err_ldt
-;	cmp [eax+TOBJECT.parent],edx
-;	jnz	.err_ldt
-;	m2m [.flags],[eax+TOBJECT.dword1]
-
-;	;2) --- take path+filenames of devtool -----
-;	add eax,sizeof.TOBJECT
-;	cmp [eax+TOBJECT.type],VAL_ANSI
-;	jnz	.err_ldt
-;	cmp [eax+TOBJECT.parent],edx
-;	jnz	.err_ldt
-;	
-;	push eax
-;	call [top.getvalue]
-;	test ecx,ecx
-;	jz	.err_ldt
-
-;	; lab.devtool  (
-;	;	. 0,'%SystemRoot%\system32\mspaint.exe'
-;	;)
-;	push ecx
-;	push eax
-
-;	add ecx,sizeof.DEVTOOL
-;	mov eax,ecx
-;	call shared.malloc
-;	mov edi,eax
-;	mov edx,eax
-
-;	pop esi
-;	pop ecx
-;	mov [edx+DEVTOOL.lenfile],cx
-;	add edi,sizeof.DEVTOOL
-;	rep movsb
-;	mov edi,edx
-;	m2m [edi+DEVTOOL.flags],[.flags]
-
-;	mov eax,[lab.devtool.param]
-;	test eax,eax
-;	jz	.set_mainldt
-
-;.set_nextldt:
-;	mov edx,[eax+DEVTOOL.pnexttool]
-;	test edx,edx
-;	jz	.set_thisldt
-;	mov eax,edx
-;	jmp	.set_nextldt
-
-;.set_thisldt:
-;	mov [eax+DEVTOOL.pnexttool],edi
-;	jmp	.ok_ldt
-
-;.set_mainldt:
-;	mov [lab.devtool.param],edi
-
-;.ok_ldt:	
-;.err_ldt:
-;	pop eax
-;	jmp	.next_ldt
-
-;.exit_ldt:
-;	pop ebx
-;	pop edi
-;	pop esi
-;	ret
-;endp
-
-;	;#---------------------------------------------------ö
-;	;|                   SAVE PROJECT                    |
-;	;ö---------------------------------------------------ü
-
-;.save_project:
-;	;IN ESP+4 _how save
-;	mov edx,[esp+4]
-;	
-;	push ebp
-;	push ebx
-;	push edi
-;	push esi
-;	sub esp,1024
-;	mov edi,esp
-;	mov ebp,esp	
-
-;	xor eax,eax
-;	push eax
-;	push edx
-;	push eax
-;	call tree.list
-
-;	mov edx,[pDirTable]
-;	mov eax,[edx+DEF_DIRS.pProjDir.pdir]
-
-;	mov edx,[lab.lastproj.param]
-;	test edx,edx
-;	jnz	.spA
-;	
-;	push eax
-;	push edi
-;	push szProjFilt
-;	push szAskSaveAll
-;	push [wcx.hInstance]
-;	push [hMain]
-;	call [savefile]
-
-;	test eax,eax
-;	jz	.err_sp
-
-;	add eax,ecx
-;	mov esi,eax
-;	call shared.lenz
-;	inc eax
-;	mov ebx,eax
-;	call shared.malloc
-;	mov [lab.lastproj.param],eax
-
-;	push edi
-;	mov edi,eax
-;	mov ecx,ebx
-;	rep movsb
-;	pop edi
-
-;	call tree.getroot
-;	mov edx,[lab.lastproj.param]
-;	call tree.setname
-
-;	mov edx,[pDirTable]
-;	mov eax,[edx+DEF_DIRS.pProjDir.pdir]
-;	mov edx,[lab.lastproj.param]
-;	
-;.spA:
-;	;--------------------------ok check this
-;	push 0
-;	push edx
-;	push szSlash
-;	push eax
-;	push edi
-;	push 0
-;	call shared.catstr
-
-;	mov eax,edi
-;	call shared.open_AfileRW
-;	test eax,eax
-;	jle	.err_sp
-;	mov ebx,eax
-
-;	;1) ------------ save known dirs -------------------
-;	@do_name proj,proj.kdirs			
-;	@do_openobj
-;	@do_endl
-;	@do_write ebp
-;	
-;	mov esi,[pDirTable]
-;	add esi,sizeof.DEF_DIRS
-
-;.sp_kdirs:
-;	xor edx,edx
-;	cmp [esi+DIR_SLOT.hash],edx
-;	jz	.ok_sp_kdirs
-;	cmp [esi+DIR_SLOT.nused],dx
-;	jz	.sp_kdirsA
-
-;	push esi
-;	@do_indent 1
-;	@do_anon
-;	@do_quote [esi+DIR_SLOT.pdir]
-;	@do_endl
-;	@do_write ebp
-;	pop esi				
-
-;.sp_kdirsA:	
-;	add esi,sizeof.DIR_SLOT
-;	jmp	.sp_kdirs
-
-;.ok_sp_kdirs:
-;	@do_closeobj
-;	@do_endl
-;	@do_write ebp
-
-;	;1) ------------ save files -------------------
-;		
-;	@do_name proj,proj.files
-;	@do_openobj
-;	@do_endl
-;	@do_write ebp
-
-;	sub esp,512
-;	mov eax,esp
-;	push eax		;--- write buffer
-;	push ebx		;--- filehandle
-;	push 0			;--- level
-;	push 0			;--- startitem
-;	call tree.write_item
-;	add esp,512
-
-;	@do_closeobj
-;	@do_endl
-;	@do_write ebp
-
-;	call shared.fend
-;	mov eax,ebx
-;	call shared.fclose
-
-;.err_sp:
-;	add esp,1024
-;	pop esi
-;	pop edi
-;	pop ebx
-;	pop ebp
-;	ret 4
-
-;	;#---------------------------------------------------ö
-;	;|                   LOAD PROJECT                    |
-;	;ö---------------------------------------------------ü
-
-;.load_project:
-;	push ebx
-;	push edi
-;	push esi
-
-;	mov edx,[pDirTable]
-;	mov eax,[edx+DEF_DIRS.pProjDir.pdir]
-
-;	push eax
-;	push szProjFilt
-;	push szLoadProj
-
-;	push 0
-;	push [hMain]
-;	call [openfile]
-;	test eax,eax		;path+file
-;	jz .exit_loadp
-;	mov [pOpenBuffer],eax 
-
-;	mov ebx,ecx			;offset filename
-;	mov esi,edx			;hash of loaded path
-;				
-;	push 0
-;	push IDM_PROJECT_CLOSE
-;	push WM_COMMAND
-;	push [hMain]
-;	SendMessage
-;	test eax,eax
-;	jz	.exit_loadp
-
-;	;1) --- if loaded path not pProj path
-;;@break
-;	mov edx,[pDirTable]
-;	cmp esi,[edx+DEF_DIRS.pProjDir.hash]
-;	jz	.lpA
-
-;	;2) --- check if file in projdir exist
-;	sub esp,512
-;	mov edi,esp
-;	mov esi,[edx+DEF_DIRS.pProjDir.pdir]
-;	mov eax,[pOpenBuffer]
-;	add eax,ebx
-
-;	push 0
-;	push eax
-;	push szSlash
-;	push esi
-;	push edi
-;	push 0
-;	call shared.catstr
-
-;	mov eax,edi
-;	call shared.is_file
-;	jc	.lpB
-
-;	;5) --- create a copy of the  name in project dir
-;	call shared.time2name
-;	
-;	mov edx,[pOpenBuffer]
-;	add edx,ebx
-
-;	push 0
-;	push szFlpExt
-;	push eax
-;	push szScore
-;	push edi
-;	call shared.catstr
-
-;.lpB:
-;	;5) --- create and fix filename as existing in projdir
-;	;----- on r-cd cannot copy ! -------------------
-;	push FALSE
-;	push edi
-;	push [pOpenBuffer]
-;	CopyFile
-;	
-;	mov esi,edi
-;	mov edi,[pOpenBuffer]
-;	call shared.copyz
-
-;	mov edx,[pDirTable]
-;	movzx ebx,[edx+DEF_DIRS.pProjDir.nsize]
-;	inc ebx		;offset of the file after 1=slash
-;	
-;	mov eax,edi
-;	add eax,ebx
-;	mov edi,esp
-
-;	push 0
-;	push eax
-;	push szImpFile
-;	push edi
-;	push 0
-;	call shared.catstr
-;	
-;	push MB_OK or MB_ICONINFORMATION	
-;	push szTitle
-;	push edi
-;	push 0
-;	MessageBox
-
-;	add esp,512
-
-;.lpA:		
-;	mov eax,[lab.lastproj.param]
-;	mov esi,[pOpenBuffer]
-;	test eax,eax
-;	jz	@f
-;	call shared.free
-;@@:
-;	push esi
-;	add esi,ebx
-;	mov ecx,esi
-;@@:
-;	lodsb
-;	test al,al
-;	jnz	@b
-;	xchg esi,ecx
-;	sub ecx,esi			
-;	pop esi
-
-;	mov eax,ecx
-;	push eax
-;	call shared.malloc
-;	mov [lab.lastproj.param],eax
-;	mov edi,eax
-;	pop ecx
-
-;	push edi
-;	push esi
-;	push esi			
-;	add esi,ebx
-;	rep movsb
-;	pop esi
-;	mov byte[esi+ebx-1],0
-;	call config.read_project
-
-;	xor ecx,ecx
-;	mov [lab.lastproj.info],ecx
-
-;	test eax,eax
-;	jnz	.exit_loadp
-;	mov eax,[lab.lastproj.param]
-;	test eax,eax
-;	jz	.exit_loadp
-;	mov [lab.lastproj.param],ecx
-;	call shared.free
-;	xor eax,eax
-
-;.exit_loadp:
-;	pop esi
-;	pop edi
-;	pop ebx
-;	ret 0
-
-
-;	;ü------------------------------------------ö
-;	;|     LOAD_FILES                           |
-;	;#------------------------------------------ä
-;	
-;proc .load_files\
-;	_ilast,\
-;	_iparent,\
-;	_flags
-
-;	local .hashpath:DWORD
-;	;RET EAX=ilast
-
-;	push ebx
-;	push edi
-;	push esi
-
-;	mov edi,[_ilast]
-;	mov edx,[_flags]
-;	test edx,edx
-;	jnz	.l_fB
-
-;	xor eax,eax
-;	push eax
-;	push szFileFilt
-;	push szLoadFile
-;	push OFN_ALLOWMULTISELECT 
-;	push [hMain]
-;	call [openfile]
-;	test eax,eax		;path+file
-;	jz .exit_loadf
-;	mov [lab.lastproj.info],PROJ_MODIFIED	;--- PROJ_MODIFIED=1
-;	mov [pOpenBuffer],eax 
-
-;	;EAX=path+file/s
-;	;ECX=offset filename
-
-;.l_fB:
-;	mov esi,eax
-;	mov ebx,ecx
-
-;	call shared.is_file
-;	push eax
-
-;	mov ecx,ebx
-;	dec ecx
-;	xor eax,eax
-;	mov byte[esi+ecx],al
-
-;	push ecx
-;	push esi
-;	call .is_hashdir
-;	mov [.hashpath],eax
-;	jc	.l_fA
-;	
-;	push FALSE
-;	push 0
-;	push 0
-;	push esi
-;	call .set_dir				
-;	jc	.err_lf
-;	m2m [.hashpath],[edx+DIR_SLOT.hash]	
-;	
-;.l_fA:
-;	pop ecx
-;	mov edx,[_flags]
-;	test edx,edx
-;	jnz	.single_file
-;	test cl,cl
-;	jz	.multi_file
-;				
-;.single_file:
-;	mov edx,esi
-;	add edx,ebx
-;	movzx ecx,cl	
-;	inc ecx				;FALGS_SECTION = 2
-;	shl ecx,1			;FLAGS_FILE = 4
-;	push ecx
-;	push [_iparent]
-;	push edi
-;	push edx
-;	push [.hashpath]
-;	call .load_singlef
-;	mov edi,eax
-;	jmp	.exit_loadf
-;	
-;.multi_file:
-;	add esi,ebx
-;.multi_fileA:
-;	lodsb
-;	test al,al
-;	jz	.exit_loadf
-;	dec esi
-;	push FLAGS_FILE
-;	push [_iparent]
-;	push edi
-;	push esi
-;	push [.hashpath]
-;	call .load_singlef
-;	mov edi,eax
-;@@:
-;	lodsb
-;	test al,al
-;	jz .multi_fileA
-;	jmp	@b
-;	
-;.err_lf:		
-;.exit_loadf:
-;	xchg eax,edi
-;	pop esi
-;	pop edi
-;	pop ebx
-;	ret
-;endp
-
-;	;ü------------------------------------------ö
-;	;|     LOAD_SINGLEFILE                      |
-;	;#------------------------------------------ä
-
-;proc .load_singlef\
-;	_hashpath,\
-;	_name,\
-;	_ilast,\
-;	_iparent,\
-;	_type
-
-;	push [_type]
-;	push [_hashpath]
-;	push 0
-;	push [_name]
-;	call .build_frame
-;	jc	.err_sf
-;	
-;	;---- add item for project (root)
-;	push [_type]
-;	push [_iparent]
-;	push [_ilast]
-;	push eax
-;	push [_name]
-;	call tree.additem
-;	clc
-;	jmp	.exit_sf
-;.err_sf:
-;	stc
-;.exit_sf:
-;	ret
-;endp
 

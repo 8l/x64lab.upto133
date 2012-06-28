@@ -1,4 +1,12 @@
 
+- version 0.0.71 (released on 28.06.2012 ) " ... " 
+  + all source files are utf-8 now
+  + close on double click in Open documents"
+  + further edit and clean
+
+- version 0.0.68 (released on 26.06.2012 ) Alpha_0 
+  + further edit and clean. set to utf-8 encoding  
+
 - version 0.0.54 (released on 24.06.2012 ) 
   + edit and clean
   + corrected save/new/load workspace

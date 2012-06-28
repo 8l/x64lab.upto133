@@ -139,8 +139,6 @@
 	@sizea16 LVCOLUMNW
 
 
-
-
 	;--- using struct
 struct PROPSHEETPAGE
   dwSize      dd ?
@@ -305,38 +303,54 @@ ends
 
 struct NM_UPDOWN
   hdr	 NMHDR
-  iPos	 dd ?
+  iPos dd ?
   iDelta dd ?
 ends
 
 
 struct LV_FINDINFO
-  flags   dd ?
-					dd ?
-  psz	    dq ?
-  lParam  dq ?
-  pt	    POINT
+  flags  dd ?
+			dd ?
+  psz	   dq ?
+  lParam dq ?
+  pt	   POINT
   vkDirection dd ?
 ends
 
 struct LV_HITTESTINFO
-  pt			POINT
+  pt		POINT
   flags 	dd ?
   iItem 	dd ?
 ends
 
 
-struct NM_LISTVIEW
-  hdr	    NMHDR
-  iItem     dd ?
-  iSubItem  dd ?
-  uNewState dd ?
-  uOldState dd ?
-  uChanged  dd ?
-  ptAction  POINT
-						dd ?
-  lParam    dq ?
-ends
+	struct NMITEMACTIVATE
+	  hdr			NMHDR
+	  iItem		dd ?
+	  iSubItem	dd ?
+	  uNewState	dd ?
+	  uOldState dd ?
+	  uChanged	dd ?
+	  ptAction	POINT
+					dd ?
+	  lParam		dq ?
+	  uKeyFlags dd ?
+					dd ?
+	ends
+	@sizea16 NMITEMACTIVATE
+
+
+	struct NM_LISTVIEW
+	  hdr	    	NMHDR
+	  iItem     dd ?
+	  iSubItem  dd ?
+	  uNewState dd ?
+	  uOldState dd ?
+	  uChanged  dd ?
+	  ptAction  POINT
+					dd ?
+	  lParam    dq ?
+	ends
 
 struct NM_CACHEHINT
   hdr	NMHDR

@@ -1,14 +1,16 @@
+  
+  ;#-------------------------------------------------ß
+  ;|          lang MPL 2.0 License                   |
+  ;|   Copyright (c) 2011-2012, Marc Rainer Kranz.   |
+  ;|            All rights reserved.                 |
+  ;ö-------------------------------------------------ä
 
-	;#-------------------------------------------------ü
-	;|            lang  MPL 2.0 License                |
-	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
-	;|            All rights reserved.                 |
-	;|-------------------------------------------------|
-	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
-	;ä-------------------------------------------------ö
+  ;#-------------------------------------------------ß
+  ;| uft-8 encoded üäöß
+  ;| update:
+  ;| filename:
+  ;ö-------------------------------------------------ä
 
-
-	;--- WARNING utf8 äöüß
 	
 	@make_lang LANG
 	@make_uz \
@@ -81,6 +83,23 @@
 			MI_PA_BROWSE,0,U8+UR,db "Browse",\
 			MI_PA_FIND,0,U8+UR,db "Find here",\
 			MI_PA_COPY,0,U8+UR,db "Copy this path",\
-			MI_PA_SETPROP,0,U8+UR,db "Set browsing"
+			MI_PA_SETPROP,0,U8+UR,db "Set browsing",\
+			BB_NULL,0,U8+UR,db "browse by (...only an idea)",\
+			BB_WSP,0,U8+UR,db "Workspace and files",\
+			BB_FOLDER,0,U8+UR,db "Folder",\
+			BB_CODE,0,U8+UR,db "Code",\
+			BB_CALL,0,U8+UR,db "Call/er",\
+			BB_COMMENT,0,U8+UR,db "Comments",\
+			BB_DATA,0,U8+UR,db "Data quantities",\
+			BB_EXPORT,0,U8+UR,db "Exported funcs",\
+			BB_FLOW,0,U8+UR,db "Flow",\
+			BB_IMM,0,U8+UR,db "Immediates",\
+			BB_IMPORT,0,U8+UR,db "Imported funcs",\
+			BB_LABEL,0,U8+UR,db "Labels",\
+			BB_MACRO,0,U8+UR,db "Macro",\
+			BB_PROC,0,U8+UR,db "Procs and Calleé",\
+			BB_REG,0,U8+UR,db "Registers",\
+			BB_RET,0,U8+UR,db "Returns"
+
 
 

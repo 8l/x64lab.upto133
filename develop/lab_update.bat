@@ -6,6 +6,7 @@ copy x64lab.exe ..\ /Y
 copy x64lab.exe.manifest ..\ /Y
 copy version.txt ..\ /Y
 copy LICENSE.TXT ..\ /Y
+copy README.TXT ..\ /Y
 
 copy plugin\lang.dll ..\plugin /Y
 copy plugin\dock64.dll ..\plugin /Y
@@ -16,9 +17,12 @@ copy plugin\Scilexer64.dll ..\plugin /Y
 set /p vers=<version.txt
 date/T >tmpfile.tmp
 set /p newdate=<tmpfile.tmp
+set comment=" ... "
 
 echo.> tmpfile.tmp
-echo - version %vers% (released on %newdate%) >> tmpfile.tmp
+IF not "%1"=="" set comment=%1
+  
+echo - version %vers% (released on %newdate%) %comment% >> tmpfile.tmp
 type WHATSNEW.TXT >> tmpfile.tmp
 copy tmpfile.tmp WHATSNEW.TXT /Y
 del tmpfile.tmp
@@ -26,7 +30,7 @@ copy WHATSNEW.TXT ..\ /Y
 
 set vers=
 set newdate=
-
+set comment=
 
 :err_exit
 	

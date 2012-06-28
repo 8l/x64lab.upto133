@@ -1,16 +1,23 @@
+  
+  ;#-------------------------------------------------ß
+  ;|          x64lab  MPL 2.0 License                |
+  ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+  ;|            All rights reserved.                 |
+  ;ö-------------------------------------------------ä
 
-	;#-------------------------------------------------�
-	;|          x64lab  MPL 2.0 License                |
-	;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
-	;|            All rights reserved.                 |
-	;|-------------------------------------------------|
-	;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
-	;�-------------------------------------------------�
-
+  ;#-------------------------------------------------ß
+  ;| uft-8 encoded üäöß
+  ;| update:
+  ;| filename:
+  ;ö-------------------------------------------------ä
 
 prop:
 	virtual at rbx
 		.cp CPROP
+	end virtual
+
+	virtual at rbx
+		.conf CONFIG
 	end virtual
 
 .proc:
@@ -100,6 +107,53 @@ prop:
 	call apiw.get_dlgitem
 	mov [.cp.hCbxCat],rax
 
+	mov rsi,rax
+	sub rsp,\
+		FILE_BUFLEN
+	mov rdi,rsp
+
+	push 0
+	push BB_RET
+	push BB_REG
+	push BB_PROC
+	push BB_MACRO
+	push BB_LABEL
+	push BB_IMPORT
+	push BB_IMM
+	push BB_FLOW
+	push BB_EXPORT
+	push BB_DATA
+	push BB_COMMENT
+	push BB_CALL
+	push BB_CODE
+	push BB_FOLDER
+	push BB_WSP
+	mov ecx,BB_NULL
+
+.wm_initdialogA:
+	mov r8,rdi
+	mov edx,U16
+	call [lang.get_uz]
+	
+	;--- in RCX hCb
+	;--- in RDX string
+	;--- in R8 imgindex
+	;--- in R9 param
+	;--- in R10 indent r10b,index overlay rest R10)
+	;--- in R11 selimage
+
+	xor r11,r11
+	xor r10,r10
+	xor r9,r9
+	xor r8,r8
+	mov rdx,rdi
+	mov rcx,rsi
+	call cbex.ins_item
+
+	pop rcx
+	test rcx,rcx
+	jnz .wm_initdialogA	
+
 	mov rdx,PROP_CBX_FILT
 	mov rcx,[.hwnd]
 	call apiw.get_dlgitem
@@ -110,10 +164,24 @@ prop:
 	call apiw.get_dlgitem
 	mov [.cp.hPrg],rax
 
+
 	mov rdx,PROP_LVIEW
 	mov rcx,[.hwnd]
 	call apiw.get_dlgitem
 	mov [.cp.hLview],rax
+
+	mov rsi,rax
+	mov rbx,[pConf]
+
+	mov r9d,[.conf.prop.bkcol]
+	mov rcx,rsi
+	call lvw.set_bkcol
+
+	mov r9d,[.conf.prop.bkcol]
+	mov rcx,rsi
+	call lvw.set_txtbkcol
+
+
 
 .ret1:				;message processed
 	xor rax,rax

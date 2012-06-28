@@ -1,17 +1,20 @@
-
-  ;#-------------------------------------------------�
+  
+  ;#-------------------------------------------------ß
   ;|          x64lab  MPL 2.0 License                |
   ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
   ;|            All rights reserved.                 |
-  ;|-------------------------------------------------|
-  ;|      Dienstag] - 19.Juni.2012 - 10:51:19        |
-	;| x64labd.asm                                     |
-	;�-------------------------------------------------�
+  ;ö-------------------------------------------------ä
+
+  ;#-------------------------------------------------ß
+  ;| uft-8 encoded üäöß
+  ;| update:
+  ;| filename:
+  ;ö-------------------------------------------------ä
 
 	define RAWMOD x64labd
 	define DEBUG TRUE
 	define VERBOSE FALSE;TRUE
-  define UNICODE TRUE
+	define UNICODE TRUE
 	define LOGGING FALSE
 	define TITLE "x64lab"
 	define MAINCLASS X64LABD

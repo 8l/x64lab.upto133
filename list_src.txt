@@ -3,7 +3,6 @@ develop\LICENSE.TXT
 develop\README.TXT
 develop\build_all.bat
 develop\command_prompt.lnk
-develop\lab_backup.bat
 develop\lab_update.bat
 develop\setenv.bat
 develop\setlang.bat
@@ -69,7 +68,6 @@ develop\plugin\bk64\equates.inc
 develop\plugin\bk64\inet.asm
 develop\plugin\bk64\layer.asm
 develop\plugin\bk64\layer.inc
-develop\plugin\bk64\opend.asm
 
 develop\plugin\dock64\code.asm
 develop\plugin\dock64\data.inc

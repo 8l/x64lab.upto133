@@ -1,3 +1,4 @@
+
 	version:64h
 	flags:1111h
 	cdate:"xxxx"
@@ -17,6 +18,16 @@
 	)
 
 	tree:(
+		bkcol:0D9FFFFh
+		pos:0Bh
+	)
+
+	docs:(
+		bkcol:0D9FFFFh
+		pos:0Bh
+	)
+
+	prop:(
 		bkcol:0D9FFFFh
 		pos:0Bh
 	)

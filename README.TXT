@@ -1,8 +1,9 @@
+ï»¿
+  Hi, Welcome to x64lab group.
+  My name is Marc Rainer, i am a German 
+  assembly programmer.
 
-Hi,Welcome to x64lab group.
-My name is Marc, i am a German assembly programmer.
-
-You find me as "hopcode" on
+  You find me as "hopcode" on
 
  - http://sites.google.com/site/x64lab
  - http://groups.google.com/group/x64lab
@@ -30,32 +31,40 @@ Summary:
 
   -8 LICENSE
 
+  -9 How does x64lab work ?
+
    -----------------------------------------------------------------
 
 -1 What is exactly x64lab ?
+
    x64lab is an assembler framework. it is written
    completely in assembly using fasm and other tools. 
    it is aimed mainly as a framework for assembly programmers.
 
 -2 Why mostly assembly coding ?
+
    because assembly is the most successful method
-   to control the machine. after having understood the basically 
-   concepts assembly coding speed up your coding of hundreds times.
-   I speak for personal experience; what we need now is
-   organization of our tools and facility when
-   editing files. This is what x64lab is for.
+   to gain control over the machine. after having 
+   understood the basic concepts, assembly coding speed up 
+   your coding of hundreds times. i speak for my personal
+   experience; what we need now is organization of our tools,
+   an easy and safe way when editing files or using a toolchain.
+   this is what x64lab is for.
 
 -3 Why x64lab is free and opensource ?
-   Because it aims to be technology. Technology
+
+   because it aims at being technology. Technology
    is the expression of human capabilities. Technology
-   should be free for all to learn improve and apply.
+   should be free for all to learn, improve and apply.
 
 -4 Is it only Windows ?
-   Yes, at the moment. I have no idea how *NXes work.
+
+   yes, at the moment. i have no idea how *NXes work.
    If You develop on other OS, make a designed proposal.
-   Nothing is impossible.
+   nothing is impossible.
 
 -5 Where can i find x64lab code ?
+
    online cloning the Mercurial from
      https://code.google.com/p/x64lab/
 
@@ -65,21 +74,30 @@ Summary:
    -----------------------------------------------------------------
 
 -6 Install notes:
-   - download the latest version of fasm assembler
-     from http://flatassembler.net/download.php
-     and extract the package in a folder created just for it.
-   
-   - Create a local directory named "x64lab" and clone the project
+
+   - create a local directory named "x64lab" and clone the project
      in there from the Mercurial repository online.
-     Alternatively,create a subdirectory \develop in x64lab.
+     alternatively, downoad the zipped packages and unzip them
 
       the "bin" prefixed package should be unpacked in x64lab
       the "src" prefixed package should be unpacked in x64lab\develop
 
-   - edit the file [x64lab\develop\setenv.bat]
-     to set the path for fasm. if you have fasm.exe
-     in [E:\fasm], then set the path to it in this way
-     
+   -----------------------------------------------------------------
+
+-7 Compile notes:
+
+   - download the latest version of fasm assembler
+     from http://flatassembler.net/download.php
+     and extract the package in a folder created just for it.
+     You should only need the executable from the package,
+     i.e: fasm.exe. all other needed files reside already
+     in the x64lab directory.
+
+   - having installed x64lab, edit the file 
+     [x64lab\develop\setenv.bat] to set the path for fasm. 
+     if you have fasm.exe in [E:\fasm], 
+     then set the path to it in this way
+
      path=%path%;E:\fasm
 
    - set the environment variable for x64lab that allows
@@ -87,38 +105,38 @@ Summary:
      [E:\x64lab] then
 
      set x64devdir=E:\x64lab\develop
+ 
+   - save the file [x64lab\develop\setenv.bat].
+     launch it when needed.
+     you will find some other useful batch files 
+     in the [develop\] folder.
 
-   - save the file [x64lab\develop\setenv.bat]
+     # build_all.bat : to rebuild the whole package
 
-   -----------------------------------------------------------------
+     # setlang.bat   : to rebuild and set the lang.dll file
 
--7 Compile notes:
-   - Having installed x64lab, and edited the [develop\setenv.bat]
-     you will find some other batch files in the [develop\] folder.
-
-     - build_all.bat : to rebuild the whole package
-
-     - setlang.bat   : to rebuild and set the lang.dll file
-
-     - version.vbs   : to increment the version number
+     # version.vbs   : to increment the version number
        it creates or update a version.txt file
 
-     - lab_update.bat : to set the current build as the
-       working version.
+     # lab_update.bat : to set the current build as the
+       working version (after exiting current x64lab if running)
 
-     - repack.bat     : to pack src/bin zipped file
+     # repack.bat     : to pack src/bin zipped file
 
 
 -8 License
-   - x64lab is licensed under the MPL2.0 license. Please, read it 
-     online from http://www.mozilla.org/MPL/2.0/
-     or in the file LICENSE.HTM
 
-   - x64lab is Copyright © 2009-2012,Marc Rainer Kranz
+    This Source Code Form is subject to the terms of the 
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed 
+    with this file, You can obtain one at http://mozilla.org/MPL/2.0/ or read
+    it from the file LICENSE.TXT
 
-   - dock64,top64 plugins are under the MPL2.0 license as above
+   - x64lab is Copyright Â© 2009-2012,Marc Rainer Kranz
 
-   - Fasm is Copyright © 2004-2012, Tomasz Grysztar.
+   - dock64,top64,lang plugins are under the MPL2.0 license as above
+     but as separated modules
+
+   - Fasm is Copyright Â© 2004-2012, Tomasz Grysztar.
 
    - Scilexer,Scintilla is Copyright 1998-2003 by Neil Hodgson
 
@@ -126,7 +144,75 @@ Summary:
      public domain provided by madmatt.
 
    - file macro\unsupported.inc is public domain
-	 
+
+   -----------------------------------------------------------------
+
+-9 How does x64lab work ?
+
+   - because x64lab is a self-building framework, the [develop\]
+     folder contains all what i need to recompile it and set it
+     as the working version. all files should be utf-8 encoded.
+     the release version set an %X64LAB% env variable pointing
+     to the application executable. the debug version an %X64LABD% one
+
+   - x64lab can load/unload DLL files at run-time, plugins
+     and languages too. i use this load/unload method i thought up,
+     just because i wanted to solve the problem about languages 
+     (having them on-demand and unloading/loading them whithout 
+     needing to relaunch the application)
+
+   - x64lab uses a docking system i built taking inspiration from
+     Qt. Obviously it is not Qt, but something very flexible and
+     very easy to use. it doesnt save the position for now but 
+     this last feature is already in my todo list.
+
+   - x64lab uses very few unicode routine, whose methods 
+     i am very proud of.
+
+   - x64lab works good but it is not perfect and still in ALPHA.
+     you can do whatever you want with my code. the guideline
+     of using my code are set in the MPL 2.0 license.
+     The MPL 2.0 license allows us to build for example a plugin
+     and use it in x64lab whatever its internal code may be: 
+     open source or not, freeware,shareware etc.
+
+   - x64lab uses config files in a proprietary format called
+     TOP (Text Object Parser) format. i invented that format and
+     that tecnology myself because i was bored of standard .ini files 
+     and the redundancy of .xml&C. formats. i needed something
+     powerful like CSV files, but capable to store nesting objects too.
+
+     a TOP format file is always an utf-8 encoded file. also
+     forget ANSI on editing it ! x64lab doesent write into 
+     Windows registry.
+
+   - x64lab creates/uses some subdirectories to work.
+     they are:
+
+     [backup\]   backup files
+     [config\]   for config files
+     [plugin\]   plugin/dll files
+     [tool\]     to store tools
+     [tmp\]      tempo files
+     [template\] template files
+
+
+   - Scintilla in x64lab loads and stores files by default in utf-8
+     encoding for now. we will be able in a near future version
+     to choose/recall encodings and charsets for each of them.
+
+   ...
+
+   - TOBEDOCed
+   - proprietary docking system
+   - proprietary plug-in system
+   - proprietary unicode routines
+   - proprietary dll load/unload system
+   - proprietary language system
+
+   ... 
+      
+
 
 
 
