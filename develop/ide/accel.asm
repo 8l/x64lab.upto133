@@ -25,6 +25,7 @@ accel:
 	push rsi
 	push r12
 	push r13
+	push r14
 
 	mov rbp,rsp
 	and rsp,-16
@@ -61,7 +62,7 @@ accel:
 
 	mov rbx,rax
 	mov rsi,rax
-	mov rcx,rsp	;--- stack start of table
+	mov r14,rsp	;--- stack start of table
 
 	cmp [rbx+\
 		TITEM.type],TLABEL
@@ -125,6 +126,7 @@ accel:
 
 .setupG:
 	mov rdx,r12
+	mov rcx,r14
 	call apiw.create_acct
 	mov r12,rax
 
@@ -135,6 +137,7 @@ accel:
 .setupE:
 	mov rax,r12
 	mov rsp,rbp
+	pop r14
 	pop r13
 	pop r12
 	pop rsi

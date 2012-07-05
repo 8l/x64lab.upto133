@@ -54,6 +54,7 @@
 		MP_WSPACE,0,U8+UR,db "Work&space",\
 			MI_WS_LOAD,0,U8+UR,db "&Load",\
 			MI_WS_NEW,0,U8+UR,db "&New",\
+			MI_WS_NEWLNK,0,U8+UR,db "Insert new smartlink",\
 			MI_WS_ADD,0,U8+UR,db "Add &Project",\
 			MI_WS_BACK,0,U8+UR,db "&Backup",\
 			MI_WS_EXP,0,U8+UR,db "E&xport to archive",\
@@ -74,12 +75,9 @@
 			MI_FI_ENCO,0,U8+UR,db "Encode current",\
 			MI_FI_BACK,0,U8+UR,db "Backup as",\
 		MP_EDIT,0,U8+UR,db "Edit",\
-			MI_TREEV,0,U8+UR,db "Treeview",\
-		MP_WIN,0,U8+UR,db "Window",\
-			MI_WI_CLOSEALL,0,U8+UR,db "Close All",\
+			MP_WIN,0,U8+UR,db "Window",\
 		MP_DEVT,0,U8+UR,db "Developer tools",\
 		MP_CONF,0,U8+UR,db "Configurator",\
-			MI_CO_KEY,0,U8+UR,db "Key binding",\
 		MP_HELP,0,U8+UR,db "Help",\
 		MP_PATH,0,U8+UR,db "[?]",\
 			MI_PA_CONS,0,U8+UR,db "Open console here",\

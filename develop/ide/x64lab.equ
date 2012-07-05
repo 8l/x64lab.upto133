@@ -55,147 +55,132 @@
 		;--- hash X64LAB\project equ  08035E4A734D7F58Fh
 		;--- hash X64LABD\project equ 0CC6546847FF98F71h
 
-	;--- used into plugin\lang\en\lang.dll ---------------
-	macro @make_id argbase,[argid]{
-		common
-			local tmp
-			tmp equ argbase
-		forward
-			tmp equ tmp + 1
-			argid equ (tmp and 0FFFFh)
-			
-			; display `argid," equ ",9
-			; display_hex 16,argid
-			; display "h",13,10
-		}
-
 	MNU_X64LAB equ 1000h
-	MI_USER    equ 1080h
-	MI_OTHER	 equ 1100h
+	MI_USER    equ 1100h
+	MI_OTHER	 equ 1200h
 
-	@make_id MNU_X64LAB,\
-		MP_WSPACE,\
-			MI_WS_LOAD,\
-			MI_WS_NEW,\
-			MI_WS_ADD,\
-			MI_WS_BACK,\
-			MI_WS_EXP,\
-			MI_WS_SAVE,\
-			MI_WS_SAVET,\
-			MI_WS_RECODE,\
-			MP_WS_REC,\
-			MI_WS_EXIT,\
-		MP_FILE,\
-			MI_FI_OPEN,\
-			MI_FI_NEWF,\
-			MI_FI_NEWB,\
-			MI_FI_IMP,\
-			MI_FI_CLOSE,\
-			MI_FI_CCOPY,\
-			MI_FI_SAVE,\
-			MI_FI_SAVEAS,\
-			MI_FI_ENCO,\
-			MI_FI_BACK,\
-		MP_EDIT,\
-			MI_TREEV,\
-		MP_WIN,\
-			MI_WI_CLOSEALL,\
-		MP_DEVT,\
-		MP_CONF,\
-			MI_CO_KEY,\
-		MP_HELP,\
-		MP_PATH,\
-			MI_PA_CONS,\
-			MI_PA_BROWSE,\
-			MI_PA_FIND,\
-			MI_PA_COPY,\
-			MI_PA_SETPROP,\
-		MI_LAST
+	MP_WSPACE      equ 1001h
+   MI_WS_LOAD    equ 1002h
+   MI_WS_NEW     equ 1003h
+   MI_WS_NEWLNK  equ 1004h
+   MI_WS_ADD     equ 1005h
+   MI_WS_BACK    equ 1006h
+   MI_WS_EXP     equ 1007h
+   MI_WS_SAVE    equ 1008h
+   MI_WS_SAVET   equ 1009h
+   MI_WS_RECODE  equ 100Ah
+   MP_WS_REC     equ 100Bh
+   MI_WS_EXIT    equ 100Ch
+
+	MP_FILE       equ 1020h
+   MI_FI_OPEN   equ 1021h
+   MI_FI_NEWF   equ 1022h
+   MI_FI_NEWB   equ 1023h
+   MI_FI_IMP    equ 1024h
+   MI_FI_CLOSE  equ 1025h
+   MI_FI_CCOPY  equ 1026h
+   MI_FI_SAVE   equ 1027h
+   MI_FI_SAVEAS equ 1028h
+   MI_FI_ENCO   equ 1029h
+   MI_FI_BACK   equ 102Ah
+
+	MP_EDIT   		equ 1040h
+  MP_WIN    		equ 1060h
+  MP_DEVT   		equ 1070h
+	MP_CONF   		equ 1080h
+	MP_HELP   		equ 1090h
+
+	MP_PATH        equ 10A0h
+	 MI_PA_CONS    equ 10A1h
+   MI_PA_BROWSE  equ 10A2h
+   MI_PA_FIND    equ 10A3h
+   MI_PA_COPY    equ 10A4h
+   MI_PA_SETPROP equ 10A5h
+
 
 	;--- strings id usable in lang.dll ------------------
-	@make_id MI_LAST+1,\
-		UZ_ERR_NOFILE,\
-    UZ_ERR_NODIR,\
-		UZ_HOME,\
-		UZ_CONS_WIN,\
-    UZ_EXPR_WIN,\
-    UZ_EDIT_PANE,\
-    UZ_EDIT_UNTL,\
-    UZ_WSPACE,\
-    UZ_CURDIR,\
-    UZ_FSAVE,\
-    UZ_CPWIN,\
-    UZ_CPPROCS,\
-    UZ_CPDIRS,\
-    UZ_CPNOSEL,\
-		UZ_INFO_UTF8,\
-		UZ_INFO_TOP,\
-		UZ_INFO_COPYR,\
-		UZ_INFO_CDATE,\
-		UZ_INFO_SIZE,\
-		UZ_INFO_TYPE,\
-		UZ_INFO_BUF,\
-		UZ_INFO_SELITEM,\
-		UZ_OK,\
-		UZ_NO,\
-		UZ_CANCEL,\
-		UZ_IO_SELDPF,\
-		UZ_IO_DPATH,\
-		UZ_IO_KDIR,\
-		UZ_IO_DFNAME,\
-		UZ_IO_EXT,\
-		UZ_WSP_EXT,\
-		UZ_OVERWFILE,\
-		UZ_COURNEW,\
-		UZ_IO_NEWWSP,\
-		UZ_IO_SAVEWSP,\
-		BB_NULL,\
-		BB_WSP,\
-		BB_FOLDER,\
-		BB_CODE,\
-		BB_CALL,\
-		BB_COMMENT,\
-		BB_DATA,\
-		BB_EXPORT,\
-		BB_FLOW,\
-		BB_IMM,\
-		BB_IMPORT,\
-		BB_LABEL,\
-		BB_MACRO,\
-		BB_PROC,\
-		BB_REG,\
-		BB_RET
+  UZ_ERR_NOFILE  equ 2000h
+  UZ_ERR_NODIR   equ 2001h
+  UZ_HOME        equ 2002h
+  UZ_CONS_WIN    equ 2003h
+  UZ_EXPR_WIN    equ 2004h
+  UZ_EDIT_PANE   equ 2005h
+  UZ_EDIT_UNTL   equ 2006h
+  UZ_WSPACE      equ 2007h
+  UZ_CURDIR      equ 2008h
+  UZ_FSAVE       equ 2009h
+  UZ_CPWIN       equ 200Ah
+  UZ_CPPROCS     equ 200Bh
+  UZ_CPDIRS      equ 200Ch
+  UZ_CPNOSEL     equ 200Dh
+  UZ_INFO_UTF8   equ 200Eh
+  UZ_INFO_TOP    equ 200Fh
+  UZ_INFO_COPYR  equ 2010h
+  UZ_INFO_CDATE  equ 2011h
+  UZ_INFO_SIZE   equ 2012h
+  UZ_INFO_TYPE   equ 2013h
+  UZ_INFO_BUF    equ 2014h
+  UZ_INFO_SELITEM  equ 2015h
+  UZ_OK          equ 2016h
+  UZ_NO          equ 2017h
+  UZ_CANCEL      equ 2018h
+  UZ_IO_SELDPF   equ 2019h
+  UZ_IO_DPATH    equ 201Ah
+  UZ_IO_KDIR     equ 201Bh
+  UZ_IO_DFNAME   equ 201Ch
+  UZ_IO_EXT      equ 201Dh
+  UZ_WSP_EXT     equ 201Eh
+  UZ_OVERWFILE   equ 201Fh
+  UZ_COURNEW     equ 2020h
+  UZ_IO_NEWWSP   equ 2021h
+  UZ_IO_SAVEWSP  equ 2022h
+  BB_NULL        equ 2023h
+  BB_WSP         equ 2024h
+  BB_FOLDER      equ 2025h
+  BB_CODE        equ 2026h
+  BB_CALL        equ 2027h
+  BB_COMMENT     equ 2028h
+  BB_DATA        equ 2029h
+  BB_EXPORT      equ 202Ah
+  BB_FLOW        equ 202Bh
+  BB_IMM         equ 202Ch
+  BB_IMPORT      equ 202Dh
+  BB_LABEL       equ 202Eh
+  BB_MACRO       equ 202Fh
+  BB_PROC        equ 2030h
+  BB_REG         equ 2031h
+  BB_RET         equ 2032h
 
 
-		;--- hash equ for config/config.utf8 items
-		macro @cfg_hash [argid]{
-			forward
-			result equ 0
-			@xsdbm argid,result
-			hash_#argid equ result
-		}
+	;--- hash equ for config/config.utf8 items
+  macro @cfg_hash [argid]{
+	 forward
+   result equ 0
+   @xsdbm argid,result
+     hash_#argid equ result
+   }
 
-		@cfg_hash\
-			wspace,\
-			version,\
-			cons,\
-			docs,\
-			prop,\
-			pos,\
-			tree,\
-			bkcol
+  @cfg_hash\
+   wspace,\
+   version,\
+   cons,\
+   docs,\
+   prop,\
+   pos,\
+   tree,\
+   bkcol
 
-		CFG_FSHOW				equ TRUE
-		CFG_FLOG				equ FALSE
-		CFG_FSPLASH			equ FALSE
-		CFG_UPDATE			equ FALSE
-		CFG_POS_RB 			equ 0000'02BC'0000'0320h
-		CFG_CONS_LTRB		equ 0
-		CFG_CONS_BKCOL	equ 0AABBCCh
-		CFG_TREE_BKCOL 	equ 0D9FFFFh
-		CFG_DOCS_BKCOL 	equ 00DADCD6h
-		CFG_PROP_BKCOL 	equ 00DADADAh
-		CFG_TREE_LTRB		equ 0
+	CFG_FSHOW				equ TRUE
+	CFG_FLOG				equ FALSE
+	CFG_FSPLASH			equ FALSE
+	CFG_UPDATE			equ FALSE
+	CFG_POS_RB 			equ 0000'02BC'0000'0320h
+	CFG_CONS_LTRB		equ 0
+	CFG_CONS_BKCOL	equ 0AABBCCh
+	CFG_TREE_BKCOL 	equ 0D9FFFFh
+	CFG_DOCS_BKCOL 	equ 00DADCD6h
+	CFG_PROP_BKCOL 	equ 00DADADAh
+	CFG_TREE_LTRB		equ 0
 			
 
 

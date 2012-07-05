@@ -1,6 +1,7 @@
-
-﻿  Hi, Welcome to x64lab group.
-  My name is Marc Rainer, i am a German 
+﻿
+﻿ 
+ Hi, Welcome to x64lab group.
+  My name is Marc Rainer Kranz, i am a German 
   assembly programmer.
 
   You find me as "hopcode" on
@@ -149,7 +150,7 @@ Summary:
 
 -9 How does x64lab work ?
 
-   - because x64lab is a self-building framework, the [develop\]
+   - because x64lab is a self-building framework, the [develop]
      folder contains all what i need to recompile it and set it
      as the working version. all files should be utf-8 encoded.
      the release version set an %X64LAB% env variable pointing
@@ -162,7 +163,7 @@ Summary:
      needing to relaunch the application)
 
    - x64lab uses a docking system i built taking inspiration from
-     Qt. Obviously it is not Qt, but something very flexible and
+     Qt. obviously it is not Qt, but something very flexible and
      very easy to use. it doesnt save the position for now but 
      this last feature is already in my todo list.
 
@@ -172,7 +173,7 @@ Summary:
    - x64lab works good but it is not perfect and still in ALPHA.
      you can do whatever you want with my code. the guideline
      of using my code are set in the MPL 2.0 license.
-     The MPL 2.0 license allows us to build for example a plugin
+     the MPL 2.0 license allows us to build for example a plugin
      and use it in x64lab whatever its internal code may be: 
      open source or not, freeware,shareware etc.
 
@@ -189,12 +190,12 @@ Summary:
    - x64lab creates/uses some subdirectories to work.
      they are:
 
-     [backup\]   backup files
-     [config\]   for config files
-     [plugin\]   plugin/dll files
-     [tool\]     to store tools
-     [tmp\]      tempo files
-     [template\] template files
+     [backup]   backup files
+     [config]   for config files
+     [plugin]   plugin/dll files
+     [tool]     to store tools
+     [tmp]      tempo files
+     [template] template files
 
 
    - Scintilla in x64lab loads and stores files by default in utf-8

@@ -1,55 +1,10 @@
+	;--- read only file for now
+
 	.:\
-      1007'0070'0001h,\
-      1013'0071'0001h,\
-      100B'0073'0011h
-
+      1008'0070'0001h,\
+      1027'0071'0001h,\
+      100C'0073'0011h
   ;-- MENU'VKEY'FLAGh
-	;--- read only file for now --------
-
-	; MNU_X64LAB equ 1000h
-	; MI_USER    equ 1080h
-	; MI_OTHER	 equ 1100h
-
-	; MP_WSPACE:0070'0001h
-	; MP_USER:0070'0001h,0170'0001h
-	;    
-	; MP_WSPACE 		equ 	1001h
-	; MI_WS_LOAD 		equ 	1002h
-	; MI_WS_NEW 		equ 	1003h
-	; MI_WS_ADD 		equ 	1004h
-	; MI_WS_BACK 		equ 	1005h
-	; MI_WS_EXP 		equ 	1006h
-	; MI_WS_SAVE 		equ 	1007h
-	; MI_WS_SAVET 	equ 	1008h
-	; MI_WS_RECODE 	equ 	1009h
-	; MP_WS_REC 		equ 	100Ah
-	; MI_WS_EXIT 		equ 	100Bh
-	; MP_FILE 			equ 	100Ch
-	; MI_FI_OPEN 		equ 	100Dh
-	; MI_FI_NEWF 		equ 	100Eh
-	; MI_FI_NEWB 		equ 	100Fh
-	; MI_FI_IMP 		equ 	1010h
-	; MI_FI_CLOSE 	equ 	1011h
-	; MI_FI_CCOPY 	equ 	1012h
-	; MI_FI_SAVE 		equ 	1013h
-	; MI_FI_SAVEAS 	equ 	1014h
-	; MI_FI_ENCO 		equ 	1015h
-	; MI_FI_BACK 		equ 	1016h
-	; MP_EDIT 			equ 	1017h
-	; MI_TREEV 			equ 	1018h
-	; MP_WIN 				equ 	1019h
-	; MI_WI_CLOSEALL 	equ 	101Ah
-	; MP_DEVT 			equ 	101Bh
-	; MP_CONF 			equ 	101Ch
-	; MI_CO_KEY 		equ 	101Dh
-	; MP_HELP 			equ 	101Eh
-	; MP_PATH 			equ 	101Fh
-	; MI_PA_CONS 		equ 	1020h
-	; MI_PA_BROWSE 	equ 	1021h
-	; MI_PA_FIND 		equ 	1022h
-	; MI_PA_COPY 		equ 	1023h
-	; MI_PA_SETPROP equ 	1024h
-	; MI_LAST 			equ 	1025h
 
 
 	; VK_LBUTTON   = 001h

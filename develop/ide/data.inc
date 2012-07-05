@@ -154,72 +154,10 @@ section '.data' data readable writeable
 			MI_PA_COPY,		18,OWN,DIF,\
 			MI_PA_SETPROP,18,OWN,DIF
 		
-;		uzStrNull		du "<#null>",0
-;		CPTS_MAXNAME	= 16
-;		align 16
-;		uzKeyCol		du "Key name",0
-;		uzAction		du "Action",0
-;		uzNoC				du "NoConvert",0
-		;uzComctl			du "comctl32.dll",0
-		;uzShellDll	du "Shell32.dll",0
 
-
-	align 8
-;		taccels:
-;			db FNOINVERT
-;			db 0
-;			dw 0
-;			dw 0
-
-;			db FNOINVERT
-;			db 0
-;			dw 0
-;			dw 0
-
-;			db FVIRTKEY
-;			db 0
-;			dw VK_F2
-;			dw MI_FI_SAVE
-
-;			db FVIRTKEY
-;			db 0
-;			dw VK_F1
-;			dw MI_WS_SAVE
-	
-;		dw 9090h
-;		dw 9090h
-;
-;
-
-;
-;;		pMenu 		dq 0
-;;		hMnuWsp		dq 0
-;;		hMnuFile	dq 0
-;		hMnuEdit	dq 0
-;		hMnuWin		dq 0
-;		hMnuDir		dq 0
-;		phGraph		dq 0
-;		phBitmap	dq 0
-;		hRedBrush	dq 0
-
-;	;	hMnuUnb		dq 0
-
-;			SLOT_EXT	equ 0
-;			SLOT_CFG	equ 8
-;			SLOT_HILI	equ 16
-
-;		pSlot:
-;			pExt			dq 0	;--- slot ext	offset +0
-;			pCfg			dq 0	;--- slot cfg	offset +8
-;			pHili			dq 0	;--- slot hili offset +16
-
-;		labfMem	dq 0
-;		dirMem	dq 0
-
-
-	display "--- Size of data "
-	display_decimal $-$$
-	display 13,10
+		display "--- Size of data "
+		display_decimal $-$$
+		display 13,10
 
 
 
