@@ -63,11 +63,15 @@
 		forward
 			tmp equ tmp + 1
 			argid equ (tmp and 0FFFFh)
-;			display `argid," equ ",9
-;			display_hex 16,argid
-;			display "h",13,10
+			
+			; display `argid," equ ",9
+			; display_hex 16,argid
+			; display "h",13,10
 		}
+
 	MNU_X64LAB equ 1000h
+	MI_USER    equ 1080h
+	MI_OTHER	 equ 1100h
 
 	@make_id MNU_X64LAB,\
 		MP_WSPACE,\
@@ -131,6 +135,7 @@
 		UZ_INFO_SIZE,\
 		UZ_INFO_TYPE,\
 		UZ_INFO_BUF,\
+		UZ_INFO_SELITEM,\
 		UZ_OK,\
 		UZ_NO,\
 		UZ_CANCEL,\

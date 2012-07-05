@@ -71,7 +71,7 @@ section '.code' code readable executable
 	include "edit.asm"
 	include "menu.asm"
 	include "tree.asm"
-	;include "plug.asm"
+	include "accel.asm"
 	include "console.asm"
 	include "prop.asm"
 	include "sciwrap.asm"
@@ -100,7 +100,7 @@ start:
 
 	call [lang.info_uz]
 	@nearest 16,eax			;<--- ave size 16 aligned
-	add eax,sizeof.OMNI	
+	add eax,sizeof.OMNI
 	@nearest 16,eax			
 	shl eax,2
 	mul ecx
@@ -110,14 +110,12 @@ start:
 		400h*8+\	;--- dirHash
 		80h*8+\		;--- envHash
 		200h*8+\	;--- extHash
-		\;		800h*2+\	;--- idsHash
-		sizeof.IODLG+\
+		((MI_OTHER-MNU_X64LAB) * sizeof.KEYA)+\
+		sizeof.CONFIG+\
+		sizeof.CONS+\
 		sizeof.CPROP+\
-		sizeof.KEYDLG+\
-		sizeof.EDIT+\
-		sizeof.CONFIG
-
-		;sizeof.XCOMP+\
+		sizeof.IODLG+\
+		sizeof.EDIT
 
 	@frame rax
 	mov rdx,rax
@@ -193,18 +191,9 @@ start:
 	mov rdx,ICO_X64LAB
 	mov rcx,[hInst]
 	call apiw.loadicon
+
 	mov	[.wcx.hIcon],rax
 	mov	[.wcx.hIconSm],rax
-
-	; mov rdx,2
-	; mov rcx,taccels
-	; call apiw.create_acct
-	; mov [hAccel],rax
-
-	;	mov rdx,ACC_X64LAB
-	;	mov rcx,rsi
-	;	call apiw.loadacc
-	;	mov [hAccel],rax
 
 	;	mov rdx,MNU_X64LAB
 	;	mov rcx,rsi
@@ -284,8 +273,8 @@ start:
 	mov rcx,rdi
 	call apiw.update
 
-	;	call accels.load
-	;	mov [hAccel],rax
+	call accel.setup
+	mov [hAccel],rax
 
 	mov rsi,rsp
 	lea rdi,[rbx+20h]
@@ -304,12 +293,6 @@ start:
 	call [GetMessageW]
 	test eax,eax
 	jz	.end_msg_loop
-
-	;	mov rdx,rdi
-	;	mov rcx,[hClient]
-	;	call [TranslateMDISysAccel]
-	;	test rax,rax
-	;	jnz	.begin_msg_loop
 
 	mov rdx,[hAccel]
 	test rdx,rdx
@@ -341,6 +324,12 @@ start:
 	mov rsp,rsi
 
 .err_startD:
+	mov rcx,[hAccel]
+	test rcx,rcx
+	jz	.err_startD1
+	call apiw.destroy_acct
+
+.err_startD1:
 	;--- error windowing
 	mov rcx,[hMnuMain]
 	call apiw.mnu_destroy
@@ -374,9 +363,12 @@ start:
 	xor ecx,ecx
 	call apiw.exitp
 	;--- ret 0
+
+	;ü------------------------------------------ö
+	;|     WINPROC                              |
+	;#------------------------------------------ä
 	
 winproc:
-
 	virtual at rbx
 		.labf LABFILE
 	end virtual
@@ -482,7 +474,18 @@ winproc:
 	test eax,eax
 	jnz .mi_fi_impA
 
+.mi_fi_impB:
 	;--- please,choose an item in treeview
+	sub rsp,FILE_BUFLEN
+	mov r8,rsp
+	mov edx,U16
+	mov ecx,UZ_INFO_SELITEM
+	call [lang.get_uz]
+
+	mov r8,uzTitle
+	mov rdx,rsp
+	mov rcx,[hMain]
+	call apiw.msg_ok
 	jmp	.ret0
 
 .mi_fi_impA:
@@ -722,6 +725,7 @@ winproc:
 	mov rcx,rdx
 
 ;	xor rcx,rcx
+
 .wm_createA:
 	call wspace.load_wsp
 	test rax,rax
@@ -741,18 +745,34 @@ winproc:
 	;#------------------------------------------ä
 
 .mi_ws_save:
+	mov rax,[pEdit]
+	mov rbx,\
+		[rax+EDIT.curlabf]
+	
 	mov rcx,NOASK_SAVE
 	call wspace.save_docs
 	test rax,rax
 	jle .exit
 	call wspace.save_wsp
-	jmp	.exit
+	mov rsi,rax
+
+	mov rdx,[pEdit]
+	mov rcx,\
+		[rdx+EDIT.curlabf]
+	mov rax,rsi
+	cmp rcx,rbx
+	jz	.exit
+
+	mov rcx,rbx
+	call edit.view
+	mov rax,rsi
+	jmp .exit
 
 .mi_fi_newf:
 	mov rcx,[hTree]
 	call tree.get_sel
 	test eax,eax
-	jz .ret0
+	jz .mi_fi_impB
 
 	sub rsp,\
 		sizeof.TVITEMW
@@ -792,6 +812,10 @@ winproc:
 
 .wm_notifyE:
 	jmp	.ret0
+
+	;ü------------------------------------------ö
+	;|     WM_DRAWITEM                          |
+	;#------------------------------------------ä
 
 .wm_drawitem:
 	virtual at rbx
@@ -849,13 +873,12 @@ winproc:
 		ODS_SELECTED
 	jz	.wm_dis_mnuB
 	mov r8,\
-		COLOR_INACTIVECAPTION+1;COLOR_3DLIGHT+1
+		COLOR_INACTIVECAPTION+1
 	
 .wm_dis_mnuB:
 	lea rdx,[.dis.rcItem]
 	mov rcx,[.dis.hDC]
 	call apiw.fillrect
-
 
 	mov rdi,[.dis.itemData]
 	test rdi,rdi
@@ -885,6 +908,29 @@ winproc:
 	mov rcx,[.dis.hDC]
 	call apiw.set_bkmode
 
+	mov eax,[.dis.itemID]
+	cmp eax,MI_OTHER
+	jae	.wm_dis_mnuB2
+
+;@break
+	sub eax,MNU_X64LAB
+	jl	.wm_dis_mnuB2
+	shl eax,5		;--- x 32 size of KEYA
+	add rax,[pKeya]
+	lea rdx,[rax+KEYA.name]
+
+	sub [.dis.rcItem.right],20
+	mov r10,DT_NOCLIP\
+		or DT_RIGHT	\
+		or DT_VCENTER	\
+		or DT_SINGLELINE	
+	lea r9,[.dis.rcItem]
+	mov r8,-1
+	mov rcx,[.dis.hDC]
+	call apiw.drawtext
+	add [.dis.rcItem.right],20
+
+.wm_dis_mnuB2:
 	mov ecx,COLOR_GRAYTEXT
 	test [.dis.itemState],\
 		ODS_GRAYED

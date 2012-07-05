@@ -966,6 +966,11 @@ apiw:
 	jmp	.prolog0
 @endusing
 
+@using .destroy_acct
+.destroy_acct:
+	mov rax,[DestroyAcceleratorTable]
+	jmp	.prolog0
+@endusing
 
 @using .loadicon
 .loadicon:
@@ -1108,6 +1113,13 @@ apiw:
 	;#---------------------------------------------------ö
 	;|                   .messages                       |
 	;ö---------------------------------------------------ü
+
+@using .msg_ok
+.msg_ok:
+	mov r9,\
+		MB_OK or MB_ICONINFORMATION
+	jmp	.msg_exec
+@endusing
 
 @using .msg_ync
 .msg_ync:

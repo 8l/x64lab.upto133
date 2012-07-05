@@ -146,7 +146,7 @@ sci:
 	mov rcx,rbx
 	call .set_fontsize
 
-	mov r8,3
+	mov r8,2
 	mov rcx,rbx
 	call .set_tabs
 

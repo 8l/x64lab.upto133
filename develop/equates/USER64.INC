@@ -898,46 +898,46 @@ VK_F6	     = 075h
 VK_F7	     = 076h
 VK_F8	     = 077h
 VK_F9	     = 078h
-VK_F10	     = 079h
-VK_F11	     = 07Ah
-VK_F12	     = 07Bh
-VK_F13	     = 07Ch
-VK_F14	     = 07Dh
-VK_F15	     = 07Eh
-VK_F16	     = 07Fh
-VK_F17	     = 080h
-VK_F18	     = 081h
-VK_F19	     = 082h
-VK_F20	     = 083h
-VK_F21	     = 084h
-VK_F22	     = 085h
-VK_F23	     = 086h
-VK_F24	     = 087h
-VK_NUMLOCK   = 090h
-VK_SCROLL    = 091h
-VK_LSHIFT    = 0A0h
-VK_RSHIFT    = 0A1h
-VK_LCONTROL  = 0A2h
-VK_RCONTROL  = 0A3h
-VK_LMENU     = 0A4h
-VK_RMENU     = 0A5h
-VK_ATTN      = 0F6h
-VK_CRSEL     = 0F7h
-VK_EXSEL     = 0F8h
-VK_EREOF     = 0F9h
-VK_PLAY      = 0FAh
-VK_ZOOM      = 0FBh
-VK_NONAME    = 0FCh
-VK_PA1	     = 0FDh
+VK_F10	  = 079h
+VK_F11	  = 07Ah
+VK_F12	  = 07Bh
+VK_F13	  = 07Ch
+VK_F14	  = 07Dh
+VK_F15	  = 07Eh
+VK_F16	  = 07Fh
+VK_F17	  = 080h
+VK_F18	  = 081h
+VK_F19	  = 082h
+VK_F20	  = 083h
+VK_F21	  = 084h
+VK_F22	  = 085h
+VK_F23	  = 086h
+VK_F24	  = 087h
+VK_NUMLOCK  = 090h
+VK_SCROLL   = 091h
+VK_LSHIFT   = 0A0h
+VK_RSHIFT   = 0A1h
+VK_LCONTROL = 0A2h
+VK_RCONTROL = 0A3h
+VK_LMENU    = 0A4h
+VK_RMENU    = 0A5h
+VK_ATTN     = 0F6h
+VK_CRSEL    = 0F7h
+VK_EXSEL    = 0F8h
+VK_EREOF    = 0F9h
+VK_PLAY     = 0FAh
+VK_ZOOM     = 0FBh
+VK_NONAME   = 0FCh
+VK_PA1	   = 0FDh
 VK_OEM_CLEAR = 0FEh
 
 ; Accelerator flags
 
 FVIRTKEY  = 01h
 FNOINVERT = 02h
-FSHIFT	  = 04h
+FSHIFT    = 04h
 FCONTROL  = 08h
-FALT	  	= 10h
+FALT      = 10h
 
 ; GetClassLong offsets
 
@@ -977,10 +977,6 @@ GWLP_USERDATA = -21
 GWLP_WNDPROC = -4
 GWLP_STYLE	  = -16
 GWLP_EXSTYLE	  = -20
-
-
-
-
 
 ; GetSystemMetrics codes
 

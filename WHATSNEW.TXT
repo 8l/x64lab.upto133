@@ -1,4 +1,7 @@
 
+- version 0.0.75 (released on 05.07.2012 ) " ... " 
+  + minimal accelerators system
+
 - version 0.0.71 (released on 28.06.2012 ) " ... " 
   + all source files are utf-8 now
   + close on double click in Open documents"

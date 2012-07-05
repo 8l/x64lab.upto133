@@ -4,7 +4,9 @@
 
 	k:(
 		.:"%X64LABD%"
+		.:"E:\x64lab\develop"
 		.:"E:\x64lab\develop\project"
 	)
+	04:081B3546437385A56h,"filename.ext"
 	04:0402E79AC91795914h,"README.TXT"
 	04:0402E79AC91795914h,"WHATSNEW.TXT"

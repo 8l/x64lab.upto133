@@ -11,8 +11,6 @@
   ;| filename:
   ;ö-------------------------------------------------ä
 
-
-
 wspace:
 	virtual at rbx
 		.labf LABFILE
@@ -214,13 +212,13 @@ wspace:
 		[.labf.type]
 
 	cmp r12,ASK_SAVE
-	jnz	.close_fileNA
+	jnz .close_fileNA
 
 	test eax,LF_MODIF
 	jz	.close_fileNA
 	
 ;	test eax,LF_BLANK
-;	jnz	.mi_fi_closeC
+;	jnz .mi_fi_closeC
 
 	mov rdx,r12
 	mov rcx,rbx
@@ -352,9 +350,17 @@ wspace:
 	test eax,LF_TXT
 	jz	.save_fileF		;--- TODO: err for now
 	
+	test eax,LF_BLANK
+	jnz .save_fileG1
+
+	cmp r12,NOASK_SAVE
+	jz	.save_fileG
+	
+.save_fileG1:
 	mov rcx,rbx
 	call edit.view
 
+.save_fileG:
 	mov r8,rsp
 	mov rax,[.labf.dir]
 	lea rdx,[rbx+\
@@ -401,7 +407,7 @@ wspace:
 	cmp eax,IDCANCEL
 	jz .save_file0
 	cmp eax,IDYES
-	jnz	.save_file1
+	jnz .save_file1
 
 .save_fileBT1:
 	;--- save BLANK TEXT file -------
@@ -470,7 +476,6 @@ wspace:
 	test ax,LF_BLANK
 	jz	.save_file1
 
-;.save_fileB:
 	;1) --- update labfile on len filename
 	movzx eax,[.labf.alen]
 	sub eax,2
@@ -506,11 +511,11 @@ wspace:
 .save_file1:
 	xor eax,eax
 	inc eax
-	jmp	.save_fileE
+	jmp .save_fileE
 
 .save_file0:
 	xor eax,eax
-	jmp	.save_fileE
+	jmp .save_fileE
 
 .save_fileF:
 	or rax,-1
@@ -2527,8 +2532,6 @@ wspace:
 	pop rbx
 	pop rbp
 	ret 0
-
-
 
 	;#---------------------------------------------------ö
 	;|      WSPACE.LVW_NOTIFY                            |

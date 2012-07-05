@@ -97,13 +97,17 @@
 	struct OMNI	
 		id			dw 0
 		iIcon		dw 0
-;		flags		dw 0
-;		type		dw 0
-;		state		dw 0
-;		text		dw 0
-;						dw 0
-;						dw 0
+		;--- follow menu text --
 	ends
+	
+	;--- Accelerators wrapping struct
+	struct KEYA
+		fVirt	db 0
+					db 0
+		cmd		dw 0
+		name	db 28 dup (0)
+	ends
+
 
 	;--- common to EXT/HILI/CFG
 	struct SLOT

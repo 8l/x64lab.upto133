@@ -14,16 +14,15 @@
 
 mnu:
 
-	;#---------------------------------------------------ö
-	;|                   SETUP                           |
-	;ö---------------------------------------------------ü
 	virtual at rbx
 		.mii MENUITEMINFOW
 	end virtual
 
+	;#---------------------------------------------------ö
+	;|                   SETUP                           |
+	;ö---------------------------------------------------ü
 	
 .setup:
-;@break
 	push rbp
 	push rbx
 	push rdi
@@ -38,19 +37,6 @@ mnu:
 	call apiw.mnu_create
 	mov [hMnuMain],rax
 
-;@break
-;	sub rsp,sizeof.MENUINFO
-;	mov rdx,rsp
-;	mov [rdx+MENUINFO.cbSize],\
-;		sizeof.MENUINFO
-;	mov [rdx+MENUINFO.fMask],\
-;		MIM_MAXHEIGHT
-;	mov [rdx+MENUINFO.cyMax],48
-;	mov rcx,rax
-;	call apiw.mnu_setinfo
-;	mov rax,[hMnuMain]
-
-;@break
 	xor r9,r9
 	mov r8,[omni]
 	mov rdx,tMP_WSPACE
@@ -68,17 +54,6 @@ mnu:
 	mov rdx,tMP_PATH
 	mov rcx,[hMnuMain]
 	call .mp_add
-
-;-----ok	
-;	sub rsp,sizeof.MENUINFO
-;	mov rdx,rsp
-;	mov [rdx+MENUINFO.cbSize],\
-;		sizeof.MENUINFO
-;	mov [rdx+MENUINFO.fMask],\
-;		MIM_MAXHEIGHT
-;	mov [rdx+MENUINFO.cyMax],148
-;	mov rcx,[tMP_WSPACE]
-;	call apiw.mnu_setinfo
 
 	mov rcx,[hMain]
 	call apiw.mnu_draw
@@ -100,6 +75,7 @@ mnu:
 	;--- in R8 ptr to OMNI
 	;--- in R9 position
 	;--- ret RAX ptr to OMNI
+
 	push rbp
 	push rbx
 	push rdi

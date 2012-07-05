@@ -380,7 +380,6 @@ config:
 	add rsi,rbx
 	jmp	.openA
 
-
 .openF:
 	mov rcx,rbx
 	call [top64.free]	

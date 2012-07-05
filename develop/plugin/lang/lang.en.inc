@@ -35,6 +35,9 @@
 		UZ_INFO_SIZE,0,U8+UR,db "Size",\
 		UZ_INFO_TYPE,0,U8+UR,db "Type",\
 		UZ_INFO_BUF,0,U8+UR,db "Name",\
+		UZ_INFO_SELITEM,0,U8+UR,<db \
+			"Please select a treeitem into the Workspace",13,10,\
+			"after which new documents will be inserted !">,\
 		UZ_OK,0,U8+UR,db "Ok",\
 		UZ_NO,0,U8+UR,db "No",\
 		UZ_CANCEL,0,U8+UR,db "Cancel",\
