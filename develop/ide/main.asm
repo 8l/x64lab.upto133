@@ -98,23 +98,17 @@ start:
 	;	test rax,rax
 	;	jz	.err_start
 
-	call [lang.info_uz]
-	@nearest 16,eax			;<--- ave size 16 aligned
-	add eax,sizeof.OMNI
-	@nearest 16,eax			
-	shl eax,2
-	mul ecx
-
-	add eax,\
+	mov eax,\
 		sizeof.DIR+\
 		400h*8+\	;--- dirHash
 		80h*8+\		;--- envHash
 		200h*8+\	;--- extHash
 		((MI_OTHER-MNU_X64LAB) * sizeof.KEYA)+\
+		sizeof.HU+\
 		sizeof.CONFIG+\
 		sizeof.CONS+\
 		sizeof.CPROP+\
-		sizeof.IODLG+\
+		(sizeof.IODLG*4)+\
 		sizeof.EDIT
 
 	@frame rax
@@ -152,10 +146,14 @@ start:
 	;	call art.cmdline
 	;	mov [pCmdline],rax
 	;	call ext.setup
-	call config.open
-	call config.setup_gui
 
-	;	jmp	.err_start
+	call config.open
+
+	call config.set_lang
+	test eax,eax
+	jz	.err_start
+
+	call config.setup_gui
 
 
 .winmain:
@@ -341,8 +339,11 @@ start:
 	;--- error loading sci
 
 .err_start:
+	call config.unset_lang
+
 	call config.unset_libs
 	call config.unset_files
+
 
 	;	call config.discard
 	;	mov rcx,SLOT_EXT
@@ -376,6 +377,11 @@ winproc:
 	virtual at rbx
 		.conf CONFIG
 	end virtual
+
+	virtual at rsi
+		.io	IODLG
+	end virtual
+
 
 	@wpro rbp,\
 		rbx rdi rsi
@@ -447,8 +453,8 @@ winproc:
 	jz	.mi_ws_new
 	cmp ax,MI_WS_EXIT
 	jz	.mi_ws_exit
-;	cmp ax,MI_CO_KEY
-;	jz	.mi_co_key
+	cmp ax,MI_ED_LNK
+	jz	.mi_ed_lnk
 	jmp	.defwndproc
 
 	;ü------------------------------------------ö
@@ -676,6 +682,127 @@ winproc:
 	jmp	.mi_ws_newA
 
 	;ü------------------------------------------ö
+	;|     WS_NEWLNK                            |
+	;#------------------------------------------ä
+.mi_ed_lnk:
+	sub rsp,\
+		sizeof.TVITEMW
+	mov rdi,rsp
+	xor rsi,rsi
+
+	mov rcx,[hTree]
+	call tree.get_sel
+	test eax,eax
+	jz .mi_fi_impB
+
+	push r12
+	push r13
+
+	mov rsi,rax
+	mov r12,[hRootWsp]
+	mov r13,TVI_FIRST
+	mov rbx,[pLabfWsp]
+	cmp rax,r12
+	jz	.mi_ed_lnkA
+
+	;--- get param of selected item ---
+	mov r9,rdi
+	mov rdx,rsi
+	mov rcx,[hTree]
+	call tree.get_param
+	test eax,eax
+	jz .mi_ed_lnkE
+
+	mov rbx,[rdi+\
+		TVITEMW.lParam]
+	xor eax,eax
+	test rbx,rbx
+	jz .mi_ed_lnkE
+
+	mov r9,[.labf.hItem]
+	mov rcx,[hTree]
+	call tree.get_parent
+	test rax,rax
+	jz	.mi_ed_lnkE
+
+	mov r12,rax
+	mov r13,[.labf.hItem]
+  jmp .mi_ed_lnkA
+
+	test [.labf.type],\
+		LF_FILE
+	jnz	.mi_ed_lnkA
+
+	mov r12,rax
+	mov r13,[.labf.hItem]
+
+.mi_ed_lnkA:
+	mov rsi,[pIo]
+	mov rcx,IO_NEWLNK
+	mov rdx,rbx
+	mov rax,[.labf.dir]
+	add rsi,rcx
+	mov [.io.ldir],rax
+	call iodlg.start
+
+	cmp eax,IDCANCEL
+	jz .mi_ed_lnkE
+
+	xor eax,eax
+	lea rdi,[.io.buf]
+	cmp ax,word[rdi]
+	jnz	.mi_ed_lnkB
+	
+	mov rax,[.io.ldir]
+	mov rcx,[rax+DIR.rdir]
+	lea rdi,[rax+DIR.dir]
+
+	test [rax+DIR.type],\
+		DIR_HASREF
+	jz .mi_ed_lnkC
+	lea rdi,[rcx+DIR.dir]
+
+.mi_ed_lnkC:
+	mov rcx,rdi
+	call art.get_fname
+	mov rdi,rdx
+	
+.mi_ed_lnkB:
+	mov r8,LF_LNK
+	mov rax,[.io.ldir]
+	mov rdx,rdi
+	lea rcx,[rax+DIR.dir]
+	call wspace.new_labf
+
+	test eax,eax
+	jz	.mi_ed_lnkE
+	mov rbx,rax
+
+	mov r8,r13
+	mov rdx,r12
+	mov rcx,rbx
+	call tree.insert
+
+	mov rdx,[pLabfWsp]
+	or [rdx+LABFILE.type],\
+		LF_MODIF
+	test eax,eax
+	jnz	.mi_ed_lnkE
+
+	and [rdx+LABFILE.type],\
+		not LF_MODIF
+
+	mov rcx,rbx
+	call art.a16free
+	xor eax,eax
+
+.mi_ed_lnkE:
+	pop r13
+	pop r12
+	jmp	.ret0
+
+
+	;ü------------------------------------------ö
 	;|     WS_NEW                               |
 	;#------------------------------------------ä
 
@@ -793,6 +920,8 @@ winproc:
 		LF_TXT
 	mov rcx,rbx
 	call wspace.new_file
+	test rax,rax
+	jz	.exit
 
 	mov rbx,[pLabfWsp]
 	or [.labf.type],\

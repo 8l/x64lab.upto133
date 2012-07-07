@@ -36,7 +36,6 @@ wspace:
 		.io	IODLG
 	end virtual
 
-
 .check:
 	;--- RET EAX = -1 errror
 	;--- RET EAX = 0 cannot close/abort operation
@@ -417,7 +416,7 @@ wspace:
 
 .save_fileBT2:
 	mov rdx,rbx
-	mov rcx,IO_SAVECURRENT
+	mov rcx,IO_SAVECUR
 	call iodlg.start
 	cmp eax,IDCANCEL
 	jz	.save_file0
@@ -671,8 +670,9 @@ wspace:
 
 .save_wspC1:
 	mov rdx,[projDir]
-	mov [rsi+IODLG.ldir],rdx
 	mov rcx,IO_SAVEWSP
+	add rsi,rcx
+	mov [rsi+IODLG.ldir],rdx
 	call iodlg.start
 
 	mov ecx,eax
@@ -1169,6 +1169,7 @@ wspace:
 .new_file:
 	;--- in RCX reference labf/0
 	;--- in RDX type
+	;--- RET RAX 0,labf
 	push rbx
 	push rsi
 	push rdi
@@ -1191,10 +1192,12 @@ wspace:
 	mov rsi,[pIo]
 
 	;--- ask to save it first -------
+
 .new_fileA:
 	mov rdx,[.labf.dir]
-	mov [rsi+IODLG.ldir],rdx
 	mov rcx,IO_NEWNAME
+	add rsi,rcx
+	mov [rsi+IODLG.ldir],rdx
 	call iodlg.start
 
 	cmp eax,IDCANCEL
@@ -2740,8 +2743,20 @@ wspace:
 		NMTREEVIEWW.itemOld.lParam]
 	mov rdx,[r9+\
 		NMTREEVIEWW.itemNew.lParam]
+
 	test rdx,rdx
 	jz	winproc.ret0
+
+;	test rdx,rdx
+;	jnz	.tree_schgedA
+
+;	test rcx,rcx
+;	jz	winproc.ret0
+
+;	mov rdx,rcx
+;	jmp	.tree_schgedA
+
+
 	cmp rcx,rdx
 	jz	winproc.ret0
 	lea r8,[rax+\

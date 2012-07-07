@@ -11,8 +11,6 @@
   ;| filename:
   ;ö-------------------------------------------------ä
 
-
-
 config:
 	virtual at rbx
 		.dir DIR
@@ -179,12 +177,12 @@ config:
 	test rax,rax
 	jz	.setup_libsE
 
-	mov rdx,rsi
-	mov rcx,\
-		lang_bridge
-	call rdi
-	test rax,rax
-	jz	.setup_libsE
+;	mov rdx,rsi
+;	mov rcx,\
+;		lang_bridge
+;	call rdi
+;	test rax,rax
+;	jz	.setup_libsE
 
 	mov rcx,rsi
 	call sci.setupA
@@ -241,12 +239,72 @@ config:
 		bk64_bridge
 	call rdi
 
-	mov rcx,\
-		lang_bridge
-	call rdi
-
 	call sci.discard
 	pop rdi
+	ret 0
+
+	;ü-----------------------------------------ö
+	;|     unset_lang                          |
+	;#-----------------------------------------ä
+
+.unset_lang:
+	mov rcx,[pOmni]
+	call art.a16free
+	mov rcx,lang_bridge
+	call bridge.detach
+	ret 0
+
+	;ü-----------------------------------------ö
+	;|     set_libs                            |
+	;#-----------------------------------------ä
+	
+.set_lang:
+	push rbp
+	mov rbp,rsp
+	and rsp,-16
+
+	sub rsp,\
+		FILE_BUFLEN
+	xor edx,edx
+	mov rax,rsp
+
+	;--- make plugin\lang\CURLANG
+	push rdx
+	push uzCurLang
+	push uzSlash
+	push uzLangName
+	push uzSlash
+	push uzPlugName
+	push rax
+	push rdx
+	call art.catstrw
+
+	mov rdx,rsp
+	mov rcx,\
+		lang_bridge
+	call bridge.attach
+	test rax,rax
+	jz .set_langE
+
+	call [lang.info_uz]
+	@nearest 16,eax			;<--- ave size 16 aligned
+	add eax,sizeof.OMNI
+	@nearest 16,eax			
+	shl eax,2
+	mul ecx
+
+	mov rcx,rax
+	call art.a16malloc
+	mov [pOmni],rax
+	test rax,rax
+	jnz .set_langE
+
+	call .unset_lang
+	xor eax,eax
+
+.set_langE:
+	mov rsp,rbp
+	pop rbp
 	ret 0
 
 	;#---------------------------------------------------ö
@@ -275,6 +333,9 @@ config:
 
 	mov rax,CFG_POS_RB
 	mov [.conf.pos+8],rax
+
+	mov qword[.conf.lang],\
+		CFG_DEF_LANG
 
 	mov [.conf.fshow],\
 		CFG_FSHOW
@@ -325,20 +386,49 @@ config:
 .openA:
 	mov eax,[rsi+\
 		TITEM.hash]
+
 	mov ecx,[rsi+\
 		TITEM.attrib]
+
 	mov rdx,rbx
 	test ecx,ecx
 	jz	.openB
 
 	add rdx,rcx
-	cmp eax,hash_version
-;	jz	.openV
+	;	cmp eax,hash_version
+	;	jz	.openV
 	cmp eax,hash_pos
 	jz	.openP
 	cmp eax,hash_wspace
 	jz	.openW
+	cmp eax,hash_language
+	jz	.openL
 	jmp	.openB
+
+.openL:
+	mov rax,[pConf]
+	mov r8,rdx
+	lea rcx,[rax+\
+		CONFIG.lang]
+	xor eax,eax
+	mov rdx,uzCurLang
+
+	cmp ax,[r8+\
+		TITEM.len]
+	jz	.openL1
+
+	cmp [r8+TITEM.len],7
+	ja	.openL1
+
+	lea rcx,[r8+\
+		TITEM.value]
+	
+.openL1:
+	call utf8.to16
+
+	jmp	.openB
+
+
 
 .openW:
 	lea rcx,[rdx+TITEM.value]

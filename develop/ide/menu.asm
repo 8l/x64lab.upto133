@@ -13,7 +13,6 @@
 
 
 mnu:
-
 	virtual at rbx
 		.mii MENUITEMINFOW
 	end virtual
@@ -38,7 +37,7 @@ mnu:
 	mov [hMnuMain],rax
 
 	xor r9,r9
-	mov r8,[omni]
+	mov r8,[pOmni]
 	mov rdx,tMP_WSPACE
 	mov rcx,rax
 	call .mp_add
@@ -50,6 +49,12 @@ mnu:
 	call .mp_add
 
 	mov r9,2
+	mov r8,rax
+	mov rdx,tMP_EDIT
+	mov rcx,[hMnuMain]
+	call .mp_add
+
+	mov r9,3
 	mov r8,rax
 	mov rdx,tMP_PATH
 	mov rcx,[hMnuMain]

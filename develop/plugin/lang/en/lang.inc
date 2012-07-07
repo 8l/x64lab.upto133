@@ -54,7 +54,6 @@
 		MP_WSPACE,0,U8+UR,db "Work&space",\
 			MI_WS_LOAD,0,U8+UR,db "&Load",\
 			MI_WS_NEW,0,U8+UR,db "&New",\
-			MI_WS_NEWLNK,0,U8+UR,db "Insert new smartlink",\
 			MI_WS_ADD,0,U8+UR,db "Add &Project",\
 			MI_WS_BACK,0,U8+UR,db "&Backup",\
 			MI_WS_EXP,0,U8+UR,db "E&xport to archive",\
@@ -75,6 +74,8 @@
 			MI_FI_ENCO,0,U8+UR,db "Encode current",\
 			MI_FI_BACK,0,U8+UR,db "Backup as",\
 		MP_EDIT,0,U8+UR,db "Edit",\
+			MI_ED_LNK,0,U8+UR,db "Insert new smartlink",\
+			MI_ED_REM,0,U8+UR,db "Remove item from workspace",\
 			MP_WIN,0,U8+UR,db "Window",\
 		MP_DEVT,0,U8+UR,db "Developer tools",\
 		MP_CONF,0,U8+UR,db "Configurator",\
@@ -100,7 +101,9 @@
 			BB_MACRO,0,U8+UR,db "Macro",\
 			BB_PROC,0,U8+UR,db "Procs and Calleé",\
 			BB_REG,0,U8+UR,db "Registers",\
-			BB_RET,0,U8+UR,db "Returns"
-
-
+			BB_RET,0,U8+UR,db "Returns",\
+			UZ_INFO_LNK,0,U8+UR,db "Create a new smartlink",\
+			UZ_LNK_NAME,0,U8+UR,db "smartlinkname",\
+			UZ_LNK_MAP,0,U8+UR,db "mapped by",\
+			UZ_LNK_DESC,0,U8+UR,db "Choose a directory as reference"
 

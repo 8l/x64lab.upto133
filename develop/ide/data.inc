@@ -22,12 +22,13 @@ section '.data' data readable writeable
 	pConf		dq sizeof.CONFIG
 	pCons 	dq sizeof.CONS
 	pCp			dq sizeof.CPROP
-	pIo			dq sizeof.IODLG
+	pIo			dq sizeof.IODLG * 4
+	pHu			dq sizeof.HU
 	pEdit		dq sizeof.EDIT
 	pKeya		dq (MI_OTHER-MNU_X64LAB) * sizeof.KEYA
-	omni		dq 0
 	NUM_ITEMS = ($-curDir)/8
 
+	pOmni		dq 0
 	hSciDll	dq 0
 	hDocker	dq 0
 
@@ -46,9 +47,6 @@ section '.data' data readable writeable
 	pTopStr	dq 0
 	pTopExt	dq 0
 	hBmpIml	dq 0
-	hIcoCtrl	dq 0
-	hIcoShift	dq 0
-	hIcoAlt		dq 0
 
 	appDir		dq 0
 	backDir		dq 0
@@ -74,29 +72,36 @@ section '.data' data readable writeable
 
 		lfMnuSize	SIZE 18,16
 		szCharExt 	db "_999999",0
+
+		align 2
 		uzExtension	du "extension",0
 		uzBackName	du "backup",0
 		uzAccelName du "accel",0
 		uzConfName	du "config",0
-		uzLogName	du "log",0
+		uzLogName   du "log",0
 		uzMountName	du "mount",0
 		uzPlugName	du "plugin",0
+		uzLangName	du "lang",0
 		uzProjName	du "project",0
 		uzTemplName du "template",0
-		uzTmpName	du "tmp",0
+		uzTmpName	  du "tmp",0
 		uzToolName 	du "tool",0
 		uzMenuName	du "menu",0
 
-		uzDefault	du "default"		;<--- follows
-		uzLabExt		du "."
-		uzAppName	du TITLE,0
-		uzUtf8Ext	du ".utf8",0
-		uzBinExt		du ".bin",0
-		uzCfgExt		du ".cfg",0
-		uzPngExt		du ".png",0
-		uzEmfExt		du ".emf",0
-		uzExeExt		du ".exe",0
-		uzSciExt		du ".sci",0
+		uzCurLang		du CFG_DEF_LANG,0
+								db (16 - ($- uzCurLang)) dup (0)
+
+		uzDefault  du "default"		;<--- follows
+		uzLabExt   du "."
+		uzAppName  du TITLE,0
+		uzUtf8Ext  du ".utf8",0
+		uzBinExt   du ".bin",0
+		uzCfgExt   du ".cfg",0
+		uzPngExt   du ".png",0
+		uzEmfExt   du ".emf",0
+		uzExeExt   du ".exe",0
+		uzSciExt   du ".sci",0
+
 		uzTreeClass	du "SysTreeView32",0
 		uzLViewClass du "SysListView32",0
 		uzCbexClass	du "ComboBoxEx32",0
@@ -146,6 +151,11 @@ section '.data' data readable writeable
 			-1,\
 			MI_FI_CLOSE,	21,OWN,DIF
 
+		@mnp MP_EDIT,		0,0,ISS,\
+			MP_WSPACE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
+			MI_ED_LNK,0,OWN,DIF,\
+			UZ_EDIT_PANE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
+			;--- MI_ED_REM,7,OWN,DIF
 			
 		@mnp MP_PATH,		26,RJU,ISS or MIIM_FTYPE,\
 			MI_PA_CONS,		18,OWN,DIF,\

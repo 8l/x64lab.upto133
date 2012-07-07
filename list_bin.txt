@@ -9,7 +9,7 @@ config\config.utf8
 config\accel.utf8
 
 plugin\bk64.dll
-plugin\lang.dll
+plugin\lang\en\lang.dll
 plugin\dock64.dll
 plugin\top64.dll
 plugin\License.txt

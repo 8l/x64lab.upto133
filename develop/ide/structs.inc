@@ -72,26 +72,39 @@
 		dir		db FILE_BUFLEN dup (?)
 	ends
 
-	struct IODLG
-		param	dq 0		;--- IN param	
-		ldir	dq 0		;--- last dir
+	struct HU
 		rc		RECT
-		buflen	dw 0	;--- buf len
-		set			db 0
-						db 0
-						dd 0
-
+					dq 0
 		hDlg	dq 0
+
 		hStc1	dq 0
 		hStc2	dq 0
+
 		hCbx	dq 0
 		hBtn	dq 0
+
 		hStc3	dq 0
 		hEdi	dq 0
+
 		hCanc	dq 0
 		hOk		dq 0
-		buf		db FILE_BUFLEN dup (?)
 	ends
+
+	
+	struct IODLG
+		param		dq 0		;--- IN param	
+		ldir		dq 0		;--- last dir
+						dq 0
+		buflen	dw 0	;--- buf len
+		set			dw 0
+						dd 0
+		buf			db FILE_BUFLEN dup (?)
+	ends
+
+	IO_SAVECUR equ 0
+	IO_NEWNAME equ sizeof.IODLG
+	IO_SAVEWSP equ sizeof.IODLG * 2
+	IO_NEWLNK  equ sizeof.IODLG * 3
 
 	;--- Ownerdraw menuitem
 	struct OMNI	
@@ -271,6 +284,10 @@ ends
 		flog		db FALSE
 		fsplash	db FALSE
 						db 0
+		;-------------------------
+		lang		db 8 dup (0)
+						dd 0
+						dd 0
 		;-------------------------
 		update			dd FALSE
 		session			dd 0

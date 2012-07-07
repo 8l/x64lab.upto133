@@ -1,4 +1,9 @@
 
+- version 0.0.82 (released on 07.07.2012 ) " ... " 
+  + "Edit" menu
+  + "Insert new smartlink" in Edit menu
+  + Default language in plugin\lang\en
+
 - version 0.0.79 (released on 05.07.2012 ) " ... " 
   + minimal accelerators system
 

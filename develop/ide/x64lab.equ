@@ -11,9 +11,8 @@
   ;| filename:
   ;ö-------------------------------------------------ä
 
+	;--- from resource.h x64lab.res --------------------
 
-
-	;--- from resource.h x64lab.res ---------------------------
 	define IDC_STATIC (-1)
 	define ICO_X64LAB                              3
 	define BMP_X64LAB                              4
@@ -45,11 +44,6 @@
 	define EDIT_STB                                2817
 	define EDIT_STC                                2818
 
-
-	IO_SAVECURRENT	equ 1
-	IO_NEWNAME			equ 2
-	IO_SAVEWSP			equ 3
-
 		;--- hash X64LAB equ  02415AF6C27077B32h
 		;--- hash X64LABD equ 0402E79AC91795914h
 		;--- hash X64LAB\project equ  08035E4A734D7F58Fh
@@ -62,7 +56,6 @@
 	MP_WSPACE      equ 1001h
    MI_WS_LOAD    equ 1002h
    MI_WS_NEW     equ 1003h
-   MI_WS_NEWLNK  equ 1004h
    MI_WS_ADD     equ 1005h
    MI_WS_BACK    equ 1006h
    MI_WS_EXP     equ 1007h
@@ -85,6 +78,9 @@
    MI_FI_BACK   equ 102Ah
 
 	MP_EDIT   		equ 1040h
+   MI_ED_LNK  	equ 1041h
+   MI_ED_REM 		equ 1042h
+
   MP_WIN    		equ 1060h
   MP_DEVT   		equ 1070h
 	MP_CONF   		equ 1080h
@@ -96,7 +92,6 @@
    MI_PA_FIND    equ 10A3h
    MI_PA_COPY    equ 10A4h
    MI_PA_SETPROP equ 10A5h
-
 
 	;--- strings id usable in lang.dll ------------------
   UZ_ERR_NOFILE  equ 2000h
@@ -151,6 +146,11 @@
   BB_REG         equ 2031h
   BB_RET         equ 2032h
 
+	UZ_INFO_LNK	equ 2033h
+	UZ_LNK_NAME equ 2034h
+  UZ_LNK_MAP  equ 2035h
+	UZ_LNK_DESC equ 2036h
+
 
 	;--- hash equ for config/config.utf8 items
   macro @cfg_hash [argid]{
@@ -168,10 +168,12 @@
    prop,\
    pos,\
    tree,\
-   bkcol
+   bkcol,\
+	 language
 
 	CFG_FSHOW				equ TRUE
 	CFG_FLOG				equ FALSE
+	CFG_DEF_LANG    equ "en"
 	CFG_FSPLASH			equ FALSE
 	CFG_UPDATE			equ FALSE
 	CFG_POS_RB 			equ 0000'02BC'0000'0320h
@@ -182,8 +184,3 @@
 	CFG_PROP_BKCOL 	equ 00DADADAh
 	CFG_TREE_LTRB		equ 0
 			
-
-
-
-
-

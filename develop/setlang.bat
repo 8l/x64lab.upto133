@@ -1,14 +1,13 @@
 @echo off
- @del plugin\lang.dll
 
 IF "%1"=="" ( 
- fasm plugin\lang\lang.en.asm
+ @del plugin\lang\en\lang.dll
+ fasm plugin\lang\en\lang.asm
   IF ERRORLEVEL 1 GOTO :err_exit
- copy plugin\lang\lang.en.dll plugin\lang.dll
  ) else (
- fasm plugin\lang\lang.%1%.asm
+ @del plugin\lang\%1\lang.dll
+ fasm plugin\lang\%1\lang.asm
   IF ERRORLEVEL 1 GOTO :err_exit
- copy plugin\lang\lang.%1%.dll plugin\lang.dll
 )
 
 :err_exit

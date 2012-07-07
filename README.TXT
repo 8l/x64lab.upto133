@@ -1,5 +1,4 @@
 ﻿
-﻿ 
  Hi, Welcome to x64lab group.
   My name is Marc Rainer Kranz, i am a German 
   assembly programmer.
@@ -78,7 +77,7 @@ Summary:
 
    - create a local directory named "x64lab" and clone the project
      in there from the Mercurial repository online.
-     alternatively, downoad the zipped packages and unzip them
+     alternatively, download the zipped packages and unzip them
 
       the "bin" prefixed package should be unpacked in x64lab
       the "src" prefixed package should be unpacked in x64lab\develop

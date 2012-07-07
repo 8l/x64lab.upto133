@@ -11,10 +11,13 @@
   ;| filename:
   ;ö-------------------------------------------------ä
 
-
 iodlg:
 	virtual at rsi
 		.io	IODLG
+	end virtual
+
+	virtual at r12
+		.hu	HU
 	end virtual
 
 	virtual at rbx
@@ -29,10 +32,12 @@ iodlg:
 	;--- in RDX param
 	;--- ret RAX 0,IDOK
 	push rsi
-	xor eax,eax
+	push rdx
+
 	mov rsi,[pIo]
-	mov [.io.set],cl
-	mov [.io.param],rdx
+	add rsi,rcx
+	mov [.io.set],cx
+	pop [.io.param]
 
 .startA:
 	mov r10,rsi		;--- param
@@ -48,11 +53,13 @@ iodlg:
 
 .proc:
 @wpro rbp,\
-		rbx rsi rdi
+		rbx rsi rdi r12 r13
 
-	cmp rdx,WM_INITDIALOG
-	jz	.wm_initdialog
-	cmp rdx,WM_COMMAND
+	cmp rdx,\
+		WM_INITDIALOG
+	jz	.wm_initd
+	cmp rdx,\
+		WM_COMMAND
 	jz	.wm_command
 	jmp	.ret0
 
@@ -67,6 +74,7 @@ iodlg:
 	
 .id_ok:
 .id_cancel:
+	mov r12,[pHu]
 	mov rbx,rax
 	mov rdi,rcx
 
@@ -82,12 +90,12 @@ iodlg:
 
 	mov rsi,rax
 	mov rax,[rsp]
-	mov [.io.rc],rax
+	mov [.hu.rc],rax
 	mov rax,[rsp+8]
-	mov [.io.rc+8],rax
+	mov [.hu.rc+8],rax
 
 ;@break
-	mov rcx,[.io.hCbx]
+	mov rcx,[.hu.hCbx]
 	call cbex.get_cursel
 	mov r8,rax
 	inc rax
@@ -97,7 +105,7 @@ iodlg:
 		FILE_BUFLEN
 
 	mov rdx,r8
-	mov rcx,[.io.hCbx]
+	mov rcx,[.hu.hCbx]
 	mov r8,rsp
 	call cbex.get_item
 	inc rax
@@ -105,10 +113,11 @@ iodlg:
 	mov [.io.ldir],rdx
 
 	mov r9,rsp
-	mov rcx,[.io.hEdi]
+	mov rcx,[.hu.hEdi]
 	call win.get_text
 	test eax,eax
 	jz	.id_cancelA
+
 	lea rdx,[.io.buf]
 	mov rcx,rsp
 	call utf16.copyz
@@ -120,8 +129,8 @@ iodlg:
 	call apiw.enddlg
 	jmp	.ret1
 
-
-.wm_initdialog:
+.wm_initd:
+	mov r12,[pHu]
 	mov eax,IDCANCEL
 	mov rsi,r9
 	mov rbx,rcx
@@ -129,16 +138,11 @@ iodlg:
 	jz	.id_cancel
 
 ;@break
-	push r12
-	push r13
-	
-	mov r12,\
-		apiw.get_dlgitem
 	mov r8,r9
 	call apiw.set_wldata
 
 	mov rax,rbx
-	lea rdi,[.io.hDlg]
+	lea rdi,[.hu.hDlg]
 	stosq
 
 	push 0
@@ -151,139 +155,162 @@ iodlg:
 	push IO_STC2
 	mov edx,IO_STC1
 	
-.wm_initdialogA:
+.wm_initdA:
 	mov rcx,rbx
-	call r12
+	call apiw.get_dlgitem
 	pop rdx
 	stosq
 	test edx,edx
-	jnz .wm_initdialogA
+	jnz .wm_initdA
 
 	movzx eax,[.io.set]
-	mov r12,[lang.get_uz]
-	mov r13,win.set_text
 
 	sub rsp,\
 		FILE_BUFLEN
 	mov rdi,rsp
 
-	cmp al,IO_SAVECURRENT
-	jz	.wm_initdialogIOSC
-	cmp al,IO_NEWNAME
-	jz	.wm_initdialogIONN
-	cmp al,IO_SAVEWSP
-	jz	.wm_initdialogWSPS
+	cmp ax,IO_SAVECUR
+	jz	.wm_initdIOSC
+	cmp ax,IO_NEWNAME
+	jz	.wm_initdIONN
+	cmp ax,IO_SAVEWSP
+	jz	.wm_initdWSPS
+	cmp ax,IO_NEWLNK
+	jz	.wm_initdNL
+	jmp .wm_initdF
 
-	jmp .wm_initdialogF
-
-.wm_initdialogWSPS:
+.wm_initdNL:
+	;--- IO_NEWLNK set ---
 	push 0
-	push [.io.hStc1]
-	push UZ_IO_SELDPF
-	push [.io.hStc2]
-	push UZ_IO_DPATH
-	push [.io.hBtn]
+	push [.hu.hStc1]
+	push UZ_LNK_DESC
+	push [.hu.hStc2]
+	push UZ_IO_KDIR
+	push [.hu.hBtn]
 	push MI_PA_BROWSE
-	push [.io.hStc3]
+	push [.hu.hStc3]
+	push UZ_LNK_MAP
+	push [.hu.hEdi]
+	push UZ_LNK_NAME
+	push rbx
+	push UZ_INFO_LNK
+	push [.hu.hOk]
+	push UZ_OK
+	push [.hu.hCanc]
+	mov ecx,UZ_CANCEL
+	jmp .wm_initdB
+	
+.wm_initdWSPS:
+	;--- IO_SAVEWSP set ---
+	push 0
+	push [.hu.hStc1]
+	push UZ_IO_SELDPF
+	push [.hu.hStc2]
+	push UZ_IO_DPATH
+	push [.hu.hBtn]
+	push MI_PA_BROWSE
+	push [.hu.hStc3]
 	push UZ_IO_DFNAME
-	push [.io.hEdi]
+	push [.hu.hEdi]
 	push UZ_WSP_EXT
 	push rbx
 	push UZ_IO_SAVEWSP
-	push [.io.hOk]
+	push [.hu.hOk]
 	push UZ_OK
-	push [.io.hCanc]
+	push [.hu.hCanc]
 	mov ecx,UZ_CANCEL
-	jmp .wm_initdialogB
+	jmp .wm_initdB
 	
-.wm_initdialogIONN:
+.wm_initdIONN:
+	;--- IO_NEWNAME set ---
 	push 0
-	push [.io.hStc1]
+	push [.hu.hStc1]
 	push UZ_IO_SELDPF
-	push [.io.hStc2]
+	push [.hu.hStc2]
 	push UZ_IO_DPATH
-	push [.io.hBtn]
+	push [.hu.hBtn]
 	push MI_PA_BROWSE
-	push [.io.hStc3]
+	push [.hu.hStc3]
 	push UZ_IO_DFNAME
-	push [.io.hEdi]
+	push [.hu.hEdi]
 	push UZ_IO_EXT
 	push rbx
 	push MI_FI_NEWF
-	push [.io.hOk]
+	push [.hu.hOk]
 	push UZ_OK
-	push [.io.hCanc]
+	push [.hu.hCanc]
 	mov ecx,UZ_CANCEL
-	jmp .wm_initdialogB
+	jmp .wm_initdB
 
-.wm_initdialogIOSC:
-	;--- IO_SAVECURRENT set
+.wm_initdIOSC:
+	;--- IO_SAVECUR set ---
 	push 0
-	push [.io.hStc1]
+	push [.hu.hStc1]
 	push UZ_IO_SELDPF
-	push [.io.hStc2]
+	push [.hu.hStc2]
 	push UZ_IO_DPATH
-	push [.io.hBtn]
+	push [.hu.hBtn]
 	push MI_PA_BROWSE
-	push [.io.hStc3]
+	push [.hu.hStc3]
 	push UZ_IO_DFNAME
-	push [.io.hEdi]
+	push [.hu.hEdi]
 	push UZ_IO_EXT
 	push rbx
 	push MI_FI_SAVE
-	push [.io.hOk]
+	push [.hu.hOk]
 	push UZ_OK
-	push [.io.hCanc]
+	push [.hu.hCanc]
 	mov ecx,UZ_NO
 
-.wm_initdialogB:
+.wm_initdB:
 	;--- set strings and handles --------
 	mov r8,rdi
 	mov edx,U16
-	call r12
+	call [lang.get_uz]
 
 	mov r9,rdi
 	pop rcx
-	call r13
+	call win.set_text
 
 	pop rcx
 	test ecx,ecx
-	jnz	.wm_initdialogB
+	jnz	.wm_initdB
 
-;.wm_initdialogC:
+;.wm_initdC:
 	mov rsp,rdi
+
 	;--- set last position -------------
 	mov rdx,rsp
 	mov rcx,rbx
 	call apiw.get_winrect
 
-	mov rax,[.io.rc]
+	mov rax,[.hu.rc]
 	mov rdx,[rsp]
 	test rax,rax
-	jnz	.wm_initdialogD
-	mov [.io.rc],rdx
+	jnz	.wm_initdD
+	mov [.hu.rc],rdx
 
-	mov rax,[.io.rc+8]
+	mov rax,[.hu.rc+8]
 	mov rdx,[rsp+8]
 	test rax,rax
-	jnz	.wm_initdialogD
-	mov [.io.rc+8],rdx
+	jnz	.wm_initdD
+	mov [.hu.rc+8],rdx
 
-.wm_initdialogD:
+.wm_initdD:
 	mov eax,SWP_NOZORDER
-	mov r11d,[.io.rc.bottom]
-	sub r11d,[.io.rc.top]
-	mov r10d,[.io.rc.right]
-	sub r10d,[.io.rc.left]
-	mov r9d,[.io.rc.top]
-	mov r8d,[.io.rc.left]
+	mov r11d,[.hu.rc.bottom]
+	sub r11d,[.hu.rc.top]
+	mov r10d,[.hu.rc.right]
+	sub r10d,[.hu.rc.left]
+	mov r9d,[.hu.rc.top]
+	mov r8d,[.hu.rc.left]
 	mov rdx,HWND_TOP
 	mov rcx,rbx
 	call apiw.set_wpos
 
 	;--- set imagelists on known directories ----
 	mov r9,[hsmSysList]
-	mov rcx,[.io.hCbx]
+	mov rcx,[.hu.hCbx]
 	call cbex.set_iml
 
 	;--- set known dirs -------------
@@ -294,48 +321,46 @@ iodlg:
 	;--- try set last dir -------------
 	mov r8,[.io.ldir]
 	test r8,r8
-	jz	.wm_initdialogE
+	jz	.wm_initdE
 
 	mov rdx,r8
-	mov rcx,[.io.hCbx]
+	mov rcx,[.hu.hCbx]
 	call cbex.is_param
 	mov r8,rax
 	inc rax
 	cmovz r8,rax
 
-.wm_initdialogE:
-	;--- select default kdir ------
-	mov rcx,[.io.hCbx]
+.wm_initdE:
+	;--- select default kdir
+	mov rcx,[.hu.hCbx]
 	call cbex.sel_item
 
-	;--- try set edit -------------
+	;--- try set edit
 	mov rax,qword[.io.buf]
 	test rax,rax
-	jz	.wm_initdialogE1
+	jz	.wm_initdE1
 
 	lea r9,[.io.buf]
-	mov rcx,[.io.hEdi]
+	mov rcx,[.hu.hEdi]
 	call win.set_text
 
-.wm_initdialogE1:
-	;--- try set param -----------
+.wm_initdE1:
+	;--- try set param
 	mov rax,[.io.param]
 	test rax,rax
-	jz	.wm_initdialogF
+	jz	.wm_initdF
 
 	cmp [.io.set],\
-		IO_SAVECURRENT
-	jnz	.wm_initdialogF
+		IO_SAVECUR
+	jnz	.wm_initdF
 
-	;--- param is LABFILE for IO_SAVECURRENT
+	;--- param is LABFILE for IO_SAVECUR
 	lea r9,[rax+\
 		sizeof.LABFILE]
-	mov rcx,[.io.hStc1]
+	mov rcx,[.hu.hStc1]
 	call win.set_text
 	
-.wm_initdialogF:	
-	pop r13
-	pop r12
+.wm_initdF:	
 
 .ret1:				;message processed
 	xor rax,rax
@@ -349,8 +374,11 @@ iodlg:
 .exit:
 	@wepi
 
+
 .fill_kdirs:
 	;--- in RSI iodlg
+	;--- in R12 pHu
+
 	;--- in RCX hCb
 	;--- in RDX string
 	;--- in R8 imgindex
@@ -364,7 +392,7 @@ iodlg:
 	xor r10,r10
 	mov r9,rbx
 	mov r8d,[.dir.iIcon]
-	mov rcx,[.io.hCbx]
+	mov rcx,[.hu.hCbx]
 	call cbex.ins_item
 	xor eax,eax
 	inc eax
