@@ -19,7 +19,9 @@ dlg:
 	;--- in RDX filespec
 	;--- in R8 flags
 	;--- ret RAX membuf of textptrs: free art.a16free
-	;--- DQ num items, DQ PATH ,DQ text pointers: free using CoTaskMemFree
+	;--- DQ num items
+	;--- DQ PATH,
+	;--- DQ text pointers: free using CoTaskMemFree
 	push rbp
 	push rbx
 	push rdi

@@ -70,6 +70,74 @@ iodlg:
 	jz	.id_cancel
 	cmp ax,IDOK
 	jz	.id_ok
+	cmp ax,IO_BTN
+	jz	.io_btn
+	jmp	.ret0
+
+.io_btn:
+	 mov r8,FOS_PICKFOLDERS\
+		or FOS_NODEREFERENCELINKS\
+		or FOS_ALLNONSTORAGEITEMS\
+		or FOS_NOVALIDATE \
+		or FOS_PATHMUSTEXIST
+	xor edx,edx
+	xor ecx,ecx
+	call [dlg.open]
+	test rax,rax
+	jz	.ret0
+
+	mov rdi,rax					;--- pnum items
+	xor r8,r8
+	mov rdx,[rdi+16]		;--- files
+	mov rcx,[rdi+8]			;--- ppath
+	call wspace.set_dir
+	test eax,eax
+	jz	.ret0
+	
+	mov rbx,rax
+	mov r12,[pHu]
+
+	mov rdx,rax
+	mov rcx,[.hu.hCbx]
+	call cbex.is_param
+	mov r8,rax
+	inc rax
+	jnz	.io_btnA
+
+	mov rcx,rbx
+	call .fill_kdirs
+	mov r8,rcx
+
+.io_btnA:
+	mov rcx,[.hu.hCbx]
+	call cbex.sel_item
+
+	mov rcx,[rdi+8]
+	call apiw.co_taskmf
+	mov rcx,[rdi+16]
+	call apiw.co_taskmf
+	mov rcx,rdi
+	call art.a16free
+	jmp	.ret0
+
+	sub rsp,\
+		FILE_BUFLEN
+	mov rsi,rsp
+
+	push 0
+	push rcx
+	push uzSlash
+	push rdx
+	push rsi
+	push 0
+	call art.catstrw
+
+
+
+
+
+
+
 	jmp	.ret0
 	
 .id_ok:
@@ -376,7 +444,7 @@ iodlg:
 
 
 .fill_kdirs:
-	;--- in RSI iodlg
+	;--- in RCX dir
 	;--- in R12 pHu
 
 	;--- in RCX hCb
@@ -385,6 +453,7 @@ iodlg:
 	;--- in R9 param
 	;--- in R10 indent r10b,index overlay rest R10)
 	;--- in R11 selimage
+
 	push rbx
 	mov rbx,rcx
 	lea rdx,[.dir.dir]
@@ -394,6 +463,7 @@ iodlg:
 	mov r8d,[.dir.iIcon]
 	mov rcx,[.hu.hCbx]
 	call cbex.ins_item
+	mov ecx,eax
 	xor eax,eax
 	inc eax
 	pop rbx

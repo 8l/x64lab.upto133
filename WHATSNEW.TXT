@@ -1,4 +1,7 @@
 
+- version 0.0.83 (released on 07.07.2012 ) " ... " 
+  + Browse button by user IODLG
+
 - version 0.0.82 (released on 07.07.2012 ) " ... " 
   + "Edit" menu
   + "Insert new smartlink" in Edit menu

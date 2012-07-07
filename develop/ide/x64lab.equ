@@ -146,10 +146,10 @@
   BB_REG         equ 2031h
   BB_RET         equ 2032h
 
-	UZ_INFO_LNK	equ 2033h
-	UZ_LNK_NAME equ 2034h
-  UZ_LNK_MAP  equ 2035h
-	UZ_LNK_DESC equ 2036h
+	UZ_INFO_LNK	   equ 2033h
+	UZ_LNK_NAME    equ 2034h
+  UZ_LNK_MAP     equ 2035h
+	UZ_LNK_DESC    equ 2036h
 
 
 	;--- hash equ for config/config.utf8 items
