@@ -1,4 +1,10 @@
 
+- version 0.0.86 (released on 09.07.2012 ) " ... " 
+  + improving behaviour by Save All
+
+- version 0.0.85 (released on 08.07.2012 ) " ... " 
+  + workaround by treeview loosing focus
+
 - version 0.0.83 (released on 07.07.2012 ) " ... " 
   + Browse button by user IODLG
 

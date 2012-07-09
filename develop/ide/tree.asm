@@ -267,7 +267,8 @@ tree:
 	jmp .get_next
 
 .get_sel:
-	xor r9,r9
+	mov r9,TVI_ROOT
+	;xor r9,r9
 	mov r8,TVGN_CARET
 	jmp	.get_next
 

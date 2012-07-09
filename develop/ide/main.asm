@@ -640,6 +640,10 @@ winproc:
 	mov rdx,NOASK_SAVE
 	mov rcx,rbx
 	call wspace.save_file
+	test eax,eax
+	jle	.ret0
+	mov rcx,rbx
+	call edit.view
 	jmp	.ret0
 
 	;ü------------------------------------------ö
@@ -880,6 +884,7 @@ winproc:
 	call wspace.save_docs
 	test rax,rax
 	jle .exit
+
 	call wspace.save_wsp
 	mov rsi,rax
 

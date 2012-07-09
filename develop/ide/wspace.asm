@@ -128,8 +128,8 @@ wspace:
 	xor r13,r13
 
 	sub rsp,\
-		sizea16.LVITEMW;+FILE_BUFLEN
-;@break
+		sizea16.LVITEMW
+
 	mov rcx,[hDocs]
 	call lvw.get_count
 	mov r13,rax
@@ -328,6 +328,7 @@ wspace:
 	;--- RET EAX = -1 errror
 	;--- RET EAX = 0 cannot close/abort operation
 	;--- RET EAX = 1 no need to save/saved ok
+
 	push rbx
 	push rdi
 	push rsi
@@ -506,6 +507,10 @@ wspace:
 		LVITEMW.pszText],rdx
 	mov rcx,[hDocs]
 	call lvw.set_itext
+
+	;--- set new view for previously LF_BLANK
+	mov rcx,rbx
+	call edit.view
 
 .save_file1:
 	xor eax,eax
@@ -1214,6 +1219,7 @@ wspace:
 		DIR_HASREF
 	jz	@f
 	lea rcx,[r8+DIR.dir]
+
 @@:
 	mov r13,rcx
 	push 0
@@ -2566,8 +2572,6 @@ wspace:
 	jz	winproc.ret0
 
 	call edit.view
-	;	mov rcx,rax
-	;	call .info
 	jmp winproc.ret0
 
 .docs_dblclk:
@@ -2601,14 +2605,21 @@ wspace:
 
 .tree_notify:
 	mov edx,[r9+NMHDR.code]
+
 	cmp edx,NM_DBLCLK
 	jz	.tree_dblclk
+
+	cmp edx,NM_KILLFOCUS
+	jz	.tree_killfoc
+
 	cmp edx,\
 		TVN_ITEMEXPANDEDW
 	jz	.tree_exped
+
 	cmp edx,\
 		TVN_GETDISPINFOW
 	jz	.tree_gdinfo
+
 	cmp edx,\
 		TVN_SELCHANGEDW
 	jz	.tree_schged
@@ -2618,6 +2629,17 @@ wspace:
 	;	jz	.tree_gdinfo
 	; cmp edx,NM_RCLICK
 	;	jz	.tree_rclick
+
+
+.tree_killfoc:
+	;--- workaround when selecting
+	;--- the same/other item after
+  ;--- gaining focus
+
+	xor r9,r9
+	mov rcx,[hTree]
+	call tree.sel_item
+	jmp	winproc.ret0
 
 	;#---------------------------------------------------ö
 	;|      WSPACE.TREE_EXPED                            |
@@ -2631,7 +2653,7 @@ wspace:
 	mov rbx,[r9+\
 		NMTREEVIEWW.itemNew.lParam]
 	test rbx,rbx
-	jz	winproc.ret1
+	jz	winproc.ret0
 
 	mov [.labf.state],al
 	;mov rdx,[pLabfWsp]
@@ -2645,8 +2667,7 @@ wspace:
 	;TVE_EXPAND	  		= 0002h
 	;TVE_EXPANDPARTIAL = 4000h
 	;TVE_COLLAPSERESET = 8000h
-	jmp	winproc.ret1
-	
+	jmp	winproc.ret0
 
 	;#---------------------------------------------------ö
 	;|      WSPACE.TREE_DBLCLK                           |
@@ -2744,6 +2765,20 @@ wspace:
 	mov rdx,[r9+\
 		NMTREEVIEWW.itemNew.lParam]
 
+;	push rdx
+;	push rcx
+;	push rax
+;	push r9
+
+;	mov r8,rdx
+;	mov rdx,rcx
+;	call art.cout2XX
+
+;	pop r9
+;	pop rax
+;	pop rcx
+;	pop rdx
+
 	test rdx,rdx
 	jz	winproc.ret0
 
@@ -2759,6 +2794,7 @@ wspace:
 
 	cmp rcx,rdx
 	jz	winproc.ret0
+
 	lea r8,[rax+\
 		NMTREEVIEWW.itemOld]
 	lea r9,[rax+\
