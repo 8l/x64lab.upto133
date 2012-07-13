@@ -276,6 +276,7 @@
 
 	import SHELL32,\
 		CommandLineToArgvW,"CommandLineToArgvW",\
+		SHCreateItemFromParsingName,"SHCreateItemFromParsingName",\
 		SHGetFileInfoW,"SHGetFileInfoW",\
 		Shell_GetImageLists,"Shell_GetImageLists",\
 		ShellExecuteW,"ShellExecuteW"

@@ -650,10 +650,12 @@ wspace:
 	;|               Save Workspace                      |
 	;ö---------------------------------------------------ü
 
+
 .save_wsp:
 	;--- RET EAX = -1 errror
 	;--- RET EAX = 0 cannot close/abort operation
 	;--- RET EAX = 1 no need to save/saved ok
+
 	push rbp
 	push rbx
 	push rdi
@@ -728,6 +730,7 @@ wspace:
 	
 .save_wspB:
 	;--- copy path+name to cfg wsp
+
 	mov r8,[pConf]
 	lea rdx,[r8+CONFIG.wsp]
 	mov rcx,rdi
@@ -743,6 +746,7 @@ wspace:
 	mov r12,rax
 	test eax,eax
 	jz .save_wspE		;--- err cannot be no items
+
 	dec r12
 	jz .save_wspKE	;--- only root item
 	inc r12
@@ -754,13 +758,14 @@ wspace:
 	mov rdx,rax
 	call art.zeromem
 
-	xor ebx,ebx	;--- setup level
+	xor ebx,ebx	;--- 
 	xor esi,esi	;--- datalen text of labf
 	mov rdi,rax	;--- setup buffer
 	mov rdx,[hRootWsp]
 	call tree.list
 
 	;--- calculate num known dirs/ datasize ------
+
 	mov rbx,rsi	;--- save datasize
 	mov rsi,rsp	;--- RSI point to labf,last is 0
 	xor eax,eax
@@ -768,6 +773,7 @@ wspace:
 
 .save_wspK:
 	lodsq
+	and al,0FCh
 	test rax,rax
 	jz	.save_wspKE
 
@@ -798,6 +804,7 @@ wspace:
 	;--- R12 num items
 	;--- typical item   04 : 0F639768B040DF0D0h , " attach.txt " ( ) . 
 	;--- ~64 -------  32 2 1 1       16       1 1 1            1 1 1 1
+
 	mov r13,rsp 		;--- src items
 	shl r12,7				;--- safer 128
 	add rbx,r12
@@ -872,32 +879,100 @@ wspace:
 	mov al,'"'
 	stosb
 	jmp .save_wspD
-	
+
 .save_wspDE:
 	@do_eol
 	mov ax,"	)"
 	stosw
 	@do_eol
 
-	;--- output items on RDI ------
-	;--- 3) recurse labf on stack,last is 0
-	;--- first is WSP item 
+	mov r9,[hRootWsp]
+	mov rcx,[hTree]
+	call tree.get_child	
+	test rax,rax
+	jz	.save_wspF
 
-	mov r13,rbx		;--- tmp buflen to r13
-	mov rbx,rsp
-	xor eax,eax
-	pop rbx
-	cmp [.labf.flags],al
-	jz	.save_wspI1
+	xor r12,r12	;--- level
+	mov rdx,rax
+	mov r13,rbx	;--- tmp buflen to r13
+	push .save_wspF
 
-.save_wspI:
-	pop rbx
-	test rbx,rbx
-	jz .save_wspIE
+	;-------------------------------
 
-.save_wspI1:
-	mov cl,[.labf.level]
+.save_wspL:
+	sub rsp,\
+		sizeof.TVITEMW
+	inc r12
+
+.save_wspLA:
+	@do_eol
+	mov rcx,r12
 	@do_indent
+
+	mov r9,rsp
+	mov rcx,[hTree]
+	call tree.get_param
+	test eax,eax
+	jz	.save_wspLD
+
+	mov rbx,[rsp+\
+		TVITEMW.lParam]
+	test rbx,rbx
+	jz	.save_wspLD
+	call .save_wspT
+	
+	mov ecx,[rsp+\
+		TVITEMW.cChildren]
+	and ecx,1
+
+	mov rdx,[rsp+\
+		TVITEMW.hItem]
+	dec ecx
+	js .save_wspLC
+
+.save_wspLB:
+	mov al,"("
+	stosb
+	push rdx
+	mov r9,rdx
+	mov rcx,[hTree]
+	call tree.get_child
+	mov rdx,rax
+	call .save_wspL
+	pop rdx
+	mov rcx,r12
+	@do_indent
+	mov al,")"
+	stosb
+	jmp	.save_wspLC1
+
+.save_wspLC:
+	;--- check .sibling ----
+	test [.labf.type],\
+		LF_FILE
+	jnz	.save_wspLC1
+	mov ax,"()"
+	stosw
+
+.save_wspLC1:
+	mov r9,rdx
+	mov rcx,[hTree]
+	call tree.get_sibl
+	mov rdx,rax
+	test eax,eax
+	jnz	.save_wspLA
+
+.save_wspLD:
+	add rsp,\
+		sizeof.TVITEMW
+	dec r12
+	@do_eol
+	ret 0
+
+.save_wspT:
+	;--- in RDI dest buffer
+	;--- in RBX labf
+
 	movzx eax,\
 		[.labf.type]
 
@@ -905,75 +980,6 @@ wspace:
 		LF_PRJ or\
 		LF_FILE or\
 		LF_LNK
-	call .save_wspT
-
-	mov rdx,r13
-	lea rcx,[rbx+\
-		sizeof.LABFILE]
-	call utf16.to8
-
-	mov ecx,eax
-	mov rsi,r13
-	rep movsb
-	mov al,'"'
-	stosb
-	test [.labf.type],\
-		LF_FILE
-	jnz	.save_wspI2
-
-	mov al,"("
-	stosb
-	cmp [.labf.flags],1
-	jz	.save_wspI2
-
-	mov al,")"
-	stosb
-	@do_eol
-	jmp	.save_wspI
-
-.save_wspI2:
-	@do_eol
-	;--- go ahead to check for last
-	;--- setup indentation --------
-	mov rdx,[rsp]
-	movzx ecx,[.labf.level]
-	test edx,edx
-	jnz	.save_wspI3
-	mov r9l,cl
-	dec cl
-	jle	.save_wspI
-;@break
-	xor r8,r8
-	inc r8
-	jmp	.save_wspI4
-
-.save_wspI3:
-	cmp cl,[rdx+\
-		LABFILE.level]
-	jbe .save_wspI
-
-	movzx r9,cl
-	movzx r8,[rdx+\
-		LABFILE.level]
-
-.save_wspI4:
-	mov cl,r9l
-	dec cl
-	@do_indent
-	mov al,")"
-	stosb
-	@do_eol
-	dec r9l
-	cmp r9l,r8l
-	ja .save_wspI4
-	jmp	.save_wspI
-
-.save_wspT:
-	;--- save type
-	;--- in RAX byte
-	;--- in RDI dest buffer
-	;--- in RBX labf
-;@break
 	or al,[.labf.state]
 	call art.b2a
 	stosw
@@ -989,9 +995,18 @@ wspace:
 	stosw
 	mov al,'"'
 	stosb
-	ret 0
 
-.save_wspIE:
+	mov rdx,r13
+	lea rcx,[rbx+\
+		sizeof.LABFILE]
+	call utf16.to8
+
+	mov ecx,eax
+	mov rsi,r13
+	rep movsb
+	mov al,'"'
+	stosb
+	ret 0
 
 .save_wspF:
 	;--- in R14 pointer to buflen
@@ -1073,13 +1088,8 @@ wspace:
 	mov rcx,[hTree]
 	call tree.set_item
 
-;	mov r9,[.labf.hItem]
-;	mov rcx,[hTree]
-;	call tree.sel_item
-
 	xor eax,eax
 	inc eax
-
 
 .save_wspE:
 	mov rsp,rbp
@@ -1091,6 +1101,7 @@ wspace:
 	pop rbx
 	pop rbp
 	ret 0
+
 
 	;#---------------------------------------------------ö
 	;|                   WSPACE.OPEN_FILE                |
@@ -1122,11 +1133,16 @@ wspace:
 	mov rcx,[hTree]
 	call tree.set_bold
 
-	mov rcx,rbx
-	call edit.view
+;	mov rcx,rbx
+;	call edit.view
 
 	mov rcx,rbx
 	call .ins_doc
+
+	mov r9,[.labf.hItem]
+	mov rcx,[hTree]
+	call tree.sel_item
+
 	mov rax,rbx
 
 	pop rsi
@@ -1500,7 +1516,6 @@ wspace:
 	pop rbx
 	pop rbp
 	ret 0
-	
 
 	;ü------------------------------------------ö
 	;|     WSPACE.load_items                    |
@@ -1904,7 +1919,6 @@ wspace:
 
 .set_dirC3:
 	;--- no create + exp exist
-;@break
 	mov rcx,rsp
 	xor edx,edx
 	mov r8,rdi
@@ -2730,7 +2744,7 @@ wspace:
 	jmp	winproc.mi_fi_closeA
 ;	mov rcx,rbx
 ;	call .close_file
-;	jmp	winproc.ret1
+;	jmp	winproc.ret0
 
 	;#---------------------------------------------------ö
 	;|      WSPACE.TREE_GDINFO                           |
@@ -2790,7 +2804,6 @@ wspace:
 
 ;	mov rdx,rcx
 ;	jmp	.tree_schgedA
-
 
 	cmp rcx,rdx
 	jz	winproc.ret0

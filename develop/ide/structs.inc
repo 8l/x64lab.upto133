@@ -170,7 +170,7 @@
 	PROJ_MODIFIED	= 1
 
 	struct LABFILE
-					dq 0
+						dq 0
 		union
 			hItem	dq 0	;--- treeitem
 			hRoot	dq 0	;--- treeroot
@@ -181,12 +181,12 @@
 			hBin	dq 0	;--- hex container
 			hView	dq 0	;--- generic view window
 		ends
-		dir		dq 0	;--- slot dir
+		dir			dq 0	;--- slot dir
 
 		alen		dw 0	;--- total available following len
 		cpts		dw 0	;--- cpts, text following item
-		idx		dw 0	;--- index slot,
-		level		db 0	;--- BY SAVING level
+		idx			dw 0	;--- index slot
+						db 0	;---
 		state		db 0	;--- treitem state 
 							;--- TVE_COLLAPSE	= 0001h
 							;--- TVE_EXPAND  	= 0002h
@@ -194,7 +194,7 @@
 		ext		dq 0	;--- extension slot
 
 		type		dw 0	;--- LF_?
-		flags		db 0	;--- states /children/ by saving
+						db 0	;---
 		iBlank	db 0 	;--- index blank
 		iIcon		dd 0	;--- index icon
 		hIcon		dq 0	;--- icon handle

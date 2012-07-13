@@ -508,6 +508,7 @@ winproc:
 		TVITEMW.lParam]
 	test rcx,rcx
 	jz .ret0
+	mov rbx,rcx
 
 	call tree.get_paraft
 	test rax,rax
@@ -520,6 +521,9 @@ winproc:
 	mov r12,.mi_fi_openI
 	mov r13,rdx	;--- parent
 	mov r14,r8	;--- insafter
+
+	mov rax,[.labf.dir]
+	lea r9,[rax+DIR.dir]
 	jmp	.mi_fi_openA
 
 .mi_fi_openO:
@@ -552,6 +556,7 @@ winproc:
 	mov r12,.mi_fi_openO
 	xor r13,r13
 	xor r14,r14
+	xor r9,r9
 
 .mi_fi_openA:
 	mov r8,FOS_ALLOWMULTISELECT\
@@ -651,6 +656,7 @@ winproc:
 	;#------------------------------------------ä
 
 .mi_ws_load:
+	xor r9,r9
 	mov r8,FOS_NODEREFERENCELINKS\
 		or FOS_ALLNONSTORAGEITEMS\
 		or FOS_NOVALIDATE \
@@ -731,6 +737,13 @@ winproc:
 
 	mov r12,rax
 	mov r13,[.labf.hItem]
+	
+	mov r9,r12
+	mov rcx,[hTree]
+	call tree.get_child
+	cmp rax,r13
+	jnz .mi_ed_lnkA
+	mov r13,TVI_FIRST
   jmp .mi_ed_lnkA
 
 	test [.labf.type],\

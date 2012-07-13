@@ -75,11 +75,29 @@ iodlg:
 	jmp	.ret0
 
 .io_btn:
-	 mov r8,FOS_PICKFOLDERS\
-		or FOS_NODEREFERENCELINKS\
-		or FOS_ALLNONSTORAGEITEMS\
-		or FOS_NOVALIDATE \
-		or FOS_PATHMUSTEXIST
+;@break
+	mov r12,[pHu]
+	mov rcx,[.hu.hCbx]
+	call cbex.get_cursel
+	mov rdx,rax
+	inc rax
+	jz	.ret0
+
+	sub rsp,\
+		FILE_BUFLEN
+
+	mov rcx,[.hu.hCbx]
+	mov r8,rsp
+	call cbex.get_item
+	test rdx,rdx
+	jz	.ret0
+
+	lea r9,[rdx+DIR.dir]
+	mov r8,FOS_PICKFOLDERS\
+	 or FOS_NODEREFERENCELINKS\
+	 or FOS_ALLNONSTORAGEITEMS\
+	 or FOS_NOVALIDATE \
+	 or FOS_PATHMUSTEXIST
 	xor edx,edx
 	xor ecx,ecx
 	call [dlg.open]
@@ -95,8 +113,6 @@ iodlg:
 	jz	.ret0
 	
 	mov rbx,rax
-	mov r12,[pHu]
-
 	mov rdx,rax
 	mov rcx,[.hu.hCbx]
 	call cbex.is_param
@@ -118,26 +134,6 @@ iodlg:
 	call apiw.co_taskmf
 	mov rcx,rdi
 	call art.a16free
-	jmp	.ret0
-
-	sub rsp,\
-		FILE_BUFLEN
-	mov rsi,rsp
-
-	push 0
-	push rcx
-	push uzSlash
-	push rdx
-	push rsi
-	push 0
-	call art.catstrw
-
-
-
-
-
-
-
 	jmp	.ret0
 	
 .id_ok:

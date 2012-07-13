@@ -18,6 +18,8 @@ dlg:
 	;--- in RCX title
 	;--- in RDX filespec
 	;--- in R8 flags
+	;--- in R9 startdir
+
 	;--- ret RAX membuf of textptrs: free art.a16free
 	;--- DQ num items
 	;--- DQ PATH,
@@ -32,8 +34,9 @@ dlg:
 	xor eax,eax
 	and rsp,-16
 	mov r12,r8
-	sub rsp,40h
+	sub rsp,50h
 	mov rsi,rsp
+	mov rbx,r9
 
 	@comptr \
 		.pFod,rsi,iFileOpenDialog,\
@@ -42,19 +45,38 @@ dlg:
 		.nItems,rsi+24,dq ?,\
 		.options,rsi+32,dq ?,\
 		.pPath,rsi+40,dq ?,\
-		.title,rsi+48,dq ?,\
-		.fspec,rsi+56,dq ?
+		.pStartShi,rsi+48,iShellItem,\
+		.pRet,rsi+56,dq ?,\
+		.title,rsi+64,dq ?,\
+		.fspec,rsi+72,dq ?
 
 	mov [.title],rcx
 	mov [.fspec],rdx
 
 	mov rdi,rsp
-	mov ecx,6
+	mov ecx,8
 	rep stosq
 	xor edi,edi		;--- ret value
 		
 	call apiw.co_init
 
+	test rbx,rbx
+	jz	.openF
+
+	mov rcx,rbx
+	sub rsp,20h
+	lea r9,[.pStartShi]
+	lea r8,[iid_Shi]
+	xor edx,edx
+	call [SHCreateItemFromParsingName]
+	add rsp,20h
+	test eax,eax
+	jnl	.openF
+
+	xor eax,eax
+	mov [.pStartShi],rax
+
+.openF:
 	lea r10,[.pFod]
 	mov r9,iid_FileOD
 	mov r8,1
@@ -97,18 +119,17 @@ dlg:
 	;mov dword[.options],\
 
 	mov rdx,r12
-;		FOS_ALLOWMULTISELECT\
-;		or FOS_NODEREFERENCELINKS\
-;		or FOS_ALLNONSTORAGEITEMS\
-;		or FOS_NOVALIDATE \
-;		or FOS_PATHMUSTEXIST
-
-	;mov rdx,[.options]
 	@comcall .pFod->\
 		SetOptions
 	test eax,eax
 	jl	.openE
 
+	mov rdx,[.pStartShi]
+	test rdx,rdx
+	jz	.openD2
+	@comcall .pFod->SetFolder
+
+.openD2:
 	xor edx,edx
 	@comcall .pFod->Show
 	test eax,eax
@@ -157,11 +178,10 @@ dlg:
 	mov rdi,rax
 	mov [rdi],rbx
 	add rdi,8
-;@break
 	neg rbx
 	
 	dec rbx
-	mov [rsi+48],rax	
+	mov [.pRet],rax	
 	jmp .openA2
 
 .openA:
@@ -193,7 +213,7 @@ dlg:
 	add rdi,8
 	inc rbx
 	jnz	.openA
-	mov rdi,[rsi+48]
+	mov rdi,[.pRet]
 
 .openC:
 	@comcall .pShia->\
@@ -204,6 +224,14 @@ dlg:
 		iUnknown.Release
 
 .openE:
+	mov rax,[.pStartShi]
+	test rax,rax
+	jz	.openE1
+	
+	@comcall .pStartShi->\
+		iUnknown.Release
+
+.openE1:
 	call apiw.co_uninit
 	mov rax,rdi
 	mov rsp,rbp

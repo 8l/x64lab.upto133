@@ -158,6 +158,10 @@
 		iid_FileOD GUID D57C7288-D4AD-4768-BE02-9D969532D960
 	@endusing
 
+	@using iid_Shi
+		iid_Shi	GUID 43826D1E-E718-42EE-BC55-A1E261C37BFE
+	@endusing
+
 	@using clsid_FileOD
 		clsid_FileOD 	GUID DC1C5A9C-E88A-4DDE-A5A1-60F82A20AEF7
 	@endusing
@@ -177,7 +181,8 @@
 	@using clsid_FolderView
 		clsid_FolderView	GUID CDE725B0-CCC9-4519-917E-325D72FAB4CE
 	@endusing
-	
+
+
 	virtual at 0
 	struc iUnknown {
 		.QueryInterface dq ?

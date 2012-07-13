@@ -1,4 +1,8 @@
 
+- version 0.0.91 (released on 13.07.2012 ) " ... " 
+  + improving behaviour by folder orientation
+  + corrected bug by Save All
+
 - version 0.0.86 (released on 09.07.2012 ) " ... " 
   + improving behaviour by Save All
 

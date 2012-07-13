@@ -799,8 +799,10 @@ cbex:
 	mov r9,rax
 	mov edx,CBEM_GETITEMW
 	call apiw.sms
+
 	test rax,rax
 	jz	.get_itemA
+
 	mov rax,[rsp+\
 		COMBOBOXEXITEMW.iItem]
 	mov rcx,[rsp+\

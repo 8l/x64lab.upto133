@@ -273,37 +273,15 @@ tree:
 	jmp	.get_next
 
 	
-;	;#-------------------------------------------------ö
-;	;|                   HASCHILDREN                   |
-;	;ö-------------------------------------------------ü
-
-;proc .haschildren
-;	local .tvi:TV_ITEM
-;	mov [.tvi.mask],TVIF_CHILDREN or TVIF_HANDLE	
-;	mov [.tvi.hItem],eax
-;	lea eax,[.tvi]
-;	call tree.getitem
-;	test eax,eax
-;	jz	.err_hc
-;	mov eax,[.tvi.cChildren]
-;	test eax,eax
-;	jz	.err_hc
-;	mov eax,[.tvi.hItem]
-;	call tree.getchild
-;.err_hc:
-;	ret
-;endp
-
 	;#-----------------------------------------ö
 	;|             LIST (item-params)          |
 	;ä-----------------------------------------ü
 
 .list:
 	;--- uses RDX startitem
-	;--- uses RBX level
 	;--- uses RDI capable buffer nItems * 8
 	;--- uses RSI datalen of text
-	
+
 	sub rsp,\
 		sizeof.TVITEMW
 
@@ -314,32 +292,25 @@ tree:
 	test eax,eax
 	jz	.listE
 
-	mov rax,[rsp+\
+	mov rbx,[rsp+\
 		TVITEMW.lParam]
 	
 	mov ecx,[rsp+\
 		TVITEMW.cChildren]
+	and ecx,1
 
 	mov rdx,[rsp+\
 		TVITEMW.hItem]
-
-	test rax,rax
+	
+	test rbx,rbx
 	jz	.listE
 
-	movzx r8,[rax+\
-		LABFILE.alen]
+	mov rax,rbx
+	movzx r8,[.labf.alen]
 	add rsi,r8
-
-	mov [rax+\
-		LABFILE.level],bl
-	
-	mov [rax+\
-		LABFILE.flags],cl
-
 	stosq
 	dec ecx
 	js .listA
-	inc bl
 
 .listC:
 	push rdx
@@ -360,7 +331,6 @@ tree:
 	jnz	.listD
 
 .listE:
-	dec bl
 	add rsp,\
 		sizeof.TVITEMW
 	ret 0
