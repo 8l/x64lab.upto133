@@ -1046,7 +1046,6 @@ wspace:
 	call art.fclose
 
 	mov rbx,[pLabfWsp]
-
 	and [.labf.type],\
 			not LF_MODIF
 
@@ -1058,6 +1057,7 @@ wspace:
 		not LF_BLANK
 
 	mov rsi,[pIo]
+	add rsi,IO_SAVEWSP
 	mov rax,[.io.ldir]
 	mov [.labf.dir],rax
 
@@ -1065,7 +1065,6 @@ wspace:
 	lea rdx,[rbx+\
 		sizeof.LABFILE]
 	call utf16.copyz
-	;----
 
 	sub rsp,\
 		sizeof.TVITEMW

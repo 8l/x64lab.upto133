@@ -462,7 +462,6 @@ winproc:
 	;#------------------------------------------ä
 
 .mi_ws_exit:
-;@break
 	xor r9,r9
 	xor r8,r8
 	mov rdx,WM_CLOSE
@@ -562,7 +561,6 @@ winproc:
 	mov r8,FOS_ALLOWMULTISELECT\
 		or FOS_NODEREFERENCELINKS\
 		or FOS_ALLNONSTORAGEITEMS\
-		or FOS_NOVALIDATE \
 		or FOS_PATHMUSTEXIST
 	xor edx,edx
 	xor ecx,ecx

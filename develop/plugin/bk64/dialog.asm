@@ -127,7 +127,7 @@ dlg:
 	mov rdx,[.pStartShi]
 	test rdx,rdx
 	jz	.openD2
-	@comcall .pFod->SetFolder
+	@comcall .pFod->SetDefaultFolder
 
 .openD2:
 	xor edx,edx
@@ -135,7 +135,6 @@ dlg:
 	test eax,eax
 	jl	.openE
 
-;@break
 	lea rdx,[.pShi]
 	xor eax,eax
 	mov [rdx],rax
