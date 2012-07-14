@@ -34,7 +34,7 @@ dlg:
 	xor eax,eax
 	and rsp,-16
 	mov r12,r8
-	sub rsp,50h
+	sub rsp,60h
 	mov rsi,rsp
 	mov rbx,r9
 
@@ -48,7 +48,9 @@ dlg:
 		.pStartShi,rsi+48,iShellItem,\
 		.pRet,rsi+56,dq ?,\
 		.title,rsi+64,dq ?,\
-		.fspec,rsi+72,dq ?
+		.fspec,rsi+72,dq ?,\
+		.tmpShi,rsi+80,iShellItem,\
+		.dummy,rsi+88,dq ?
 
 	mov [.title],rcx
 	mov [.fspec],rdx
@@ -119,39 +121,21 @@ dlg:
 	;mov dword[.options],\
 
 	mov rdx,r12
-	@comcall .pFod->\
-		SetOptions
+	@comcall .pFod->SetOptions
 	test eax,eax
 	jl	.openE
 
 	mov rdx,[.pStartShi]
 	test rdx,rdx
 	jz	.openD2
-	@comcall .pFod->SetDefaultFolder
+	;@comcall .pFod->SetDefaultFolder
+	@comcall .pFod->SetFolder
 
 .openD2:
 	xor edx,edx
 	@comcall .pFod->Show
 	test eax,eax
 	jl	.openE
-
-	lea rdx,[.pShi]
-	xor eax,eax
-	mov [rdx],rax
-	@comcall .pFod->GetFolder
-	test eax,eax
-	jl	.openB
-
-	lea r8,[.pPath]
-	mov rdx,SIGDN_FILESYSPATH
-	@comcall .pShi->GetDisplayName
-	mov rbx,rax
-
-	@comcall .pShi->\
-		iUnknown.Release
-
-	test ebx,ebx
-	jl	.openB
 
 	lea rdx,[.pShia]
 	@comcall .pFod->GetResults
@@ -161,12 +145,32 @@ dlg:
 	lea rdx,[.nItems]
 	@comcall .pShia->GetCount
 	mov rbx,[.nItems]
-
 	test eax,eax
 	jl	.openC
 	test ebx,ebx
 	jz	.openC
 
+	lea r8,[.tmpShi]
+	xor edx,edx
+	@comcall .pShia->GetItemAt
+	test eax,eax
+	jl	.openC
+
+	lea rdx,[.pShi]
+	@comcall .tmpShi->GetParent	
+	test eax,eax
+	jl	.openC
+
+	lea r8,[.pPath]
+	mov rdx,SIGDN_FILESYSPATH
+	@comcall .pShi->GetDisplayName
+
+	@comcall .tmpShi->\
+		iUnknown.Release
+
+	@comcall .pShi->\
+		iUnknown.Release
+	
 	mov rcx,rbx
 	add ecx,4			;--- 1 ppath + 1 nitems 2zero
 	shl ecx,3

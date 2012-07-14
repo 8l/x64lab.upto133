@@ -39,12 +39,12 @@ Summary:
 
    x64lab is an assembler framework. it is written
    completely in assembly using fasm and other tools. 
-   it is aimed mainly as a framework for assembly programmers.
+   it is aimed mainly as a framework to assembly programmers.
 
 -2 Why mostly assembly coding ?
 
    because assembly is the most successful method
-   to gain control over the machine. after having 
+   to gain control of the machine. once having 
    understood the basic concepts, assembly coding speed up 
    your coding of hundreds times. i speak for my personal
    experience; what we need now is organization of our tools,
@@ -53,8 +53,8 @@ Summary:
 
 -3 Why x64lab is free and opensource ?
 
-   because it aims at being technology. Technology
-   is the expression of human capabilities. Technology
+   because it aims at being technology. technology
+   is the expression of human capabilities. technology
    should be free for all to learn, improve and apply.
 
 -4 Is it only Windows ?
@@ -85,6 +85,9 @@ Summary:
    -----------------------------------------------------------------
 
 -7 Compile notes:
+   - i am compiling it using fasm 1.69.34. for eventual
+     problems using newer versions of fasm, please let me know.
+     i wil try to adapt it.
 
    - download the latest version of fasm assembler
      from http://flatassembler.net/download.php
@@ -131,17 +134,17 @@ Summary:
     with this file, You can obtain one at http://mozilla.org/MPL/2.0/ or read
     it from the file LICENSE.TXT
 
-   - x64lab is Copyright © 2009-2012,Marc Rainer Kranz
+   - x64lab is Copyright © 2009-2012, Marc Rainer Kranz
 
-   - dock64,top64,lang plugins are under the MPL2.0 license as above
+   - dock64,top64,lang plugins are under the MPL 2.0 license as above
      but as separated modules
 
    - Fasm is Copyright © 2004-2012, Tomasz Grysztar.
 
-   - Scilexer,Scintilla is Copyright 1998-2003 by Neil Hodgson
+   - Scilexer, Scintilla is Copyright 1998-2003 by Neil Hodgson
 
    - files in the [equates\] folder are my own modifications from
-     public domain provided by madmatt.
+     excellent public domain provided by madmatt.
 
    - file macro\unsupported.inc is public domain
 
@@ -158,7 +161,7 @@ Summary:
    - x64lab can load/unload DLL files at run-time, plugins
      and languages too. i use this load/unload method i thought up,
      just because i wanted to solve the problem about languages 
-     (having them on-demand and unloading/loading them whithout 
+     (having them on-demand and unloading/loading them without 
      needing to relaunch the application)
 
    - x64lab uses a docking system i built taking inspiration from
@@ -169,12 +172,16 @@ Summary:
    - x64lab uses very few unicode routine, whose methods 
      i am very proud of.
 
+   - x64lab introduces a new feature of file/folder organization.
+     i call it "folder orientation" and smartlinks. this should
+     reduce mad clicking by 2/3.
+
    - x64lab works good but it is not perfect and still in ALPHA.
      you can do whatever you want with my code. the guideline
      of using my code are set in the MPL 2.0 license.
      the MPL 2.0 license allows us to build for example a plugin
      and use it in x64lab whatever its internal code may be: 
-     open source or not, freeware,shareware etc.
+     open source or not, freeware, shareware etc.
 
    - x64lab uses config files in a proprietary format called
      TOP (Text Object Parser) format. i invented that format and

@@ -1,8 +1,6 @@
 
-- version 0.0.92 (released on 13.07.2012 ) " ... " 
-  + improving behaviour by SetDefaultFolder
-
-- version 0.0.91 (released on 13.07.2012 ) " ... " 
+- version 0.0.93 (released on 14.07.2012 ) alpha 
+  + improving behaviour by SetFolder
   + improving behaviour by folder orientation
   + corrected bug by Save All
 
