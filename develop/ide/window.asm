@@ -77,9 +77,10 @@ win:
 	mov r9,WS_CHILD\
 		or WS_VISIBLE\
 		or LVS_REPORT
+	;mov r9,0x50810105
 	xor r8,r8
 	mov rdx,uzLViewClass
-	mov rcx,WS_EX_WINDOWEDGE
+	mov rcx,WS_EX_WINDOWEDGE;WS_EX_STATICEDGE;0;
 	call r12
 	test rax,rax
 	jz .controlsE
@@ -210,7 +211,6 @@ win:
 	pop r12
 	pop rbp
 	ret 0
-
 
 .set_text:
 	xor r8,r8

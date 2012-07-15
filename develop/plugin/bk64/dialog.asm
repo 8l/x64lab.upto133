@@ -20,10 +20,16 @@ dlg:
 	;--- in R8 flags
 	;--- in R9 startdir
 
+	;--- on SINGLE SELECT
+	;--- ret RAX path+filename
+
+	;--- on FOS_ALLOWMULTISELECT
+	;------------------------------------------------
 	;--- ret RAX membuf of textptrs: free art.a16free
 	;--- DQ num items
 	;--- DQ PATH,
 	;--- DQ text pointers: free using CoTaskMemFree
+
 	push rbp
 	push rbx
 	push rdi
@@ -50,7 +56,7 @@ dlg:
 		.title,rsi+64,dq ?,\
 		.fspec,rsi+72,dq ?,\
 		.tmpShi,rsi+80,iShellItem,\
-		.dummy,rsi+88,dq ?
+		.pFile,rsi+88,dq ?
 
 	mov [.title],rcx
 	mov [.fspec],rdx
@@ -92,83 +98,119 @@ dlg:
 	xchg rdx,[.title]
 	test rdx,rdx
 	mov [.title],rax
-	jz	.openD
+	jz .openD
 
 	@comcall .pFod->SetTitle
 	test eax,eax
-	jl	.openE
+	jl .openE
 
 .openD:
 	xor eax,eax
 	xchg rcx,[.fspec]
 	test rcx,rcx
 	mov [.fspec],rax
-	jz	.openD1
+	jz .openD1
 
 	mov rdx,[rcx]
 	lea r8,[rcx+8]
 	and edx,0FFh		
 	@comcall .pFod->SetFileTypes
 	test eax,eax
-	jl	.openE
+	jl .openE
 	
 .openD1:
-;	lea rdx,[.options]
-;	@comcall .pFod->\
-;		GetOptions
-;	test eax,eax
-;	jl	.open_fdE
-	;mov dword[.options],\
-
 	mov rdx,r12
 	@comcall .pFod->SetOptions
 	test eax,eax
-	jl	.openE
+	jl .openE
 
 	mov rdx,[.pStartShi]
 	test rdx,rdx
 	jz	.openD2
-	;@comcall .pFod->SetDefaultFolder
 	@comcall .pFod->SetFolder
 
 .openD2:
 	xor edx,edx
 	@comcall .pFod->Show
 	test eax,eax
-	jl	.openE
+	jl .openE
 
-	lea rdx,[.pShia]
-	@comcall .pFod->GetResults
-	test eax,eax
-	jl	.openB
+	test r12,\
+		FOS_ALLOWMULTISELECT
+	jnz .openMS
 
-	lea rdx,[.nItems]
-	@comcall .pShia->GetCount
-	mov rbx,[.nItems]
-	test eax,eax
-	jl	.openC
-	test ebx,ebx
-	jz	.openC
-
-	lea r8,[.tmpShi]
-	xor edx,edx
-	@comcall .pShia->GetItemAt
-	test eax,eax
-	jl	.openC
-
+.openSS:
+	;--- single selection -------
+	xor rbx,rbx
 	lea rdx,[.pShi]
-	@comcall .tmpShi->GetParent	
+	@comcall .pFod->GetResult
 	test eax,eax
-	jl	.openC
+	jl .openB
 
 	lea r8,[.pPath]
 	mov rdx,SIGDN_FILESYSPATH
 	@comcall .pShi->GetDisplayName
 
-	@comcall .tmpShi->\
+	;--- check FOLDERS root is X:\0 unicode
+	;--- remove backslash ----------------
+	xor ecx,ecx
+	mov rax,[.pPath]
+	test rax,rax
+	jz .openSSA
+	cmp cx,[rax+6]
+	jnz	.openSSA
+	mov [rax+4],cx
+	
+.openSSA:
+	mov rdi,[.pPath]
+	@comcall .pShi->\
+		iUnknown.Release
+	jmp .openB
+
+.openMS:
+	lea rdx,[.pShia]
+	@comcall .pFod->GetResults
+	test eax,eax
+	jl .openB
+
+	lea rdx,[.nItems]
+	@comcall .pShia->GetCount
+	mov rbx,[.nItems]
+	test eax,eax
+	jl .openC
+	test ebx,ebx
+	jz .openC
+
+	lea r8,[.tmpShi]
+	xor edx,edx
+	@comcall .pShia->GetItemAt
+	test eax,eax
+	jl .openC
+
+.openD6:
+	lea rdx,[.pShi]
+	@comcall .tmpShi->GetParent
+	test eax,eax
+	jl .openC
+
+	lea r8,[.pPath]
+	mov rdx,SIGDN_FILESYSPATH
+	@comcall .pShi->GetDisplayName
+
+	;--- case path is root is X:\0 unicode
+	;--- remove backslash ----------------
+	xor ecx,ecx
+	mov rax,[.pPath]
+	cmp cx,[rax+6]
+	jnz	.openD3
+	mov [rax+4],cx
+
+.openD3:
+	@comcall .pShi->\
 		iUnknown.Release
 
-	@comcall .pShi->\
+.openD4:
+	@comcall .tmpShi->\
 		iUnknown.Release
 	
 	mov rcx,rbx
@@ -198,14 +240,14 @@ dlg:
 	@comcall .pShia->\
 		GetItemAt
 	test eax,eax
-	jl	.openC
+	jl .openC
 
 	lea r8,[.pPath]
 	mov rdx,SIGDN_NORMALDISPLAY
 	@comcall .pShi->\
 		GetDisplayName
 	test eax,eax
-	jl	.openC
+	jl .openC
 
 	@comcall .pShi->\
 		iUnknown.Release
@@ -229,7 +271,7 @@ dlg:
 .openE:
 	mov rax,[.pStartShi]
 	test rax,rax
-	jz	.openE1
+	jz .openE1
 	
 	@comcall .pStartShi->\
 		iUnknown.Release
@@ -237,6 +279,7 @@ dlg:
 .openE1:
 	call apiw.co_uninit
 	mov rax,rdi
+	mov rdx,rbx
 	mov rsp,rbp
 	pop r12
 	pop rsi

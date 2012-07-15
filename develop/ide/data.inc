@@ -132,28 +132,28 @@ section '.data' data readable writeable
 		RJU equ MFT_RIGHTJUSTIFY
 
 		@mnp MP_WSPACE,	0,0,ISS,\
-			MI_WS_LOAD,		1,OWN,DIF,\
+			MI_WS_LOAD,		9,OWN,DIF,\
 			-1,\
 			MI_WS_NEW,		0,OWN,DIF,\
 			-1,\
-			MI_WS_SAVE,		2,OWN,DIF,\
+			MI_WS_SAVE,		3,OWN,DIF,\
 			-1,\
-			MI_WS_EXIT,		24,OWN,DIF
+			MI_WS_EXIT,		7,OWN,DIF
 
 		@mnp MP_FILE,		0,0,ISS,\
-			MI_FI_OPEN,		1,OWN,DIF,\
-			MI_FI_IMP,		20,OWN,DIF,\
+			MI_FI_OPEN,		4,OWN,DIF,\
+			MI_FI_IMP,		6,OWN,DIF,\
 			-1,\
 			MI_FI_NEWB,		0,OWN,DIF,\
-			MI_FI_NEWF,		0,OWN,DIF,\
+			MI_FI_NEWF,		1,OWN,DIF,\
 			-1,\
 			MI_FI_SAVE,		2,OWN,DIF,\
 			-1,\
-			MI_FI_CLOSE,	21,OWN,DIF
+			MI_FI_CLOSE,	5,OWN,DIF
 
 		@mnp MP_EDIT,		0,0,ISS,\
 			MP_WSPACE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
-			MI_ED_LNK,0,OWN,DIF,\
+			MI_ED_LNK,8,OWN,DIF,\
 			UZ_EDIT_PANE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
 			;--- MI_ED_REM,7,OWN,DIF
 			

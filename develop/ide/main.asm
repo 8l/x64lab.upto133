@@ -665,33 +665,23 @@ winproc:
 	test rax,rax
 	jz	.ret0
 
-	mov rbx,rax					;--- pnum items
-	mov rdx,[rax+8]			;--- ppath
-	mov rcx,[rax+16]		;--- files
-
+	mov rbx,rax
 	sub rsp,\
 		FILE_BUFLEN
 	mov rsi,rsp
 
-	push 0
-	push rcx
-	push uzSlash
-	push rdx
-	push rsi
-	push 0
-	call art.catstrw
+	mov rdx,rsp
+	mov rcx,rax
+	call utf16.copyz
 
-	mov rcx,[rbx+8]
-	call apiw.co_taskmf
-	mov rcx,[rbx+16]
-	call apiw.co_taskmf
 	mov rcx,rbx
-	call art.a16free
+	call apiw.co_taskmf
 	jmp	.mi_ws_newA
 
 	;ü------------------------------------------ö
 	;|     WS_NEWLNK                            |
 	;#------------------------------------------ä
+
 .mi_ed_lnk:
 	sub rsp,\
 		sizeof.TVITEMW
@@ -756,6 +746,7 @@ winproc:
 	mov rcx,IO_NEWLNK
 	mov rdx,rbx
 	mov rax,[.labf.dir]
+
 	add rsi,rcx
 	mov [.io.ldir],rax
 	call iodlg.start

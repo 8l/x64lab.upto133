@@ -10,7 +10,6 @@
   ;| update:
   ;| filename:
   ;ö-------------------------------------------------ä
-
 iodlg:
 	virtual at rsi
 		.io	IODLG
@@ -92,11 +91,16 @@ iodlg:
 	test rdx,rdx
 	jz	.ret0
 
+	mov r10,[rdx+DIR.rdir]
 	lea r9,[rdx+DIR.dir]
+	test [rdx+DIR.type],\
+		DIR_HASREF
+	jz	.io_btnB
+	lea r9,[r10+DIR.dir]
+
+.io_btnB:
 	mov r8,FOS_PICKFOLDERS\
 	 or FOS_NODEREFERENCELINKS\
-	 or FOS_ALLNONSTORAGEITEMS\
-	 or FOS_NOVALIDATE \
 	 or FOS_PATHMUSTEXIST
 	xor edx,edx
 	xor ecx,ecx
@@ -104,14 +108,18 @@ iodlg:
 	test rax,rax
 	jz	.ret0
 
-	mov rdi,rax					;--- pnum items
+	mov rdi,rax
 	xor r8,r8
-	mov rdx,[rdi+16]		;--- files
-	mov rcx,[rdi+8]			;--- ppath
+	xor edx,edx
+	mov rcx,rdi				;--- path+fname
 	call wspace.set_dir
 	test eax,eax
-	jz	.ret0
-	
+	jz	.io_btnE
+
+	;--- bug: on no selection on Explorer's root (edit = "Computer") gets back
+	;--- C:\Users\marc\AppData\Roaming\Microsoft\Windows\Network Shortcuts
+	;--- but no Computer exists
+
 	mov rbx,rax
 	mov rdx,rax
 	mov rcx,[.hu.hCbx]
@@ -128,12 +136,9 @@ iodlg:
 	mov rcx,[.hu.hCbx]
 	call cbex.sel_item
 
-	mov rcx,[rdi+8]
-	call apiw.co_taskmf
-	mov rcx,[rdi+16]
-	call apiw.co_taskmf
+.io_btnE:
 	mov rcx,rdi
-	call art.a16free
+	call apiw.co_taskmf
 	jmp	.ret0
 	
 .id_ok:
@@ -175,6 +180,10 @@ iodlg:
 	inc rax
 	cmovz rdx,rax
 	mov [.io.ldir],rdx
+
+	xor r8,r8
+	lea rdx,[.io.buf]
+	mov [rdx],r8
 
 	mov r9,rsp
 	mov rcx,[.hu.hEdi]

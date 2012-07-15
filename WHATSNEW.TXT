@@ -1,5 +1,6 @@
 
-- version 0.0.93 (released on 14.07.2012 ) alpha 
+- version 0.0.94 (released on 15.07.2012 ) " ... " 
+  + improving behaviour on smartlink
   + improving behaviour by SetFolder
   + improving behaviour by folder orientation
   + corrected bug by Save All
