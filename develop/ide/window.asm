@@ -237,7 +237,11 @@ iml:
 .create:
 	mov rax,[ImageList_Create]
 	jmp	apiw.prologP
-	
+
+.destroy:
+	mov rax,[ImageList_Destroy]
+	jmp	apiw.prologP
+
 .add_masked:
 	mov rax,[ImageList_AddMasked]
 	jmp	apiw.prolog0
@@ -246,14 +250,15 @@ iml:
 	mov rax,[ImageList_GetImageCount]
 	jmp	apiw.prolog0
 
-.load_img:
+.load_bmp:
+	;--- in R11 flags
 	push rbp
 	mov rbp,rsp
 	and rsp,-16
 	push 0			;--- hold align 16
 	push r11
 	mov rax,[ImageList_LoadImageW]
-	xor r11,r11	;--- uType IMAGE_BITMAP
+	xor r11,r11	;--- uType IMAGE_BITMAP = 0
 	jmp	apiw.prologQ
 
 .draw:

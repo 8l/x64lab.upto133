@@ -11,8 +11,6 @@
   ;| filename:
   ;ö-------------------------------------------------ä
 
-
-
 section '.data' data readable writeable
 	curDir	dq sizeof.DIR
 	dirHash	dq 400h*8
@@ -25,9 +23,10 @@ section '.data' data readable writeable
 	pIo			dq sizeof.IODLG * 4
 	pHu			dq sizeof.HU
 	pEdit		dq sizeof.EDIT
+	pTime		dq sizeof.SYSTIME
 	pKeya		dq (MI_OTHER-MNU_X64LAB) * sizeof.KEYA
 	NUM_ITEMS = ($-curDir)/8
-
+	
 	pOmni		dq 0
 	hSciDll	dq 0
 	hDocker	dq 0
@@ -62,13 +61,13 @@ section '.data' data readable writeable
 
 	match n,\`MAINCLASS {	uzClass	du n,0 }
 	match =TRUE,DEBUG {
-		uzTitle du TITLE," (DEBUG) ",0
+		uzTitle du TITLE," (DEBUG) "
 	}
 	match =FALSE,DEBUG {
 		uzTitle du TITLE," v. "
-		match v,VERSION \{
-      szVersion du \`v,0 \}
 	}
+	match v,VERSION {
+    uzVers du `v,0 }
 
 		lfMnuSize	SIZE 18,16
 		szCharExt 	db "_999999",0
@@ -88,9 +87,6 @@ section '.data' data readable writeable
 		uzToolName 	du "tool",0
 		uzMenuName	du "menu",0
 
-		uzCurLang		du CFG_DEF_LANG,0
-								db (16 - ($- uzCurLang)) dup (0)
-
 		uzDefault  du "default"		;<--- follows
 		uzLabExt   du "."
 		uzAppName  du TITLE,0
@@ -101,6 +97,7 @@ section '.data' data readable writeable
 		uzEmfExt   du ".emf",0
 		uzExeExt   du ".exe",0
 		uzSciExt   du ".sci",0
+		uzBmpExt	 du ".bmp",0
 
 		uzTreeClass	du "SysTreeView32",0
 		uzLViewClass du "SysListView32",0
@@ -164,6 +161,31 @@ section '.data' data readable writeable
 			MI_PA_COPY,		18,OWN,DIF,\
 			MI_PA_SETPROP,18,OWN,DIF
 		
+	
+
+		;--- utf8 strings for config/config.utf8 items
+		macro @cfg_items [argid,argval]{
+		 forward
+			;--- because string must be "utf-8" not ascii
+			sz_#argid db argval,0
+		 }
+
+		@cfg_items\
+		 wspace,"wspace",\
+		 version,"version",\
+		 session,"session",\
+	 	 fshow,"fshow",\
+		 cons,"cons",\
+		 docs,"docs",\
+		 prop,"prop",\
+		 pos,"pos",\
+		 tree,"tree",\
+		 bkcol,"bkcol",\
+		 language,"language",\
+		 owner,"owner",\
+		 cdate,"cdate",\
+		 ctime,"ctime",\
+		 atime,"atime"
 
 		display "--- Size of data "
 		display_decimal $-$$

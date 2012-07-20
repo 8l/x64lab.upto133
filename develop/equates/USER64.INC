@@ -172,10 +172,6 @@
 		szText		dw ?
 	ends
 
-
-
-
-
 ;--------------------------------------------
 
 struct SCROLLINFO
@@ -207,20 +203,20 @@ struct WINDOWPLACEMENT
 ends
 
 struct WINDOWPOS
-  hwnd		  dq ?
+  hwnd	dq ?
   hwndInsertAfter dq ?
   x		  dd ?
   y		  dd ?
-  cx		  dd ?
-  cy		  dd ?
-  flags 	  dd ?,?
+  cx		dd ?
+  cy		dd ?
+  flags dd ?,?
 ends
 
 struct NMHDR
  hwndFrom dq ?
  idFrom	dq ?
  code		dd ?
-			dd ?
+			  dd ?
 ends
 
 

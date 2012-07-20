@@ -8,6 +8,7 @@ copy version.txt ..\ /Y
 copy LICENSE.TXT ..\ /Y
 copy README.TXT ..\ /Y
 
+copy config\x64lab.bmp ..\config /Y
 copy plugin\lang\en\lang.dll ..\plugin\lang\en /Y
 copy plugin\dock64.dll ..\plugin /Y
 copy plugin\bk64.dll ..\plugin /Y

@@ -100,10 +100,16 @@
 			BB_LABEL,0,U8+UR,db "Labels",\
 			BB_MACRO,0,U8+UR,db "Macro",\
 			BB_PROC,0,U8+UR,db "Procs and Calleé",\
+			BB_PROCESS,0,U8+UR,db "Processes",\
 			BB_REG,0,U8+UR,db "Registers",\
 			BB_RET,0,U8+UR,db "Returns",\
+			BB_SYS,0,U8+UR,db "System",\
+			BB_AKEY,0,U8+UR,db "Assigned Key",\
 			UZ_INFO_LNK,0,U8+UR,db "Create a new smartlink",\
 			UZ_LNK_NAME,0,U8+UR,db "smartlinkname",\
 			UZ_LNK_MAP,0,U8+UR,db "mapped by",\
-			UZ_LNK_DESC,0,U8+UR,db "Choose a directory as reference"
+			UZ_LNK_DESC,0,U8+UR,db "Choose a directory as reference",\
+			UZ_DATEFRM,0,U8+UR,db "dddd','dd'.'MMMM'.'yyyy",\
+			UZ_TIMEFRM,0,U8+UR,db "HH':'mm':'ss",\
+			UZ_DEFUSER,0,U8+UR,db "Mr.Biberkopf"
 

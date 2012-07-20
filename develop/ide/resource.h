@@ -3,7 +3,7 @@
 #endif
 
 #define ICO_X64LAB                              3
-#define BMP_X64LAB                              4
+
 #define IO_DLG                                  1024
 #define IO_STC1                                 1025
 #define IO_STC2                                 1026
@@ -22,10 +22,10 @@
 #define PROP_CBX_FILT                           2050
 #define PROP_PRG                                2051
 #define PROP_LVIEW                              2052
-#define KEY_DLG                                 2304
-#define KEY_LVIEW                               2305
-#define KEY_HOT                                 2306
-#define KEY_SET                                 2307
+
+
+
+
 #define PLUG_DLG                                2560
 #define PLUG_TAB                                2561
 #define EDIT_DLG                                2816

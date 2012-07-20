@@ -168,8 +168,6 @@ apiw:
 	jmp	.prolog0
 @endusing
 
-
-
 @using .mnu_loadi
 .mnu_loadi:
 	mov rax,[LoadMenuIndirectW]
@@ -485,8 +483,6 @@ apiw:
 	jmp	.prolog0
 @endusing
 
-
-
 @using .patblt
   ;--- in RCX hdc
   ;--- in RDX nXLeft
@@ -640,6 +636,14 @@ apiw:
 	jmp	.prolog0
 @endusing
 
+@using .get_winplacem
+.get_winplacem:
+	;--- in RCX hwnd
+	;--- in RDX struct
+	mov rax,[GetWindowPlacement]
+	jmp	.prolog0
+@endusing
+
 @using .get_curspos
 	;--- in RCX LPPOINT
 .get_curspos:
@@ -690,11 +694,10 @@ apiw:
 	jmp	.prolog0
 @endusing
 
-
-
    ;ü------------------------------------------ö
    ;|   window managing                        |
    ;#------------------------------------------ä
+
 @using .beg_defwpos
 .beg_defwpos:
 	mov rax,[BeginDeferWindowPos]
@@ -1201,4 +1204,22 @@ apiw:
 .co_uninit:
 	mov rax,[CoUninitialize]
 	jmp	.prolog0
-@endusing	
+@endusing
+
+
+	;#---------------------------------------------------ö
+	;|           ADVAPI                                  |
+	;ö---------------------------------------------------ü
+
+@using .get_usrname
+  ;--- in RCX LPTSTR lpBuffer,
+  ;--- in RDX LPDWORD lpnSize
+.get_usrname:
+	mov rax,[GetUserNameW]
+	jmp	.prolog0
+@endusing
+
+	
+
+
+

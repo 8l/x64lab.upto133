@@ -66,3 +66,11 @@ PLUG_HOST			= 10h	;container
 	USE_SYSERRSTR equ 2
 	USE_CURMODULE	equ 4
 
+
+	struct SYSTIME
+		systime	SYSTEMTIME
+		uzTmFrm	db 64 dup (0)  ;--- "' - 'HH':'mm':'ss",0
+		uzDtFrm	db 128 dup (0) ;--- "'['dddd'] - 'dd'.'MMMM'.'yyyy",0
+		uzTmBuf	db 128 dup (0)
+		uzDtBuf	db FILE_BUFLEN dup (0)
+	ends

@@ -1625,7 +1625,8 @@ end if
 	push rbp
 	mov rbp,rsp
 	and rsp,-16
-	sub rsp,sizeof.SYSTEMTIME
+	sub rsp,\
+		sizeof.SYSTEMTIME
 	mov rcx,rsp
 	sub rsp,20h
 	call [GetLocalTime]
@@ -1636,15 +1637,16 @@ end if
 	ret 0
 @endusing
 
-@using .st2ft
+@using .syst2ft
 	;--- in RAX systemdate
 	;--- in RDX systemtime
 	;--- ret RAX filetime
-.st2ft:
+.syst2ft:
 	push rbp
 	mov rbp,rsp
 	and rsp,-16
-	sub rsp,16+sizeof.SYSTEMTIME
+	sub rsp,16+\
+		sizeof.SYSTEMTIME
 
 	mov rcx,rsp
 	mov [rcx+8],rdx
@@ -1652,7 +1654,8 @@ end if
 	lea rdx,[rsp+16]
 	sub rsp,20h
 	call [SystemTimeToFileTime]
-	mov rcx,qword[rsp+20h+16]
+	mov rcx,\
+		qword[rsp+20h+16]
 	mov rsp,rbp
 	test rax,rax
 	pop rbp
@@ -1660,15 +1663,16 @@ end if
 	ret 0
 @endusing
 
-@using .ft2st
+@using .ft2syst
 	;--- in RAX filetime
 	;--- RET RAX systemdate
 	;--- RET RDX systemtime
-.ft2st:
+.ft2syst:
 	push rbp
 	mov rbp,rsp
 	and rsp,-16
-	sub rsp,16+sizeof.SYSTEMTIME
+	sub rsp,16+\
+		sizeof.SYSTEMTIME
 	mov rcx,rsp
 
 	lea rdx,[rsp+16]
@@ -1683,8 +1687,6 @@ end if
 	ret 0
 @endusing
 
-
-
 	;#---------------------------------------------------ö
 	;|                   .stamp2ft                       |
 	;ö---------------------------------------------------ü
@@ -1693,20 +1695,6 @@ end if
 .stamp2ft:
 	;--- in RAX fstamp
 	;--- RET RAX = dwHighDateTime | dwLowDateTime
-;	mov r8,019DB1DE'D53E8000h
-;	cmp r8,rax
-;	jnc .stamp2ftA
-;	neg rax
-	;19DB1DED53E800 = 7277796000000000
-;	mov ecx,989680h  ;582778452220000000 ;575500656220000000
-;	mul ecx
-;	add eax,0D53E8000h
-;	adc edx,019DB1DEh
-;	shl rdx,32
-;	or rax,rdx
-;	mov r8,rax
-
-;.stamp2ftA:
 	mov ecx,989680h ;= 10000000
 	mul ecx
 	add eax,0D53E8000h
@@ -1718,13 +1706,12 @@ end if
 
 	;#---------------------------------------------------ö
 	;|                   .FILETIME 2 TSAMP               |
-	;|              SEH wrapped proc                     |
 	;ö---------------------------------------------------ü
 
 @using .ft2stamp
 .ft2stamp:
 	;--- IN RAX = ftime
-	;RET EAX = timestamp or ZF or CF
+	;--- RET EAX = timestamp or ZF or CF
 	mov rdx,019DB1DE'D53E8000h
 	mov ecx,989680h
 	sub rax,rdx
@@ -1856,128 +1843,6 @@ end if
 ;display_decimal $-.u2dq
 @endusing
 
-
-;if (used .profiler_m1pro) |\
-;	(used .profiler_m1epi)|\
-;	(used .profiler_m2pro) |\
-;	(used .profiler_m2epi) |\
-;	(used .profiler_m1warmup)
-
-
-;.profiler_m1pro:
-;	pushfq
-;	push rax rbx rcx rdx rdi rsi
-;  xor     rax,rax
-;  cpuid
-;  stmxcsr [dummy_dat]
-;  pxor    xmm0,xmm0
-;  pxor    xmm1,xmm1
-;  pxor    xmm2,xmm2
-;  pxor    xmm3,xmm3
-;  pxor    xmm4,xmm4
-;  pxor    xmm5,xmm5
-;  pxor    xmm6,xmm6
-;  pxor    xmm7,xmm7
-;  ;ldmxcsr [dummy_dat]  ;not needed, still get good results without it
-;  xor     rax,rax
-;  cpuid
-;  rdtsc
-;  mov     [tsc_lo],eax
-;  mov     [tsc_hi],edx
-;  xor     rax,rax
-;  cpuid
-;	pop rsi rdi rdx rcx rbx rax
-;	popfq
-;	ret 0
-
-;.profiler_m1epi:
-;	pushfq
-;	push rax rbx rcx rdx rdi rsi
-;  ldmxcsr [dummy_dat]
-;  xor     rax,rax
-;  cpuid
-;  rdtsc
-;  sub eax,[tsc_lo]
-;	mov [over_lo],eax
-;	xchg eax,[tsc_lo]
-;  sbb edx,[tsc_hi]
-;	mov [over_hi],edx
-;	xchg edx,[tsc_hi]
-;	pop rsi rdi rdx rcx rbx rax
-;	popfq
-;	ret 0
-
-;.profiler_m1warmup:
-;	call .profiler_m1pro
-;	call .profiler_m1epi
-;	ret 0
-
-
-;.profiler_m2pro:
-;	pushfq
-;		push rax rbx rcx rdx rdi rsi
-;	mov	eax,dword [tsc_lo]			; prefetch
-;	xor	eax,eax
-;	mov	dword [tsc_lo],eax			; prepare the storage
-;	mov	dword [tsc_hi],eax
-
-;	cpuid
-;	rdtsc										; start measure odd code
-;	add	dword [tsc_lo],eax
-;	adc	dword [tsc_hi],edx
-;		pop rsi rdi rdx rcx rbx rax
-;	popfq
-;	push rax rbx rcx rdx rdi rsi
-;		pushfq
-;	xor	rax,rax
-;	cpuid										; serialize
-;	rdtsc										; end measure odd code
-;	sub	eax,dword [tsc_lo]
-;	sbb	edx,dword [tsc_hi]
-;	mov	dword [tsc_lo],eax			; mem has the odd code timing
-;	mov	dword [tsc_hi],edx
-
-;	xor	rax,rax
-;	cpuid
-;	rdtsc										; start main measure
-;	add	dword [tsc_lo],eax
-;	adc	dword [tsc_hi],edx
-;		popfq										; restore the context
-;	pop rsi rdi rdx rcx rbx rax
-;	ret 0
-
-;.profiler_m2epi:
-;	pushfq
-;	push rax rbx rcx rdx rdi rsi
-
-;	xor	rax,rax
-;	cpuid									;serialize measured instructions
-;	rdtsc
-;	sub	eax,dword [tsc_lo]		;time=time(end)-time(begin)-time(odd)
-;	sbb	edx,dword [tsc_hi]	;time=time(end)-(time(begin)+time(odd))
-;	mov	dword [tsc_lo],eax
-;	mov	dword [tsc_hi],edx
-;	pop rsi rdi rdx rcx rbx rax
-;	popfq
-;	ret 0
-;end if
-
-
-
-
-;@using .stamp2ft
-;.stamp2ft:
-;	;IN EAX = timestamp DWORD
-;	;RET EDX = dwHighDateTime
-;	;RET EAX = dwLowDateTime
-;	mov ecx,989680h
-;	xor edx,edx
-;	mul ecx
-;	add eax,0D53E8000h
-;	adc edx,019DB1DEh
-;	ret 0
-;@endusing
-
 ;	;#---------------------------------------------------ö
 ;	;|                     SETDIR                        |
 ;	;ö---------------------------------------------------ü
@@ -2022,40 +1887,6 @@ end if
 ;	ret 0
 ;@endusing
 
-
-;;	;#---------------------------------------------------ö
-;;	;|                   .FILETIME 2 TSAMP               |
-;;	;|              SEH wrapped proc                     |
-;;	;ö---------------------------------------------------ü
-
-;;@using .ft2stamp
-;;.ft2stamp:
-;;	;IN EAX = ftime
-;;	;RET EAX = timestamp
-;;	push .h_ft2stamp
-;;	push dword [fs:0]
-;;	mov	dword [fs:0],esp
-
-;;	mov edx,[eax+4]
-;;	mov ecx,989680h
-;;	mov eax,[eax]
-;;	sub eax,0D53E8000h
-;;	sbb edx,019DB1DEh
-;;	div ecx
-
-;;.ft2stampA:
-;;	mov esp,[fs:0]
-;;	pop dword [fs:0]
-;;	add esp,4
-;;	ret 0
-
-;;.h_ft2stamp:
-;;	mov edx,[esp+0Ch]								;pContext
-;;	mov dword[edx+0B8h],.ft2stampA	;regEip
-;;	xor eax,eax
-;;	mov dword[edx+0B0h],eax					;regEax
-;;	ret 16
-;;@endusing
 
 ;	;#---------------------------------------------------ö
 ;	;|                    GET_DATETIME                   |
@@ -2139,28 +1970,6 @@ end if
 ;	pop esi
 ;	ret 0
 ;@endusing
-
-;	;#---------------------------------------------------ö
-;	;|                   SZLEN			                     |
-;	;ö---------------------------------------------------ü
-
-;@using .szlen
-;.szlen:
-;	;IN [ESP+4] zero terminated string
-;	;RET EAX=string len (0 not counted)
-;	push edi
-;	xor ecx,ecx
-;	mov edi,[esp+8]
-;	dec ecx
-;	xor eax,eax
-;	repne scasb
-;	not ecx
-;	dec ecx
-;	pop edi
-;	xchg eax,ecx
-;	ret 4
-;@endusing
-
 
 
 	;#---------------------------------------------------ö

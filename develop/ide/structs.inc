@@ -278,16 +278,18 @@ ends
 		version	dw 64h
 		flags		db 0
 						db 0
-		cdate		dd %t
-		adate		dd %t
+						dd ?
+						dd ?
 		fshow		db 1
 		flog		db FALSE
 		fsplash	db FALSE
 						db 0
 		;-------------------------
-		lang		db 8 dup (0)
+		lang8		db 8 dup (0)
 						dd 0
 						dd 0
+		;-------------------------
+		lang16  db 16 dup (?)
 		;-------------------------
 		update			dd FALSE
 		session			dd 0
@@ -299,11 +301,18 @@ ends
 						dd 0
 						dd 0
 		;-------------------------
-		pos		RECT 0,0,320h,2BCh
-		cons.pos	RECT 0,0,0,0
-		tree.pos	RECT 0,0,0,0
+		pos			 dq 0
+		cons.pos dq 0
+		tree.pos dq 0
+						 dq 0
 		;-------------------------
-		wsp		dw FILE_BUFLEN dup (?)
+		owner	db FILE_BUFLEN dup (?)
+		cdate db FILE_BUFLEN dup (?)
+		ctime db 128 dup (0)
+		adate db FILE_BUFLEN dup (?)
+		atime db 128 dup (0)
+
+		wsp		db FILE_BUFLEN*2 dup (?)
 	ends
 
 	

@@ -113,8 +113,10 @@ prop:
 	mov rdi,rsp
 
 	push 0
+	push BB_SYS
 	push BB_RET
 	push BB_REG
+	push BB_PROCESS
 	push BB_PROC
 	push BB_MACRO
 	push BB_LABEL
@@ -126,6 +128,7 @@ prop:
 	push BB_COMMENT
 	push BB_CALL
 	push BB_CODE
+	push BB_AKEY
 	push BB_FOLDER
 	push BB_WSP
 	mov ecx,BB_NULL
@@ -163,7 +166,6 @@ prop:
 	mov rcx,[.hwnd]
 	call apiw.get_dlgitem
 	mov [.cp.hPrg],rax
-
 
 	mov rdx,PROP_LVIEW
 	mov rcx,[.hwnd]

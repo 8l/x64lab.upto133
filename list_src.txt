@@ -16,6 +16,7 @@ develop\x64labd.exe.manifest
 
 develop\config\config.utf8
 develop\config\accel.utf8
+develop\config\x64lab.bmp
 develop\project\welcome.x64lab
 
 develop\equates\COMCTL64.INC
@@ -44,7 +45,6 @@ develop\ide\wspace.asm
 develop\ide\x64lab.equ 
 develop\ide\x64lab.ico 
 develop\ide\x64lab.inc 
-develop\ide\x64lab.bmp 
 develop\ide\x64lab.rc  
 
 develop\macro\com_macro.inc

@@ -148,6 +148,9 @@ Summary:
 
    - file macro\unsupported.inc is public domain
 
+   - icons in the [config\x64lab.bmp] are from the Open Icon Library
+     under the CC License at http://openiconlibrary.sourceforge.net/
+
    -----------------------------------------------------------------
 
 -9 How does x64lab work ?
@@ -207,19 +210,3 @@ Summary:
    - Scintilla in x64lab loads and stores files by default in utf-8
      encoding for now. we will be able in a near future version
      to choose/recall encodings and charsets for each of them.
-
-   ...
-
-   - TOBEDOCed
-   - proprietary docking system
-   - proprietary plug-in system
-   - proprietary unicode routines
-   - proprietary dll load/unload system
-   - proprietary language system
-
-   ... 
-      
-
-
-
-

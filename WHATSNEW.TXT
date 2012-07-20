@@ -1,4 +1,18 @@
 
+- version 0.0.98 (released on 20.07.2012 ) Alpha 
+  + edit and clean
+  + read/write [config\config.utf8] the following paras
+    . version
+    . session
+    . wspace
+    . language
+    . fshow
+    . pos
+    . owner
+  + save last workspace on exit
+  + save lab main position and show flags (max/min/normal)
+  + icons packed in [config\x64lab.bmp]
+  
 - version 0.0.94 (released on 15.07.2012 ) " ... " 
   + improving behaviour on smartlink
   + improving behaviour by SetFolder

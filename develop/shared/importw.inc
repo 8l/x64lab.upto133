@@ -17,7 +17,8 @@
 
 	define status 0
 	match =0 items,status APIIMPORT {
-	library GDI32,"GDI32",\
+	library ADVAPI32,"ADVAPI32",\
+		GDI32,"GDI32",\
 		COMCTL32,"COMCTL32",\
 		USER32,"USER32",\
 		KERNEL32,"KERNEL32",\
@@ -32,7 +33,8 @@
 		}
 
 	match =0,status {
-	library GDI32,"GDI32",\
+	library  ADVAPI32,"ADVAPI32",\
+		GDI32,"GDI32",\
 		COMCTL32,"COMCTL32",\
 		USER32,"USER32",\
 		KERNEL32,"KERNEL32",\
@@ -45,7 +47,9 @@
 		define status 1
 	include "uxtheme.inc"
 	}
-	
+
+	import ADVAPI32,\
+		GetUserNameW,"GetUserNameW"
 	
 	import GDI32,\
 		BitBlt,"BitBlt",\
@@ -86,6 +90,7 @@
 		DrawStatusTextW,"DrawStatusTextW",\
 		ImageList_AddMasked,"ImageList_AddMasked",\
 		ImageList_Create,"ImageList_Create",\
+		ImageList_Destroy,"ImageList_Destroy",\
 		ImageList_Draw,"ImageList_Draw",\
 		ImageList_GetImageCount,"ImageList_GetImageCount",\
 		ImageList_LoadImageW,"ImageList_LoadImageW",\
@@ -165,6 +170,7 @@
 		GetUpdateRect,"GetUpdateRect",\
 		GetWindow,"GetWindow",\
 		GetWindowLongPtrW,"GetWindowLongPtrW",\
+		GetWindowPlacement,"GetWindowPlacement",\
 		GetWindowRect,"GetWindowRect",\
 		GetWindowTextW,"GetWindowTextW",\
 		InsertMenuItemW,"InsertMenuItemW",\

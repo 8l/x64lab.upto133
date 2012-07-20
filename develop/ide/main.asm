@@ -12,9 +12,8 @@
   ;ö-------------------------------------------------ä
 
 
-display "- infos: ",13,10
-
-define status 0
+	display "- infos: ",13,10
+	define status 0
 	match =TRUE,DEBUG	{
 		display "--- Compile DEBUG ",13,10
 		define status 1
@@ -94,16 +93,13 @@ start:
 	test rax,rax
 	jz	.err_start
 
-	;	call config.setup_files
-	;	test rax,rax
-	;	jz	.err_start
-
 	mov eax,\
 		sizeof.DIR+\
 		400h*8+\	;--- dirHash
 		80h*8+\		;--- envHash
 		200h*8+\	;--- extHash
 		((MI_OTHER-MNU_X64LAB) * sizeof.KEYA)+\
+		sizeof.SYSTIME+\
 		sizeof.HU+\
 		sizeof.CONFIG+\
 		sizeof.CONS+\
@@ -148,8 +144,6 @@ start:
 	;	call ext.setup
 
 	call config.open
-
-	call config.set_lang
 	test eax,eax
 	jz	.err_start
 
@@ -242,14 +236,19 @@ start:
 	mov [rbx+48h],rax
 	mov [rbx+40h],rcx
 
-	mov eax,[.conf.pos.bottom]
+	sub rsp,16
+	mov rax,[.conf.pos]
+	@reg2rect rsp,rax
+
+	mov eax,[rsp+RECT.bottom]
 	mov [rbx+38h],rax
-	mov eax,[.conf.pos.right]
+	mov eax,[rsp+RECT.right]
 	mov [rbx+30h],rax
-	mov eax,[.conf.pos.top]
+	mov eax,[rsp+RECT.top]
 	mov [rbx+28h],rax
-	mov eax,[.conf.pos.left]
+	mov eax,[rsp+RECT.left]
 	mov [rbx+20h],rax
+	add rsp,16
 
 	mov r9,\
 		WS_OVERLAPPEDWINDOW \
@@ -278,11 +277,6 @@ start:
 	lea rdi,[rbx+20h]
 
 .begin_msg_loop:
-	;	mov r8,rdi
-	;	mov rdx,rsp
-	;	mov rcx,uzFrmLL
-	;	call config.print2
-
 	xor r9,r9
 	xor r8,r8
 	xor edx,edx
@@ -332,6 +326,9 @@ start:
 	mov rcx,[hMnuMain]
 	call apiw.mnu_destroy
 
+	mov rcx,[hBmpIml]
+	call iml.destroy
+
 .err_startC:
 	;--- error registering
 
@@ -340,18 +337,7 @@ start:
 
 .err_start:
 	call config.unset_lang
-
 	call config.unset_libs
-	call config.unset_files
-
-
-	;	call config.discard
-	;	mov rcx,SLOT_EXT
-	;	call slot.discard
-	;	mov rcx,SLOT_CFG
-	;	call slot.discard
-	;	mov rcx,SLOT_HILI
-	;	call slot.discard
 
 .err_startA:
 	mov rsp,rbp
@@ -381,7 +367,6 @@ winproc:
 	virtual at rsi
 		.io	IODLG
 	end virtual
-
 
 	@wpro rbp,\
 		rbx rdi rsi
@@ -828,11 +813,14 @@ winproc:
 	test eax,eax
 	jle .exit
 
+	xor r9,r9
+	mov rax,[pConf]
 	test rsi,rsi
+	mov qword[rax+\
+		CONFIG.wsp],r9
 	mov rcx,rsi
 	jz	.wm_createA
 
-	mov rax,[pConf]
 	lea rdx,[rax+CONFIG.wsp]
 	mov rsi,rdx
 	call utf16.copyz
@@ -938,6 +926,10 @@ winproc:
 .mi_fi_newb:
 	call wspace.new_bt
 	jmp	.ret1
+
+	;ü------------------------------------------ö
+	;|     WM_NOTIFY                            |
+	;#------------------------------------------ä
 
 .wm_notify:
 	mov rdx,[r9+NMHDR.hwndFrom]
@@ -1132,9 +1124,17 @@ winproc:
 	;	mov [.mis.itemWidth],90
 	jmp	.ret1
 
+
+	;ü------------------------------------------ö
+	;|     WM_DESTROY                           |
+	;#------------------------------------------ä
+
 .wm_destroy:
+	call config.write
+
 	xor rcx,rcx
 	call [PostQuitMessage]
+
 	mov rcx,[hDocker]
 	call [dock64.discard]
 	jmp	.ret0

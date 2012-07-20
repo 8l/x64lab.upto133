@@ -15,7 +15,6 @@
 
 	define IDC_STATIC (-1)
 	define ICO_X64LAB                              3
-	define BMP_X64LAB                              4
 
 	define IO_DLG                                  1024
 	define IO_STC1                                 1025
@@ -34,10 +33,6 @@
 	define PROP_CBX_FILT                           2050
 	define PROP_PRG                                2051
 	define PROP_LVIEW                              2052
-	define KEY_DLG                                 2304
-	define KEY_LVIEW                               2305
-	define KEY_HOT                                 2306
-	define KEY_SET                                 2307
 	define PLUG_DLG                                2560
 	define PLUG_TAB                                2561
 	define EDIT_DLG                                2816
@@ -129,28 +124,34 @@
   UZ_COURNEW     equ 2020h
   UZ_IO_NEWWSP   equ 2021h
   UZ_IO_SAVEWSP  equ 2022h
-  BB_NULL        equ 2023h
-  BB_WSP         equ 2024h
-  BB_FOLDER      equ 2025h
-  BB_CODE        equ 2026h
-  BB_CALL        equ 2027h
-  BB_COMMENT     equ 2028h
-  BB_DATA        equ 2029h
-  BB_EXPORT      equ 202Ah
-  BB_FLOW        equ 202Bh
-  BB_IMM         equ 202Ch
-  BB_IMPORT      equ 202Dh
-  BB_LABEL       equ 202Eh
-  BB_MACRO       equ 202Fh
-  BB_PROC        equ 2030h
-  BB_REG         equ 2031h
-  BB_RET         equ 2032h
+	UZ_INFO_LNK	   equ 2023h
+	UZ_LNK_NAME    equ 2024h
+  UZ_LNK_MAP     equ 2025h
+	UZ_LNK_DESC    equ 2026h
 
-	UZ_INFO_LNK	   equ 2033h
-	UZ_LNK_NAME    equ 2034h
-  UZ_LNK_MAP     equ 2035h
-	UZ_LNK_DESC    equ 2036h
+  BB_NULL        equ 2027h
+  BB_WSP         equ 2028h
+  BB_FOLDER      equ 2029h
+  BB_CODE        equ 202Ah
+  BB_CALL        equ 202Bh
+  BB_COMMENT     equ 202Ch
+  BB_DATA        equ 202Dh
+  BB_EXPORT      equ 202Eh
+  BB_FLOW        equ 202Fh
+  BB_IMM         equ 2030h
+  BB_IMPORT      equ 2031h
+  BB_LABEL       equ 2032h
+  BB_MACRO       equ 2033h
+  BB_PROC        equ 2034h
+	BB_PROCESS		 equ 2035h
+  BB_REG         equ 2036h
+  BB_RET         equ 2037h
+	BB_SYS				 equ 2038h
+	BB_AKEY				 equ 2039h
 
+	UZ_DATEFRM		 equ 203Ah
+	UZ_TIMEFRM		 equ 203Bh
+	UZ_DEFUSER		 equ 203Ch
 
 	;--- hash equ for config/config.utf8 items
   macro @cfg_hash [argid]{
@@ -163,20 +164,28 @@
   @cfg_hash\
    wspace,\
    version,\
+	 session,\
+	 fshow,\
    cons,\
    docs,\
    prop,\
    pos,\
    tree,\
    bkcol,\
-	 language
+	 language,\
+	 owner,\
+	 cdate,\
+   ctime,\
+   adate,\
+   atime
 
 	CFG_FSHOW				equ TRUE
 	CFG_FLOG				equ FALSE
-	CFG_DEF_LANG    equ "en"
+	CFG_DEF_LANG8   equ "en"
+  CFG_DEF_LANG16  equ 006E0065h ;--- "en" utf16
 	CFG_FSPLASH			equ FALSE
 	CFG_UPDATE			equ FALSE
-	CFG_POS_RB 			equ 0000'02BC'0000'0320h
+	CFG_POS 				equ 2BC032000000000h
 	CFG_CONS_LTRB		equ 0
 	CFG_CONS_BKCOL	equ 0AABBCCh
 	CFG_TREE_BKCOL 	equ 0D9FFFFh

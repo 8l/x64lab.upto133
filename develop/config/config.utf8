@@ -1,34 +1,11 @@
+	;--- Warning!! utf8 no-BOM äöüß
+	;--- TOP format file for x64lab
+	;--- Copyright Marc Rainer Kranz 2009-2012
 
-	version:64h
-	flags:1111h
-	cdate:"xxxx"
-	session:6666h
-	adate:"yyyy"
-	fshow:2222h
-	flog:3333h
-	language:"en"
-	fsplash:4444h
-	update:5555h
-	owner:"marcßüäö"
-	pos:0320'02BCh
+	version:"0.0.97"
+	session:00h
 	wspace:"%X64LABD%\project\welcome.x64lab"
-	
-	cons:(
-		bkcol:0AABBCCh 
-		pos:0Ah
-	)
-
-	tree:(
-		bkcol:0D9FFFFh
-		pos:0Bh
-	)
-
-	docs:(
-		bkcol:0D9FFFFh
-		pos:0Bh
-	)
-
-	prop:(
-		bkcol:0D9FFFFh
-		pos:0Bh
-	)
+	language:"en"
+	owner:"Mr.Biberkopf"
+	fshow:03
+	pos:035A058900760108h

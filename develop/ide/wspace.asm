@@ -611,8 +611,8 @@ wspace:
 	mov [hRootWsp],rax
 	mov [pLabfWsp],rax
 
-	mov qword[rcx+\
-		CONFIG.wsp],rax	;--- reset pConf.wsp
+;	mov qword[rcx+\
+;		CONFIG.wsp],rax	;--- reset pConf.wsp
 	jmp	.discardD
 
 .discardC:
@@ -1885,7 +1885,6 @@ wspace:
 	ja	.set_dirF
 
 .set_dirC:
-;@break
 	mov r9,rdi
 	mov r10,rsi
 	mov rcx,rax
@@ -2026,7 +2025,6 @@ wspace:
 	and rsp,-16
 	sub rsp,rcx
 
-;@break
 	mov rdx,rsp
 	call art.zeromem
 
@@ -2053,7 +2051,6 @@ wspace:
 	jmp	.new_labfB1
 
 .new_labfA:
-;@break
 	xor eax,eax
 	test r12,LF_WSP
 	jz	.new_labfE

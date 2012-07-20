@@ -20,6 +20,52 @@ config:
 		.conf CONFIG
 	end virtual
 
+	;ü-----------------------------------------ö
+	;|     setup_libs                          |
+	;#-----------------------------------------ä
+
+.setup_libs:
+	push rdi
+	push rsi
+
+	mov rdi,\
+		bridge.attach
+	mov rsi,\
+		uzPlugName
+
+	mov rcx,\
+		top64_bridge
+	mov rdx,rsi
+	call rdi
+	test rax,rax
+	jz	.setup_libsE
+
+	mov rcx,\
+		bk64_bridge
+	mov rdx,rsi
+	call rdi
+	test rax,rax
+	jz	.setup_libsE
+
+	mov rcx,\
+		dock64_bridge
+	mov rdx,rsi
+	call rdi	
+	test rax,rax
+	jz	.setup_libsE
+
+	mov rcx,rsi
+	call sci.setupA
+	mov [hSciDll],rax
+
+.setup_libsE:
+	pop rsi
+	pop rdi
+	ret 0
+
+	;ü-----------------------------------------ö
+	;|     SETUP_DIRS                          |
+	;#-----------------------------------------ä
 
 .setup_dirs:
 	;--- in RCX curdir
@@ -67,10 +113,28 @@ config:
 	ret 0
 
 	;ü-----------------------------------------ö
-	;|     setup_gui                           |
+	;|     SETUP_GUI                           |
 	;#-----------------------------------------ä
+
 .setup_gui:
+	push rbp
 	push rbx
+
+	mov rbp,rsp
+	sub rsp,\
+		FILE_BUFLEN
+	xor edx,edx
+	mov rax,rsp
+
+	;--- check for config\menu.utf8 file 
+	push rdx
+	push uzBmpExt
+	push uzAppName
+	push uzSlash
+	push uzConfName
+	push rax
+	push rdx
+	call art.catstrw
 
 	mov rax,[lfMnuSize]
 	movzx ecx,al
@@ -81,142 +145,21 @@ config:
 	call apiw.cfonti
 	mov [hMnuFont],rax
 
-	mov r10,60
+	mov r11,LR_LOADFROMFILE\
+		or LR_LOADTRANSPARENT\
+		or LR_CREATEDIBSECTION
+	mov r10,CLR_DEFAULT
 	mov r9,30
-	mov r8,\
-		ILC_MASK or \
-		ILC_COLOR16
-	mov edx,16
-	mov ecx,16
-	call iml.create	
+	mov r8,16
+	mov rdx,rsp
+	xor ecx,ecx
+	call iml.load_bmp
 	mov [hBmpIml],rax
 
-	mov rdx,BMP_X64LAB
-	mov rcx,[hInst]
-	call apiw.loadbmp
-	mov rbx,rax
-
-	mov r8,0FF00FFh
-	mov rdx,rax
-	mov rcx,[hBmpIml]
-	call iml.add_masked
-
-	mov rcx,rbx
-	call apiw.delobj
-
+	mov rsp,rbp
 	pop rbx
+	pop rbp
 	ret 0
-
-
-	;ü-----------------------------------------ö
-	;|     setup_files                         |
-	;#-----------------------------------------ä
-.setup_files:
-	;--- ret RCX datalen
-	;--- ret RDX numitems
-	sub rsp,\
-		FILE_BUFLEN
-	xor edx,edx
-	mov rax,rsp
-
-;	;--- check for config\menu.utf8 file 
-;	push rdx
-;	push uzUtf8Ext
-;	push uzMenuName
-;	push uzSlash
-;	push uzConfName
-;	push rax
-;	push rdx
-;	call art.catstrw
-
-;	mov rcx,rsp
-;	call [top64.parse]
-;	test rax,rax
-;	jz	.setup_filesE
-;	mov [pTopMnu],rax
-
-.setup_filesE:
-	add rsp,\
-		FILE_BUFLEN
-	ret 0
-
-.unset_files:
-	ret 0
-
-	;ü-----------------------------------------ö
-	;|     setup_libs                          |
-	;#-----------------------------------------ä
-
-.setup_libs:
-	push rdi
-	push rsi
-
-	mov rdi,\
-		bridge.attach
-	mov rsi,\
-		uzPlugName
-
-	mov rcx,\
-		top64_bridge
-	mov rdx,rsi
-	call rdi
-	test rax,rax
-	jz	.setup_libsE
-
-	mov rcx,\
-		bk64_bridge
-	mov rdx,rsi
-	call rdi
-	test rax,rax
-	jz	.setup_libsE
-
-	mov rcx,\
-		dock64_bridge
-	mov rdx,rsi
-	call rdi	
-	test rax,rax
-	jz	.setup_libsE
-
-;	mov rdx,rsi
-;	mov rcx,\
-;		lang_bridge
-;	call rdi
-;	test rax,rax
-;	jz	.setup_libsE
-
-	mov rcx,rsi
-	call sci.setupA
-	mov [hSciDll],rax
-
-.setup_libsE:
-	pop rsi
-	pop rdi
-	ret 0
-
-.setup_lib:
-;	xor rcx,rcx
-;	mov rbx,[curDir]
-;	lea rdx,[.dir.dir]
-;	call art.get_appdir
-;	mov [.dir.cpts],ax
-
-;	sub rsp,\
-;		FILE_BUFLEN
-;	xor edx,edx
-;	mov rax,rsp
-
-;	;--- check for config\menu.utf8 file 
-;	push rdx
-;	push uzUtf8Ext
-;	push uzMenuName
-;	push uzSlash
-;	push uzConfName
-;	push rax
-;	push rdx
-;	call art.catstrw
-
-;	mov rcx,rsp
-
 
 	;ü-----------------------------------------ö
 	;|     unset_libs                          |
@@ -244,33 +187,24 @@ config:
 	ret 0
 
 	;ü-----------------------------------------ö
-	;|     unset_lang                          |
+	;|     DEF_LANG                            |
 	;#-----------------------------------------ä
 
-.unset_lang:
-	mov rcx,[pOmni]
-	call art.a16free
-	mov rcx,lang_bridge
-	call bridge.detach
-	ret 0
+.def_lang:
+	;--- in RCX langname
+	;--- ret RAX bridge
+	push rbx
+	push rdi
 
-	;ü-----------------------------------------ö
-	;|     set_libs                            |
-	;#-----------------------------------------ä
-	
-.set_lang:
-	push rbp
-	mov rbp,rsp
-	and rsp,-16
-
+	xor edx,edx
 	sub rsp,\
 		FILE_BUFLEN
-	xor edx,edx
 	mov rax,rsp
+	xor ebx,ebx
 
 	;--- make plugin\lang\CURLANG
 	push rdx
-	push uzCurLang
+	push rcx
 	push uzSlash
 	push uzLangName
 	push uzSlash
@@ -284,27 +218,43 @@ config:
 		lang_bridge
 	call bridge.attach
 	test rax,rax
-	jz .set_langE
+	jz .def_langE
 
-	call [lang.info_uz]
-	@nearest 16,eax			;<--- ave size 16 aligned
-	add eax,sizeof.OMNI
-	@nearest 16,eax			
-	shl eax,2
-	mul ecx
+	mov rdi,[pTime]
+	mov rbx,rax
 
-	mov rcx,rax
-	call art.a16malloc
-	mov [pOmni],rax
-	test rax,rax
-	jnz .set_langE
+	lea r8,[rdi+\
+		SYSTIME.uzTmFrm]
+	mov edx,U16
+	mov ecx,UZ_TIMEFRM 
+	call [lang.get_uz] 	;--- "HH':'mm':'ss"
+	
+	lea r8,[rdi+\
+		SYSTIME.uzDtFrm]
+	mov edx,U16
+	mov ecx,UZ_DATEFRM 
+	call [lang.get_uz] 	;--- "dddd','dd'.'MMMM'.'yyyy"
 
-	call .unset_lang
-	xor eax,eax
+	mov rdi,[pConf]
+	lea r8,[.conf.owner]
+	mov edx,U16
+	mov ecx,UZ_DEFUSER
+	call [lang.get_uz] 	;--- "Mr.Biberkopf"
 
-.set_langE:
-	mov rsp,rbp
-	pop rbp
+.def_langE:
+	add rsp,\
+		FILE_BUFLEN
+
+	mov rax,rbx
+	pop rdi
+	pop rbx
+	ret 0
+
+.unset_lang:
+	mov rcx,[pOmni]
+	call art.a16free
+	mov rcx,lang_bridge
+	call bridge.detach
 	ret 0
 
 	;#---------------------------------------------------ö
@@ -316,6 +266,7 @@ config:
 	push rsi
 	push rdi
 	push r12
+	push r13	;--- for lang.dll
 
 	mov rbp,rsp
 	and rsp,-16
@@ -323,19 +274,18 @@ config:
 	sub rsp,\
 		FILE_BUFLEN*2
 
-	;--- set default value ------
-
 	mov rdi,[pConf]
-;	mov eax,VERSION
-;	mov [.conf.version],ax
-	mov [.conf.cdate],%t
-	mov [.conf.adate],%t
+	lea rcx,[.conf.lang16]
+	mov qword[rcx],\
+		CFG_DEF_LANG16
+	call .def_lang
+	mov r13,rax
 
-	mov rax,CFG_POS_RB
-	mov [.conf.pos+8],rax
+	mov rax,CFG_POS
+	mov [.conf.pos],rax
 
-	mov qword[.conf.lang],\
-		CFG_DEF_LANG
+	mov qword[.conf.lang8],\
+		CFG_DEF_LANG8     ;--- utf8
 
 	mov [.conf.fshow],\
 		CFG_FSHOW
@@ -378,7 +328,7 @@ config:
 	mov rcx,rsp
 	call [top64.parse]
 	test rax,rax
-	jz	.openE
+	jz	.openL
 
 	mov rbx,rax
 	mov rsi,rax
@@ -397,49 +347,125 @@ config:
 	add rdx,rcx
 	;	cmp eax,hash_version
 	;	jz	.openV
+	cmp eax,hash_fshow
+	jz	.open_fshow
 	cmp eax,hash_pos
-	jz	.openP
+	jz	.open_pos
+	cmp eax,hash_session
+	jz	.open_sess
 	cmp eax,hash_wspace
-	jz	.openW
+	jz	.open_wsp
 	cmp eax,hash_language
-	jz	.openL
+	jz	.open_lang
+	cmp eax,hash_owner
+	jz	.open_owner
 	jmp	.openB
 
-.openL:
-	mov rax,[pConf]
-	mov r8,rdx
-	lea rcx,[rax+\
-		CONFIG.lang]
+.open_fshow:
 	xor eax,eax
-	mov rdx,uzCurLang
+	cmp ax,[rdx+\
+		TITEM.len]
+	jz	.openB
+
+	cmp [rdx+\
+		TITEM.type],\
+		TNUMBER
+	jnz	.openB
+	mov eax,[rdx+TITEM.lo_dword]
+	and eax,SW_SHOWMAXIMIZED
+	mov [.conf.fshow],al
+	jmp	.openB
+	
+.open_sess:
+	mov r8,rdx
+	xor eax,eax
+	cmp ax,[r8+\
+		TITEM.len]
+	jz	.openB
+
+	cmp [r8+TITEM.type],\
+		TNUMBER
+	jnz	.openB
+	mov eax,[r8+TITEM.lo_dword]
+	mov [.conf.session],eax
+	jmp	.openB
+
+.open_owner:
+	mov r8,rdx
+	xor eax,eax
+	test r13,r13
+	jz	.openB
 
 	cmp ax,[r8+\
 		TITEM.len]
-	jz	.openL1
+	jz	.openB
+
+	cmp [r8+\
+		TITEM.type],\
+		TQUOTED
+	jnz	.openB
+
+	cmp [r8+TITEM.len],\
+		FILE_BUFLEN-10h
+	ja	.openB
+
+	lea rdx,[.conf.owner]
+	lea rcx,[r8+\
+		TITEM.value]
+	call utf8.to16
+	jmp	.openB	
+
+.open_lang:
+	mov r8,rdx
+	xor eax,eax
+
+	cmp ax,[r8+\
+		TITEM.len]
+	jz	.openB
 
 	cmp [r8+TITEM.len],7
-	ja	.openL1
+	ja	.openB
 
 	lea rcx,[r8+\
 		TITEM.value]
-	
-.openL1:
+
+	cmp word[rcx],\
+		CFG_DEF_LANG8
+	jz	.openB
+
+	;--- TODO: exaustive check on user language
+	;--- file exist/try load it ---------------
+
+.open_langA:
+	push rcx	;--- save utf8 value
+	lea rdx,[.conf.lang16]
 	call utf8.to16
 
+	mov rcx,lang_bridge
+	call bridge.detach
+
+	xor r13,r13
+	lea rcx,[.conf.lang16]
+	call .def_lang
+	pop rcx
+	test rax,rax
+	jz	.openB
+	mov r13,rax
+	
+	lea rdx,[.conf.lang8]
+	call utf8.copyz
 	jmp	.openB
 
-
-
-.openW:
+.open_wsp:
 	lea rcx,[rdx+TITEM.value]
 	lea rdx,[rsp+FILE_BUFLEN]
 	call utf8.to16
 	mov r12,rax
 	;--- CF error
 
-;	lea rcx,[rsp+FILE_BUFLEN]
-;	call art.is_file
-;	jz	.openB
+	;	lea rcx,[rsp+FILE_BUFLEN]
+	;	call art.is_file
+	;	jz	.openB
 
 	mov r8,r12
 	lea rcx,[rsp+FILE_BUFLEN]
@@ -447,35 +473,48 @@ config:
 	call art.xmmcopy
 	jmp	.openB
 
-.openP:
-;@break
+.open_pos:
 	;--- pos ------
 	mov rax,qword[rdx+\
-		TITEM.lo_dword]
-	pxor xmm1,xmm1
-	movq xmm0,rax
-	punpcklwd xmm0,xmm1
-	pshufd xmm0,xmm0,\
-		00011011b
-	movdqa dqword \
-		[.conf.pos],xmm0
+		TITEM.qword_val]
+	mov [.conf.pos],rax
 	jmp	.openB
 
 .openB:
-	mov ecx,[rsi+\
+	mov esi,[rsi+\
 		TITEM.next]
-	test ecx,ecx
-	jz	.openF
-	mov rsi,rcx
 	add rsi,rbx
-	jmp	.openA
+	cmp rsi,rbx
+	jnz	.openA
 
 .openF:
 	mov rcx,rbx
-	call [top64.free]	
+	call [top64.free]
 
+.openL:
+	xor eax,eax
+	test r13,r13
+	jz .openE
+	call [lang.info_uz]
+	@nearest 16,eax			;<--- ave size 16 aligned
+	add eax,sizeof.OMNI
+	@nearest 16,eax			
+	shl eax,2
+	mul ecx
+
+	mov rcx,rax
+	call art.a16malloc
+	mov [pOmni],rax
+	test rax,rax
+	jnz .openE
+
+	mov rcx,lang_bridge
+	call bridge.detach
+	xor eax,eax
+	
 .openE:
 	mov rsp,rbp
+	pop r13
 	pop r12
 	pop rsi
 	pop rdi
@@ -483,416 +522,256 @@ config:
 	pop rbp
 	ret 0
 
-;	mov rdi,rsp
-;	mov rbx,rax
-;	mov rsi,rax
+	;#---------------------------------------------------ö
+	;|                   WRITE CONFIG x64lab             |
+	;ö---------------------------------------------------ü
 
-;.openV:
-;	;--- version ------
-;	mov eax,[rdx+TITEM.lo_dword]
-;	and eax,0FFFFh
-;	mov [cfg.version],ax
-;	jmp	.openB
+.write:
+	push rbp
+	push rbx
+	push rdi
+	push rsi
+	mov rbp,rsp
 
-;.err_openD:
-;.err_openC:
-;	;--- error bits or sum
-;.err_openB:
-;	;--- error size/read etc
-;.err_openA:
-;	;--- cannot find item
-;.ok_open:
-;	mov rcx,rbx
-;	call [top64.free]
+	xor rax,rax
+	@frame 8192+\
+		FILE_BUFLEN*2
 
-;.exit_open:
-;	xchg rax,rbx
-;	mov rsp,rbp
-;	pop rsi
-;	pop rdi
-;	pop rbx
-;	pop rbp
-;	ret 0
+	mov rbx,[pConf]
+	lea rdi,[rsp+\
+		FILE_BUFLEN*2]
+
+	mov al,09
+	stosb
+	;--- insert utf8 warning -------
+	xor edx,edx
+	mov ecx,UZ_INFO_UTF8
+	call [lang.get_uz]
+	mov rsi,rax
+	rep movsb
+	@do_eol
 	
+	mov al,09
+	stosb
+	;--- insert top info -------
+	xor edx,edx
+	mov ecx,UZ_INFO_TOP
+	call [lang.get_uz]
+	mov rsi,rax
+	rep movsb
+	@do_eol
 
-;	;ü------------------------------------------ö
-;	;|     DISCARD                              |
-;	;#------------------------------------------ä
+	mov al,09
+	stosb
+	;--- insert copyright -------
+	xor edx,edx
+	mov ecx,UZ_INFO_COPYR
+	call [lang.get_uz]
+	mov rsi,rax
+	rep movsb
+	@do_eol
+	@do_eol
 
-;.discard:
-;	push rbp
-;	push rbx
-;	push rdi
-;	push rsi
-;	mov rbp,rsp
-;	mov rsi,art.a16free
+	;--- version -----------
+	mov al,09
+	stosb
+	mov esi,sz_version
+	mov ecx,sz_version.size-1
+	rep movsb
+	mov ax,':"'
+	stosw
 
-;.discardA:
-;	mov r8,.discardA1
-;	jmp	.list_dir
+	mov ecx,uzVers
+	mov rdx,rdi
+	call utf16.to8
+	add rdi,rax
+	mov al,'"'
+	stosb
+	@do_eol
 
-;.discardA1:
-;	pop rcx
-;	test rcx,rcx
-;	jz .discardB
-;	call rsi
-;	jmp	.discardA1
+	;--- session -----------
+	mov al,09
+	stosb
+	mov esi,sz_session
+	mov rcx,sz_session.size-1
+	rep movsb
+	mov ax,":0"
+	stosw
 
-;.discardB:
-;	mov rcx,[wsp.src]
-;	call rsi
+	sub rsp,32
+	mov rdx,rsp
+	mov ecx,[rbx+CONFIG.session]
+	inc rcx
+	call art.qword2a
+	mov rsi,rdx
+	add rsi,rcx
+	mov rcx,rax
+	rep movsb
+	mov al,"h"
+	stosb
+	@do_eol
+	add rsp,32
 
-;;	mov rcx,bk64_bridge
-;;	call bridge.detach
+	;--- wspace -----------
+	mov al,09
+	stosb
+	mov esi,sz_wspace
+	mov rcx,sz_wspace.size-1
+	rep movsb
+	mov ax,':"'
+	stosw
 
-;	mov rcx,top64_bridge
-;	call bridge.detach
+	;--- copy what found. does not correct error
+	;--- on bad path+fname ---------------------
 
-;	mov rcx,dock64_bridge
-;	call bridge.detach
+	lea rcx,[rbx+CONFIG.wsp]
+	mov rdx,rdi
+	call utf16.to8
+	add rdi,rax
+	mov al,'"'
+	stosb
+	@do_eol
+	
+	;--- language -----------
+	mov al,09
+	stosb
+	mov esi,sz_language
+	mov rcx,sz_language.size-1
+	rep movsb
+	mov ax,':"'
+	stosw
 
-;	mov rcx,lang_bridge
-;	call bridge.detach
-
-
-;;@break
-;	mov rcx,[hMnuFont]
-;	call apiw.delobj
-
-;	call sci.discard
-;	mov rsp,rbp
-;	pop rsi
-;	pop rdi
-;	pop rbx
-;	pop rbp
-;	ret 0
-
-;.list_dir:
-;	;--- in R8 ret address
-;	;--- RET RCX stack pointer
-;	xor eax,eax
-;	mov rdx,[dirHash]
-;	push rax			;--- 0 terminator
-;	mov r10,400h
-
-;.list_dirA:
-;	cmp rax,[rdx]
-;	jz	.list_dirB
-;	mov r11,[rdx]
-
-;.list_dirC:
-;	push r11
-;	cmp  rax,[r11+DIR.hnext]
-;	jz	.list_dirB
-;	mov  r11,[r11+DIR.hnext]
-;	jmp	.list_dirC
-;	
-;.list_dirB:
-;	add rdx,8
-;	dec r10
-;	jnz .list_dirA
-;	jmp r8
-
-;;.openA:
-;;	mov r8,szLab
-;;	mov rdx,rbx
-;;	mov rcx,rbx
-;;	call [top64.locate]
-;;;	test rax,rax
-;;;	jz	
-
-;;	mov edx,[rax+TITEM.child]
-;;	test edx,edx
-;;	add rdx,rbx
-;;	mov r8,szPos
-;;	mov rcx,rbx
-;;	call [top64.locate]
-;;;	test rax,rax
-;;;	jz	
-
-
-;;	;--- parse VERSION etc
-;;	movzx eax,[rsi+\
-;;		CFG.version]
-
-;;	;--- parse flags etc
-;;	mov al,[rsi+CFG.fshow]
-;;	and al,SW_SHOWNORMAL or \
-;;		SW_SHOWMINIMIZED or \
-;;		SW_SHOWMAXIMIZED
-;;	test al,al
-;;	jnz	@f
-;;	mov al,CFG.FSHOW
-;;@@:
-;;	mov [rdi+CFG.fshow],al
-
-;;	;--- parse .update seconds
-;;	;--- parse .session
-;;	mov eax,[rsi+CFG.session]
-;;	inc eax
-;;	mov [rdi+CFG.session],eax
-
-;;	;--- parse .tcreate msecs
-;;	mov eax,[rsi+CFG.cdate]
-;;	test eax,eax
-;;	jnz	@f
-;;	mov eax,%t
-;;@@:	
-;;	mov [rdi+CFG.cdate],eax
-
-;;	;--- parse .tacces msecs
-;;	mov eax,[rsi+CFG.adate]
-;;	test eax,eax
-;;	jnz	@f
-;;	mov eax,%t
-;;@@:	
-;;	mov [rdi+CFG.adate],eax
-
-;;	;--- parse .cons.bkcol 0AABBCCh
-;;	mov eax,[rsi+\
-;;		CFG.cons.bkcol]
-;;	and eax,00FFFFFFh
-;;	test eax,eax
-;;	jnz	@f
-;;	mov eax,CFG.CONS.BKCOL
-;;@@:	
-;;	mov [rdi+\
-;;		CFG.cons.bkcol],eax
-
-;;;	;--- parse .tree.bkcol 0D9FFFFh
-;;	mov eax,[rsi+\
-;;		CFG.tree.bkcol]
-;;	and eax,00FFFFFFh
-;;	test eax,eax
-;;	jnz	@f
-;;	mov eax,CFG.TREE.BKCOL
-;;@@:	
-;;	mov [rdi+\
-;;		CFG.tree.bkcol],eax
-
-;;	;--- parse pos 
-;;	mov rcx,000'01FF'0000'01FFh
-;;	mov rax,qword[rsi+CFG.pos]
-;;	and rax,rcx
-;;	mov rdx,qword[rsi+CFG.pos+8]
-;;	mov rcx,0000'07FF'0000'07FFh
-;;	and rdx,rcx
-;;	test rdx,rdx
-;;	jnz	@f
-;;	mov rdx,(CFG.POS.BOTTOM shl 32)\
-;;		or CFG.POS.RIGHT
-;;@@:
-;;	mov qword[rdi+CFG.pos],rax
-;;	mov qword[rdi+CFG.pos+8],rdx
-
-;;	mov rcx,rax
-;;	call [top64.getnum]
-;;	jc	.openB
-
-;;	pxor xmm1,xmm1
-;;	movq xmm0,rax
-;;	punpcklwd xmm0,xmm1
-;;	pshufd xmm0,xmm0,00011011b
-;;	movdqu dqword [lab.pos.param],xmm0
-
-;;	mov rcx,LAB.size
-;;	call art.a16malloc
-;;	test eax,eax
-;;	jz	.err_openB
-;;	mov rdi,rax
-;;	call .def_fill
-;;	
-;;	mov rcx,rsi
-;;	call art.fcreate_rw
-;;	test eax,eax
-;;	jz	.err_openD
-
-;;	mov r8,LAB.size
-;;	mov rdx,rdi
-;;	mov rcx,rbx
-;;	call art.fwrite
-;;	mov [gpt.pConfig],rdi
-;;	jmp	.err_openB
-;;	
-;;.openB:
-;;	;--- cannot create config.bin
-;;	jmp	.err_openB
-;;.openA:
+	lea rcx,[rbx+CONFIG.lang8]
+	mov rdx,rdi
+	call utf8.copyz
+	add rdi,rax
+	mov al,'"'
+	stosb
+	@do_eol
 
 
+	;--- owner -----------
+	mov al,09
+	stosb
+	mov esi,sz_owner
+	mov rcx,sz_owner.size-1
+	rep movsb
+	mov ax,':"'
+	stosw
 
-;;	;--- in env X64LABD/R+0
-;;;	sub rsp,32
-;;;	mov rax,qword[uzClass]
-;;;	mov [rsp],rax
-;;;	mov rax,qword[uzClass+8]
-;;;	mov [rsp+8],rax
-;;;	mov rdx,rsi
-;;;	mov rcx,rsp
-;;;	call art.setenv
-;;;	add rsp,32
+	lea rcx,[rbx+CONFIG.owner]
+	mov rdx,rdi
+	call utf16.to8
+	add rdi,rax
+	mov al,'"'
+	stosb
+	@do_eol
 
-;;;	xor eax,eax
-;;;	inc eax
-;;.setenv:
-;;	;--- in RCX key
-;;	;--- in RDX value
-;;	push rsi
-;;	call utf16.cpts
-;;	mov rsi,rcx
-;;	add rax,rax
-;;	
-;;	pop rsi
-;;	ret 0
+	
+	;--- fshow ----------------
+	mov al,09
+	stosb
+	mov esi,sz_fshow
+	mov rcx,sz_fshow.size-1
+	rep movsb
+	mov al,':'
+	stosb
 
-;;.err_setupB:
-;;	;--- no bk64 plugin
-;;	;--- in RSP buffer of FILE_BUFLEN
+	sub rsp,32+\
+		sizeof.WINDOWPLACEMENT
 
-;;	;1)---  is tmp\dreck.exe ?
-;;	mov rsi,rsp
-;;	mov r9,uzExeExt
-;;	mov r8,uzDreck
-;;	mov rdx,TMPDIR
-;;	call .cat_dir
+	mov [rsp+\
+		WINDOWPLACEMENT.length],\
+		sizeof.WINDOWPLACEMENT
 
-;;	mov rcx,rsi
-;;	call shared.is_file
-;;	jz	.err_setupB1
+	mov rdx,rsp
+	mov rcx,[hMain]
+	call apiw.get_winplacem
 
-;;	call win.ask_tar
-;;	cmp eax,IDYES
-;;	jnz	.err_setupB2
+	mov eax,[rsp+\
+		WINDOWPLACEMENT.showCmd]
 
-;;	;2)--- SPAWN dreck.exe /TAR
+	; SW_MINIMIZE 			;6
+	; SW_RESTORE				;9
+	; SW_SHOWMAXIMIZED	;3
+	; SW_SHOWMINIMIZED	;2
+	; SW_SHOWNORMAL			;1
 
-;;.err_setupB3:
+	and eax,\
+		SW_SHOWMAXIMIZED
+	call art.b2a
+	stosw
+	@do_eol
 
-;;.err_setupB1:
-;;	;--- err NO DRECK.exe -> exit
-;;	call win.err_notar
+	;--- pos ----------------
+	mov al,09
+	stosb
+	mov esi,sz_pos
+	mov rcx,sz_pos.size-1
+	rep movsb
+	mov ax,':0'
+	stosw
 
-;;.err_setupB2:
-;;	xor rax,rax
-;;	jmp .err_setup
+	lea rax,[rsp+\
+		WINDOWPLACEMENT.rcNormalPosition]
 
-;;;	mov rax,[pCmdline]
-;;;	test rax,rax
-;;;	jz	.err_setupB1
-;;;	mov rdx,rsp
-;;;	mov rcx,rax
-;;;	push 0
-;;;	call shared.cmdargs
-;;;	pop rdx
-;;;	test rax,rax
-;;;	jz	.err_setupB1
-;;;	test rdx,rdx
-;;;	jz	.err_setupB2
-;;;	mov rcx,uzUpdMark
-;;;	dec rdx
-;;;	jz	.err_setupB2
-;;;	add rax,8
-;;;	cmp [rax],rcx
-;;;	jnz .err_setupB3
+	;--- TODO wraparound xmm
+	mov r8,[rax+8]
+	sub r8,[rax]
+	mov [rax+8],r8
 
+	@rect2reg rcx,rax
+	lea rdx,[rsp+\
+		sizeof.WINDOWPLACEMENT]
+	call art.qword2a
+	mov rsi,rdx
+	add rsi,rcx
+	mov rcx,rax
+	rep movsb
+	mov al,"h"
+	stosb
+	@do_eol
 
-;	;#---------------------------------------------------ö
-;	;|                   WRITE CONFIG x64lab             |
-;	;ö---------------------------------------------------ü
+	add rsp,32+\
+		sizeof.WINDOWPLACEMENT
 
-;.write:
-;	push rbp
-;	push rbx
-;	push rdi
-;	push rsi
-;	mov rbp,rsp
+.writeF:
+	xor eax,eax
+	mov rcx,rsp
+	mov edx,uzConfName
 
-;	xor rax,rax
-;	sub rsp,1000h+FILE_BUFLEN
-;	mov rdi,rsp
-;	lea rsi,[rsp+1000h]
-;	mov [rdi],rax				;--- assure page access
+	push rax
+	push uzUtf8Ext
+	push rdx
+	push uzSlash
+	push rdx
+	push rcx
+	push rax
+	call art.catstrw
+	
+	mov rcx,rsp
+	call art.fcreate_rw
 
-;	mov r9,uzUtf8Ext
-;	mov r8,uzConfName
-;	mov rdx,CONFDIR
-;;call .cat_dir
+	test rax,rax
+	jle	.writeE
+	mov rbx,rax				;--- file handle
 
-;;@break
-;;	mov rcx,rsi
-;;	call shared.fcreate_rw
-;;	test rax,rax
-;;	jle	.err_write
-;;	mov rbx,rax
-;;	
+	mov r8,rdi
+	lea rdx,[rsp+\
+		FILE_BUFLEN*2]
+	mov rcx,rax
+	sub r8,rdx
+	call art.fwrite
 
-;;	mov rcx,rbx
-;;	call shared.fclose
+	mov rcx,rbx
+	call art.fclose
 
-;.err_write:
-;	;--- cannot create config.utf8
-
-;.writeA:
-;	mov rsp,rbp
-;	pop rsi
-;	pop rdi
-;	pop rbx
-;	pop rbp
-;	ret 0
-
-
-
-;	;ü------------------------------------------ö
-;	;|     CREATEFONT                           |
-;	;#------------------------------------------ä
-;.createfont:
-;	;--- in RCX bold-wi-hi
-;	;--- in RDX st-un-it-ch
-;	;--- in R8	font name
-;	sub rsp,sizea16.LOGFONTW
-;	movzx eax,cl
-;	mov [rsp+LOGFONTW.lfHeight],eax
-;	movzx eax,ch
-;	mov [rsp+LOGFONTW.lfWidth],eax
-;	xor eax,eax
-;	shr rcx,16
-;	mov [rsp+LOGFONTW.lfEscapement],eax
-;	mov [rsp+LOGFONTW.lfOrientation],eax
-;	mov [rsp+LOGFONTW.lfWeight],ecx
-
-;	;-------------------------------------
-;	mov [rsp+LOGFONTW.lfCharSet],dl
-;	mov [rsp+LOGFONTW.lfItalic],dh
-;	shr edx,16
-;	mov [rsp+LOGFONTW.lfUnderline],dl
-;	mov [rsp+LOGFONTW.lfStrikeOut],dh
-;	;-------------------------------------
-;	mov [rsp+LOGFONTW.lfOutPrecision],\
-;		OUT_DEFAULT_PRECIS	
-
-;	mov [rsp+LOGFONTW.lfClipPrecision],\
-;		CLIP_DEFAULT_PRECIS	
-
-;	mov [rsp+LOGFONTW.lfQuality],\
-;		DEFAULT_QUALITY
-
-;	mov [rsp+LOGFONTW.lfPitchAndFamily],\
-;		DEFAULT_PITCH or FF_DONTCARE	
-
-;	mov r9,rdi
-;	xchg r8,rsi
-;	lea rdi,[rsp+LOGFONTW.lfFaceName]
-;@@:
-;	lodsw
-;	stosw
-;	test ax,ax
-;	jnz	@b
-;	xchg r9,rdi
-;	xchg r8,rsi
-;	mov rcx,rsp
-;	call apiw.cfonti
-;	add rsp,sizea16.LOGFONTW
-;	ret 0
-
+.writeE:
+	mov rsp,rbp
+	pop rsi
+	pop rdi
+	pop rbx
+	pop rbp
+	ret 0
 
 
