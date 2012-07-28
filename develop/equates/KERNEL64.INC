@@ -18,6 +18,40 @@
 	ends
 	@sizea16 OSVERSIONINFOEXW
 
+
+	struct STARTUPINFO
+		cb	dd ?
+				dd ?
+		lpReserved	dq ?
+		lpDesktop	  dq ?
+		lpTitle	dq ?
+		dwX		  dd ?
+		dwY		  dd ?
+		dwXSize	dd ?
+		dwYSize	dd ?
+		dwXCountChars   dd ?
+		dwYCountChars   dd ?
+		dwFillAttribute dd ?
+		dwFlags	    dd ?
+		wShowWindow	dw ?
+		cbReserved2	dw ?
+								dd ?
+		lpReserved2	dq ?
+		hStdInput	  dq ?
+		hStdOutput	dq ?
+		hStdError	  dq ?
+	ends
+	@sizea16 STARTUPINFO
+
+	struct PROCESS_INFORMATION
+		hProcess    dq ?
+		hThread     dq ?
+		dwProcessId dd ?
+		dwThreadId  dd ?
+	ends
+	@sizea16 PROCESS_INFORMATION
+
+
 ; KERNEL32.DLL structures and constants
 
 struct SECURITY_ATTRIBUTES
@@ -81,36 +115,6 @@ struct MEMORYSTATUS
   dwAvailVirtual  dq ?
 ends
 
-struct STARTUPINFO
-  cb		  dd ?
-		  dd ?
-  lpReserved	  dq ?
-  lpDesktop	  dq ?
-  lpTitle	  dq ?
-  dwX		  dd ?
-  dwY		  dd ?
-  dwXSize	  dd ?
-  dwYSize	  dd ?
-  dwXCountChars   dd ?
-  dwYCountChars   dd ?
-  dwFillAttribute dd ?
-  dwFlags	  dd ?
-  wShowWindow	  dw ?
-  cbReserved2	  dw ?
-		  dd ?
-  lpReserved2	  dq ?
-  hStdInput	  dq ?
-  hStdOutput	  dq ?
-  hStdError	  dq ?
-ends
-
-struct PROCESS_INFORMATION
-  hProcess    dq ?
-  hThread     dq ?
-  dwProcessId dd ?
-  dwThreadId  dd ?
-ends
-
 struct FILETIME
   dwLowDateTime  dd ?
   dwHighDateTime dd ?
@@ -166,18 +170,19 @@ struct WIN32_FIND_DATAA
   cAlternateFileName db 14 dup (?)
 ends
 
-struct WIN32_FIND_DATAW
-  dwFileAttributes   dd ?
-  ftCreationTime     FILETIME
-  ftLastAccessTime   FILETIME
-  ftLastWriteTime    FILETIME
-  nFileSizeHigh      dd ?
-  nFileSizeLow	     dd ?
-  dwReserved0	     dd ?
-  dwReserved1	     dd ?
-  cFileName	     du MAX_PATH dup (?)
-  cAlternateFileName du 14 dup (?)
-ends
+	;--- size 250h/592 decimal ------------
+	struct WIN32_FIND_DATAW
+		dwFileAttributes dd ?
+		ftCreationTime   FILETIME
+		ftLastAccessTime FILETIME
+		ftLastWriteTime  FILETIME
+		nFileSizeHigh    dd ?
+		nFileSizeLow	   dd ?
+		dwReserved0	     dd ?
+		dwReserved1	     dd ?
+		cFileName        du MAX_PATH dup (?)
+		cAlternateFileName du 14 dup (?)
+	ends
 
 ; General constants
 
@@ -259,11 +264,11 @@ FILE_END     = 2
 ; File attributes
 
 FILE_ATTRIBUTE_READONLY   = 001h
-FILE_ATTRIBUTE_HIDDEN	  = 002h
-FILE_ATTRIBUTE_SYSTEM	  = 004h
+FILE_ATTRIBUTE_HIDDEN     = 002h
+FILE_ATTRIBUTE_SYSTEM     = 004h
 FILE_ATTRIBUTE_DIRECTORY  = 010h
-FILE_ATTRIBUTE_ARCHIVE	  = 020h
-FILE_ATTRIBUTE_NORMAL	  = 080h
+FILE_ATTRIBUTE_ARCHIVE    = 020h
+FILE_ATTRIBUTE_NORMAL     = 080h
 FILE_ATTRIBUTE_TEMPORARY  = 100h
 FILE_ATTRIBUTE_COMPRESSED = 800h
 

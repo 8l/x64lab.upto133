@@ -476,6 +476,12 @@ lvw:
 	mov edx,LVM_DELETEITEM
 	jmp	apiw.sms
 
+.del_all:
+	xor r9,r9
+	xor r8,r8
+	mov edx,LVM_DELETEALLITEMS
+	jmp	apiw.sms
+
 .get_next:
 	;--- in r8 iItem/-1
 	;--- in r9 flags
@@ -516,6 +522,12 @@ lvw:
 	;--- in R9 color
 	mov edx,LVM_SETTEXTBKCOLOR	
 	jmp	apiw.sms
+
+.set_view:
+	;--- in R8 view type	
+	mov edx,LVM_SETVIEW
+	jmp	apiw.sms
+
 
 .is_param:
 	;--- in RCX hLvw
@@ -659,6 +671,12 @@ cbex:
 	xor r9,r9
 	xor r8,r8
 	mov edx,CB_GETCURSEL
+	jmp	apiw.sms
+
+.reset:
+	xor r9,r9
+	xor r8,r8
+	mov edx,CB_RESETCONTENT
 	jmp	apiw.sms
 
 

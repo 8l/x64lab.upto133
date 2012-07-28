@@ -74,7 +74,6 @@ iodlg:
 	jmp	.ret0
 
 .io_btn:
-;@break
 	mov r12,[pHu]
 	mov rcx,[.hu.hCbx]
 	call cbex.get_cursel
@@ -147,23 +146,14 @@ iodlg:
 	mov rbx,rax
 	mov rdi,rcx
 
-	sub rsp,\
-		sizeof.RECT
-	mov rdx,rsp
-	call apiw.get_winrect
+	call .store_pos
 
 	mov rcx,rdi
 	call apiw.get_wldata
 	test rax,rax
 	jz	.id_cancelA
-
 	mov rsi,rax
-	mov rax,[rsp]
-	mov [.hu.rc],rax
-	mov rax,[rsp+8]
-	mov [.hu.rc+8],rax
 
-;@break
 	mov rcx,[.hu.hCbx]
 	call cbex.get_cursel
 	mov r8,rax
@@ -210,31 +200,11 @@ iodlg:
 	test r9,r9
 	jz	.id_cancel
 
-;@break
 	mov r8,r9
 	call apiw.set_wldata
 
-	mov rax,rbx
-	lea rdi,[.hu.hDlg]
-	stosq
-
-	push 0
-	push IDOK
-	push IDCANCEL
-	push IO_EDI
-	push IO_STC3
-	push IO_BTN
-	push IO_CBX
-	push IO_STC2
-	mov edx,IO_STC1
-	
-.wm_initdA:
 	mov rcx,rbx
-	call apiw.get_dlgitem
-	pop rdx
-	stosq
-	test edx,edx
-	jnz .wm_initdA
+	call .get_hwnds
 
 	movzx eax,[.io.set]
 
@@ -336,7 +306,7 @@ iodlg:
 	mov ecx,UZ_NO
 
 .wm_initdB:
-	;--- set strings and handles --------
+	;--- set strings --------
 	mov r8,rdi
 	mov edx,U16
 	call [lang.get_uz]
@@ -349,37 +319,9 @@ iodlg:
 	test ecx,ecx
 	jnz	.wm_initdB
 
-;.wm_initdC:
 	mov rsp,rdi
-
-	;--- set last position -------------
-	mov rdx,rsp
 	mov rcx,rbx
-	call apiw.get_winrect
-
-	mov rax,[.hu.rc]
-	mov rdx,[rsp]
-	test rax,rax
-	jnz	.wm_initdD
-	mov [.hu.rc],rdx
-
-	mov rax,[.hu.rc+8]
-	mov rdx,[rsp+8]
-	test rax,rax
-	jnz	.wm_initdD
-	mov [.hu.rc+8],rdx
-
-.wm_initdD:
-	mov eax,SWP_NOZORDER
-	mov r11d,[.hu.rc.bottom]
-	sub r11d,[.hu.rc.top]
-	mov r10d,[.hu.rc.right]
-	sub r10d,[.hu.rc.left]
-	mov r9d,[.hu.rc.top]
-	mov r8d,[.hu.rc.left]
-	mov rdx,HWND_TOP
-	mov rcx,rbx
-	call apiw.set_wpos
+	call .set_pos
 
 	;--- set imagelists on known directories ----
 	mov r9,[hsmSysList]
@@ -447,6 +389,163 @@ iodlg:
 .exit:
 	@wepi
 
+
+	;#---------------------------------------------ö
+	;|             .SET_POS                        |
+	;ö---------------------------------------------ü
+
+.set_pos:
+	;--- in RCX hDlg
+	push rbx
+	push r12
+
+	mov rbx,rcx
+	mov r12,[pHu]
+
+	mov rax,[.hu.rc]
+	test rax,rax
+	jnz	.set_posA
+	mov rax,[.hu.rc+8]
+	test rax,rax
+	jnz	.set_posA
+	call .store_pos
+
+.set_posA:
+	mov eax,SWP_NOZORDER
+	mov r11d,[.hu.rc.bottom]
+	sub r11d,[.hu.rc.top]
+	mov r10d,[.hu.rc.right]
+	sub r10d,[.hu.rc.left]
+	mov r9d,[.hu.rc.top]
+	mov r8d,[.hu.rc.left]
+	mov rdx,HWND_TOP
+	mov rcx,rbx
+	call apiw.set_wpos
+
+	pop r12
+	pop rbx
+	ret 0
+
+	;#---------------------------------------------ö
+	;|             .STORE_POS                      |
+	;ö---------------------------------------------ü
+
+.store_pos:
+	;--- IN RCX hDialog
+	sub rsp,\
+		sizeof.RECT
+	mov rdx,rsp
+	call apiw.get_winrect
+
+	mov rcx,[pHu]
+	lea rdx,[rcx+HU.rc]
+
+	mov rax,[rsp]
+	mov [rdx],rax
+	mov rax,[rsp+8]
+	mov [rdx+8],rax
+	add rsp,\
+		sizeof.RECT
+	ret 0
+
+
+	;#---------------------------------------------ö
+	;|             .SET_STRINGS                    |
+	;ö---------------------------------------------ü
+
+.set_strings:
+	;--- in RCX stack of this reference
+	;--- 
+	; termin  0
+	; button  IDOK
+	; button  IDCANCEL
+	; edit    IO_EDI
+	; static  IO_STC3
+	; button  IO_BTN
+	; cbx     IO_CBX
+	; static  IO_STC2
+	; static  IO_STC1
+	; caption IO_DLG
+
+	push rbp
+	push rbx
+	push rdi
+	push rsi
+	mov rbp,rsp
+
+	sub rsp,\
+		FILE_BUFLEN
+
+	mov rdi,rsp
+	mov rsi,rcx
+	mov rax,[pHu]
+	lea rbx,[rax+HU.hDlg-8]
+
+.set_stringsA:
+	mov rcx,rax
+	mov r8,rdi
+	inc rax
+	mov edx,U16
+	jz .set_stringsB
+	call [lang.get_uz]
+
+	mov r9,rdi
+	mov rcx,[rbx]
+	call win.set_text
+
+.set_stringsB:
+	lodsq
+	add rbx,8
+	test rax,rax
+	jnz .set_stringsA
+
+.set_stringsE:
+	mov rsp,rbp
+	pop rsi
+	pop rdi
+	pop rbx
+	pop rbp
+	ret 0
+
+	;#---------------------------------------------ö
+	;|             .GET_HWNDS                      |
+	;ö---------------------------------------------ü
+
+.get_hwnds:
+	;--- in RCX hDlg
+	push rdi
+	push r12
+
+	mov rax,rcx
+	mov r12,[pHu]
+	lea rdi,[.hu.hDlg]
+	stosq
+
+	push 0
+	push IDOK
+	push IDCANCEL
+	push IO_EDI
+	push IO_STC3
+	push IO_BTN
+	push IO_CBX
+	push IO_STC2
+	mov edx,IO_STC1
+
+.get_hwndsA:	
+	mov rcx,[.hu.hDlg]
+	call apiw.get_dlgitem
+	pop rdx
+	stosq
+	test edx,edx
+	jnz .get_hwndsA
+
+	pop r12
+	pop rdi
+	ret 0
+
+	;#---------------------------------------------ö
+	;|             .FILL_KDIRS                     |
+	;ö---------------------------------------------ü
 
 .fill_kdirs:
 	;--- in RCX dir

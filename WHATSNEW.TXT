@@ -1,4 +1,7 @@
 
+- version 0.0.101 (released on 28.07.2012 ) " ... " 
+  + "Properties|Developer Tools" load and set from [config\devtool.utf8]
+
 - version 0.0.98 (released on 20.07.2012 ) Alpha 
   + edit and clean
   + read/write [config\config.utf8] the following paras

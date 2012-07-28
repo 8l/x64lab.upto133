@@ -20,16 +20,18 @@ section '.data' data readable writeable
 	pConf		dq sizeof.CONFIG
 	pCons 	dq sizeof.CONS
 	pCp			dq sizeof.CPROP
-	pIo			dq sizeof.IODLG * 4
+	pIo			dq sizeof.IODLG * 5
 	pHu			dq sizeof.HU
 	pEdit		dq sizeof.EDIT
 	pTime		dq sizeof.SYSTIME
 	pKeya		dq (MI_OTHER-MNU_X64LAB) * sizeof.KEYA
 	NUM_ITEMS = ($-curDir)/8
 	
+
 	pOmni		dq 0
 	hSciDll	dq 0
 	hDocker	dq 0
+	pDevT		dq 0	;--- top file
 
 	hTree			dq 0
 	hRootWsp	dq 0
@@ -54,7 +56,7 @@ section '.data' data readable writeable
 	;mountDir	dq 0
 	plugDir		dq 0
 	projDir		dq 0
-	templDir		dq 0
+	templDir	dq 0
 	tmpDir		dq 0
 	toolDir		dq 0
   DEF_DIRS	= ($-appDir)/8
@@ -85,6 +87,7 @@ section '.data' data readable writeable
 		uzTemplName du "template",0
 		uzTmpName	  du "tmp",0
 		uzToolName 	du "tool",0
+		uzDevTName	du "devtool",0
 		uzMenuName	du "menu",0
 
 		uzDefault  du "default"		;<--- follows
@@ -99,12 +102,15 @@ section '.data' data readable writeable
 		uzSciExt   du ".sci",0
 		uzBmpExt	 du ".bmp",0
 
+
 		uzTreeClass	du "SysTreeView32",0
-		uzLViewClass du "SysListView32",0
+		uzLViewClass	du "SysListView32",0
 		uzCbexClass	du "ComboBoxEx32",0
 		uzStbClass	du "msctls_statusbar32",0
 		uzSciDll		du "Scilexer64.dll",0
 		uzSciClass	du "Scintilla",0
+		uzLnkSpec	  du "*.lnk",0
+
 		uzCourierN	db "Courier New",0
 		
 		;--- menu -----------------------------------------
@@ -149,11 +155,16 @@ section '.data' data readable writeable
 			MI_FI_CLOSE,	5,OWN,DIF
 
 		@mnp MP_EDIT,		0,0,ISS,\
+			UZ_CPWIN,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
 			MP_WSPACE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
 			MI_ED_LNK,8,OWN,DIF,\
 			UZ_EDIT_PANE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
 			;--- MI_ED_REM,7,OWN,DIF
 			
+		@mnp MP_DEVT,		11,OWN,DIF or MIIM_SUBMENU,\
+			MI_DEVT_ADD,	10,OWN,DIF,\
+			MI_DEVT_REM,	12,OWN,DIF
+
 		@mnp MP_PATH,		26,RJU,ISS or MIIM_FTYPE,\
 			MI_PA_CONS,		18,OWN,DIF,\
 			MI_PA_BROWSE,	18,OWN,DIF,\
@@ -161,8 +172,6 @@ section '.data' data readable writeable
 			MI_PA_COPY,		18,OWN,DIF,\
 			MI_PA_SETPROP,18,OWN,DIF
 		
-	
-
 		;--- utf8 strings for config/config.utf8 items
 		macro @cfg_items [argid,argval]{
 		 forward

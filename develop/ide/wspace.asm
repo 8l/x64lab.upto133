@@ -1795,9 +1795,9 @@ wspace:
 	;	jnz	.load_kdirsB
 	inc qword[rsp]
 
-	mov r8,rdi
-	mov rdx,r9
-	call art.cout2XU
+	; mov r8,rdi         ;<-------------------
+	; mov rdx,r9
+	; call art.cout2XU
 
 .load_kdirsB:
 	mov esi,\
@@ -2828,3 +2828,67 @@ wspace:
 	mov rcx,[.labf.dir]
 	call mnu.set_dir
 	jmp	winproc.ret0
+
+
+
+.spawn:
+	;--- in RCX appname
+	;--- in RDX cmdline
+
+	push rbp
+	push rdi
+	push rsi
+
+	mov rsi,rcx
+	mov rbp,rsp
+	and rsp,-16
+
+	sub rsp,\
+		sizea16.STARTUPINFO+\
+		sizea16.PROCESS_INFORMATION
+
+	mov rdi,rsp
+	mov ecx,(sizea16.STARTUPINFO+\
+		sizea16.PROCESS_INFORMATION) / 8
+	xor eax,eax
+	rep stosq
+
+	mov rdi,rdx
+
+	mov rax,rsp
+	lea rdx,[rsp+\
+		sizea16.STARTUPINFO]
+
+	mov [rax+\
+		STARTUPINFO.cb],\
+		sizeof.STARTUPINFO
+
+	mov [rax+\
+		STARTUPINFO.dwFlags],\
+	STARTF_USESHOWWINDOW
+
+	mov [rax+\
+		STARTUPINFO.wShowWindow],\
+	SW_SHOWNORMAL
+	
+	xor ecx,ecx
+
+	push rdx ;--- PROCESS_INFORMATION
+	push rax ;--- STARTUPINFO
+	push rcx ;--- lpCurrentDirector
+	push rcx ;--- lpEnvironment
+	push rcx ;--- dwCreationFlags
+	push rcx ;--- bInheritHandles
+
+	xor r9,r9
+	xor r8,r8
+	mov rdx,rdi
+	mov rcx,rsi
+	sub rsp,20h
+	call [CreateProcessW]
+
+	mov rsp,rbp
+	pop rsi
+	pop rdi
+	pop rbp
+	ret 0

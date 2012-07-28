@@ -15,6 +15,7 @@ develop\x64labd.asm
 develop\x64labd.exe.manifest
 
 develop\config\config.utf8
+develop\config\devtool.utf8
 develop\config\accel.utf8
 develop\config\x64lab.bmp
 develop\project\welcome.x64lab
@@ -30,7 +31,8 @@ develop\equates\USER64.INC
 develop\ide\bridge.inc 
 develop\ide\config.asm 
 develop\ide\console.asm
-develop\ide\data.inc   
+develop\ide\data.inc
+develop\ide\devtool.asm
 develop\ide\edit.asm   
 develop\ide\iodlg.asm  
 develop\ide\main.asm   

@@ -43,7 +43,7 @@
 		UZ_CANCEL,0,U8+UR,db "Cancel",\
 		UZ_IO_SELDPF,0,U8+UR,db "Select destination path and filename",\
 		UZ_IO_DPATH,0,U8+UR,db "Dest. path",\
-		UZ_IO_KDIR,0,U8+UR,db "Known directories",\
+		UZ_IO_KDIR,0,U8+UR,db "Known paths",\
 		UZ_IO_DFNAME,0,U8+UR,db "Dest. filename",\
 		UZ_IO_EXT,0,U8+UR,db "filename.ext",\
 		UZ_WSP_EXT,0,U8+UR,db "filename.x64lab",\
@@ -51,6 +51,9 @@
 		UZ_COURNEW,0,U8+UR,db "Courier New",\
 		UZ_IO_NEWWSP,0,U8+UR,db "Create a new Workspace",\
 		UZ_IO_SAVEWSP,0,U8+UR,db "Save current Workspace",\
+		UZ_TOOLCMD,0,U8+UR,db "Tool command",\
+		UZ_TOOLDESCR,0,U8+UR,db "Select executable/batch/help file etc.",\
+		UZ_TOOLBYG,0,U8+UR,db "[Tools listed by Groups]",\
 		MP_WSPACE,0,U8+UR,db "Work&space",\
 			MI_WS_LOAD,0,U8+UR,db "&Load",\
 			MI_WS_NEW,0,U8+UR,db "&New",\
@@ -78,6 +81,8 @@
 			MI_ED_REM,0,U8+UR,db "Remove item from workspace",\
 			MP_WIN,0,U8+UR,db "Window",\
 		MP_DEVT,0,U8+UR,db "Developer tools",\
+			MI_DEVT_ADD,0,U8+UR,db "Browse to add new tool",\
+			MI_DEVT_REM,0,U8+UR,db "Remove tool",\
 		MP_CONF,0,U8+UR,db "Configurator",\
 		MP_HELP,0,U8+UR,db "Help",\
 		MP_PATH,0,U8+UR,db "[?]",\
@@ -86,7 +91,7 @@
 			MI_PA_FIND,0,U8+UR,db "Find here",\
 			MI_PA_COPY,0,U8+UR,db "Copy this path",\
 			MI_PA_SETPROP,0,U8+UR,db "Set browsing",\
-			BB_NULL,0,U8+UR,db "browse by (...only an idea)",\
+			BB_NULL,0,U8+UR,db "Browse by categories",\
 			BB_WSP,0,U8+UR,db "Workspace and files",\
 			BB_FOLDER,0,U8+UR,db "Folder",\
 			BB_CODE,0,U8+UR,db "Code",\

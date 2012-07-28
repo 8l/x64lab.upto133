@@ -52,8 +52,6 @@ top64:
 	test r8,r8
 	jz	.ok_locate
 
-;@break
-
 	mov rcx,r8
 	call utf8.zsdbm
 	and eax,eax
@@ -88,7 +86,6 @@ top64:
 	pop r9
 	pop r10
 	ret 0
-
 
 			;ü------------------------------------------ö
 			;|     PARSE                                |

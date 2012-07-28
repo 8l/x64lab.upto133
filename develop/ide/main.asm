@@ -76,6 +76,7 @@ section '.code' code readable executable
 	include "sciwrap.asm"
 	include "wspace.asm"
 	include "iodlg.asm"
+	include "devtool.asm"
 
 start:
 	;	call get_version
@@ -104,7 +105,7 @@ start:
 		sizeof.CONFIG+\
 		sizeof.CONS+\
 		sizeof.CPROP+\
-		(sizeof.IODLG*4)+\
+		(sizeof.IODLG*5)+\
 		sizeof.EDIT
 
 	@frame rax
@@ -391,7 +392,17 @@ winproc:
 	jz	.wm_close
 	cmp edx,WM_QUERYENDSESSION
 	jz	.wm_close
+	cmp edx,WM_INITMENUPOPUP
+	jz	.wm_impup
 	jmp	.defwndproc
+
+.wm_impup:
+	;--- init menupopup
+	cmp r8,[tMP_DEVT]
+	jnz	.ret0
+	;call devtool.load
+	jmp	.ret0
+
 
 .wm_close:
 	mov rcx,ASK_SAVE
@@ -440,7 +451,16 @@ winproc:
 	jz	.mi_ws_exit
 	cmp ax,MI_ED_LNK
 	jz	.mi_ed_lnk
+	cmp ax,MI_DEVT_ADD
+	jz	.mi_devt_add
 	jmp	.defwndproc
+
+	;ü------------------------------------------ö
+	;|     DEVT_ADD                             |
+	;#------------------------------------------ä
+.mi_devt_add:
+	call devtool.start
+	jmp	.ret0
 
 	;ü------------------------------------------ö
 	;|     WS_EXIT                              |
@@ -836,6 +856,8 @@ winproc:
 	mov [hMain],rcx
 	call win.controls
 
+	call devtool.load
+
 	mov rax,[pConf]
 
 	sub rsp,\
@@ -971,25 +993,29 @@ winproc:
 	jmp	.ret1
 
 .wm_dis_mnuA:
+;	cmp eax,MP_DEVT
+;	jnz	.wm_dis_mnuA2
+;@break
+;	jmp	.ret0
+
+
+.wm_dis_mnuA2:
+	cmp eax,MI_FIRSTOOL
+	jb	.wm_dis_mnuA1
+	cmp eax,MI_LASTTOOL
+	ja	.wm_dis_mnuA1
+
+.wm_dis_mnuDT:
+	;--- devtool item -----------
+	;@break
+	jmp	.ret0
+
+
+
+.wm_dis_mnuA1:
 	push r12
 	push r13
 
-	;	test [rbx+\
-	;		DRAWITEMSTRUCT.itemState],\
-	;			ODS_CHECKED
-	;	jz	@f
-	;		@break
-	;@@:
-	;	
-	;	mov rax,[.dis.hwndItem]
-	;	cmp rax,[hMnuMain]
-	;	jnz	.wm_dis_mnuD
-
-	;	mov r8,\
-	;		COLOR_3DLIGHT+1
-	;	add [.dis.rcItem.bottom],90
-	;	jmp	.wm_dis_mnuB
-	
 .wm_dis_mnuD:
 	mov r8,COLOR_MENU+1
 	test [.dis.itemState],\
@@ -1131,6 +1157,7 @@ winproc:
 
 .wm_destroy:
 	call config.write
+	call devtool.discard
 
 	xor rcx,rcx
 	call [PostQuitMessage]

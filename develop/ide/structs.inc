@@ -12,12 +12,9 @@
   ;ö-------------------------------------------------ä
 
 
-	MAX_NUMTOOLS equ 255
 	MAX_MNUCPTS	 = 80h
 	MAX_MNULEN	=  MAX_MNUCPTS*2 + 10h
-	ERROR_NO_MORE_FILES = 18
-	IDM_FIRSTCHILD   equ 50000
-		MAX_EXTLEN equ 78
+	MAX_EXTLEN equ 78
 
 	;struct ICONINFO
 	;	fIcon	dd ?
@@ -92,10 +89,10 @@
 
 	
 	struct IODLG
-		param		dq 0		;--- IN param	
-		ldir		dq 0		;--- last dir
+		param		dq 0  ;--- IN param	
+		ldir		dq 0  ;--- last dir
 						dq 0
-		buflen	dw 0	;--- buf len
+		buflen	dw 0  ;--- buf len
 		set			dw 0
 						dd 0
 		buf			db FILE_BUFLEN dup (?)
@@ -105,6 +102,7 @@
 	IO_NEWNAME equ sizeof.IODLG
 	IO_SAVEWSP equ sizeof.IODLG * 2
 	IO_NEWLNK  equ sizeof.IODLG * 3
+	IO_DEVTOOL equ sizeof.IODLG * 4
 
 	;--- Ownerdraw menuitem
 	struct OMNI	
@@ -170,30 +168,27 @@
 	PROJ_MODIFIED	= 1
 
 	struct LABFILE
-						dq 0
+		dq 0
 		union
 			hItem	dq 0	;--- treeitem
 			hRoot	dq 0	;--- treeroot
 		ends
-									
 		union
 			hSci	dq 0	;--- scintilla win
 			hBin	dq 0	;--- hex container
 			hView	dq 0	;--- generic view window
 		ends
-		dir			dq 0	;--- slot dir
+		dir		dq 0	;--- slot dir
 
-		alen		dw 0	;--- total available following len
-		cpts		dw 0	;--- cpts, text following item
-		idx			dw 0	;--- index slot
-						db 0	;---
-		state		db 0	;--- treitem state 
+		alen	dw 0	;--- total available following len
+		cpts	dw 0	;--- cpts, text following item
+		idx		dw 0	;--- index slot
+					db 0	;---
+		state	db 0	;--- treitem state 
 							;--- TVE_COLLAPSE	= 0001h
 							;--- TVE_EXPAND  	= 0002h
-
 		ext		dq 0	;--- extension slot
-
-		type		dw 0	;--- LF_?
+		type	dw 0	;--- LF_?
 						db 0	;---
 		iBlank	db 0 	;--- index blank
 		iIcon		dd 0	;--- index icon
@@ -257,21 +252,18 @@ ends
 
 	struct CPROP
 		hCbxCat		dq 0
+		hCbCat		dq 0	;--- child original ComboBox					
+
 		hCbxFilt	dq 0
 		hPrg			dq 0
+
 		hLview		dq 0
-		;---
-		iCat			dw 0
+		iCat			dw 0	;--- 
 		iFilt			dw 0
 							dd 0
-							dq 0
-	ends
 
-	struct KEYDLG
-		hDlg			dq 0
-		hLview		dq 0
-		hHot			dq 0
-		hSet			dq 0
+							dq 0
+							dq 0
 	ends
 
 	struct CONFIG
@@ -315,7 +307,19 @@ ends
 		wsp		db FILE_BUFLEN*2 dup (?)
 	ends
 
-	
+
+	struct DEVTOOL
+		type	dw 0
+		id		dw 0
+		lenP	dw 0
+		group	db 0
+		flags db 0
+		hIcon	dq 0
+		cmd		db FILE_BUFLEN dup (?)
+		paras	db 128 dup (0)
+	ends
+
+
 	;---------- scintilla related -------------
 	LINE_COMMENT		= 1
 	LINE_DECOMMENT	= 2
@@ -323,7 +327,9 @@ ends
 
 	CX_GAP equ 3
 	CY_GAP equ 3
-	define INFINITE 0xFFFFFFFF
+
+
+
 
 ;struct TOOL_SLOT
 ;	hash		dd 0
@@ -338,14 +344,6 @@ ends
 ;struct TINFO
 ;	lenname 	dw 0
 ;	lenvalue 	dw 0
-;ends
-
-;struct DEVTOOL
-;	lenfile		dw 0
-;	afname		dw 0
-;	flags			dd 0
-;	pnexttool	dd 0
-;	hIcon			dd 0
 ;ends
 
 ;struct CMD_STRUCT

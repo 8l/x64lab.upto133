@@ -99,7 +99,6 @@ apiw:
 	jmp	.prolog0
 @endusing
 
-
 ;--------------------------------
 @using .mni_set_byid
 .mni_set_byid:
@@ -986,7 +985,7 @@ apiw:
 	mov rax,[LoadMenuW]
 	jmp	.prolog0
 @endusing
-	
+
 @using .loadcurs
 .loadcursor:
 	mov rax,[LoadCursorW]
@@ -1077,6 +1076,20 @@ apiw:
 	;|                 KERNEL & RT                       |
 	;ö---------------------------------------------------ü
 
+@using .f_close,.ff_file,.fn_file
+.f_close:
+	mov rax,[FindClose]
+	jmp	.prolog0
+
+.fn_file:
+	mov rax,[FindNextFileW]
+	jmp	.prolog0
+
+.ff_file:
+	mov rax,[FindFirstFileW]
+	jmp	.prolog0
+@endusing
+
 @using .cmdline
 .cmdline:
 	mov rax,[GetCommandLineW]
@@ -1089,12 +1102,30 @@ apiw:
 	jmp	.prolog0
 @endusing
 
+@using .query_pf
+.query_pf:
+	mov rax,[QueryPerformanceFrequency]
+	jmp	.prolog0
+@endusing
+
+@using .query_pc
+.query_pc:
+	mov rax,[QueryPerformanceCounter]
+	jmp	.prolog0
+@endusing
+
 @using .wait_sobj
 .wait_sobj:
 	mov rax,[WaitForSingleObject]
 	jmp	.prolog0
 @endusing
 
+@using .sleep
+.sleep:
+	mov rax,[Sleep]
+	jmp	.prolog0
+@endusing
+	
 
 	;#---------------------------------------------------ö
 	;|                SHELL 
@@ -1109,6 +1140,19 @@ apiw:
 	mov r9,\
 		sizeof.SHFILEINFOW
 	mov rax,[SHGetFileInfoW]
+	jmp .prologP
+@endusing
+
+
+@using .shexec
+.shexec:
+  ;--- in RCX hwnd handle to parent window
+	;--- in RDX lpOperation   pointer to string that specifies operation to perform
+	;--- in R8  lpFile	      pointer to filename or folder name string
+	;--- in R9  lpParameters  pointer to string that specifies executable-file parameters 
+	;--- in R10 lpDirectory 	pointer to string that specifies default directory
+	;--- in R11 nShowCmd 	    whether file is shown when opened
+	mov rax,[ShellExecuteW]
 	jmp .prologP
 @endusing
 
@@ -1174,6 +1218,12 @@ apiw:
 .co_init:
 	xor ecx,ecx
 	mov rax,[CoInitialize]
+	jmp	.prolog0
+@endusing	
+
+@using .co_initx
+.co_initx:
+	mov rax,[CoInitializeEx]
 	jmp	.prolog0
 @endusing	
 

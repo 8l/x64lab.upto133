@@ -2,6 +2,10 @@ echo off
  copy config\config_ok.utf8 config\config.utf8 /Y
  copy develop\config\config_ok.utf8 develop\config\config.utf8 /Y
 
+ copy config\devtool_ok.utf8 config\devtool.utf8 /Y
+ copy develop\config\devtool_ok.utf8 develop\config\devtool.utf8 /Y
+
+
  REM * repack files as bin or src, using tool\7za.exe
  REM * output in packed\x64lab.bin.0.0.21.7z
  REM * args as <NULL>,<bin>,<src>

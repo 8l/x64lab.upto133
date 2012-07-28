@@ -101,6 +101,7 @@
 		CoCreateInstance,"CoCreateInstance",\
 		CoGetClassObject,"CoGetClassObject",\
 		CoInitialize,"CoInitialize",\
+		CoInitializeEx,"CoInitializeEx",\
 		CoTaskMemAlloc,"CoTaskMemAlloc",\
 		CoTaskMemFree,"CoTaskMemFree",\
 		CoUninitialize,"CoUninitialize"
@@ -242,6 +243,9 @@
 		ExitProcess,"ExitProcess",\
 		ExitThread,"ExitThread",\
 		ExpandEnvironmentStringsW,"ExpandEnvironmentStringsW",\
+		FindClose,"FindClose",\
+		FindFirstFileW,"FindFirstFileW",\
+		FindNextFileW,"FindNextFileW",\
 		FileTimeToSystemTime,"FileTimeToSystemTime",\
 		FindResourceW,"FindResourceW",\
 		FindResourceExW,"FindResourceExW",\
@@ -267,6 +271,8 @@
 		GetVersionExW,"GetVersionExW",\
 		LoadLibraryExW,"LoadLibraryExW",\
 		LoadResource,"LoadResource",\
+		QueryPerformanceCounter,"QueryPerformanceCounter",\
+		QueryPerformanceFrequency,"QueryPerformanceFrequency",\
 		ReadFile,"ReadFile",\
 		SetCurrentDirectoryW,"SetCurrentDirectoryW",\
 		SetEndOfFile,"SetEndOfFile",\

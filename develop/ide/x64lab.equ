@@ -48,6 +48,10 @@
 	MI_USER    equ 1100h
 	MI_OTHER	 equ 1200h
 
+	MI_FIRSTOOL equ 1400h
+	MI_LASTTOOL	equ 1800h
+	MAX_TOOLS		equ MI_LASTTOOL - MI_FIRSTOOL
+
 	MP_WSPACE      equ 1001h
    MI_WS_LOAD    equ 1002h
    MI_WS_NEW     equ 1003h
@@ -78,6 +82,11 @@
 
   MP_WIN    		equ 1060h
   MP_DEVT   		equ 1070h
+	 MI_DEVT_ADD	equ 1071h
+   MI_DEVT_MAN	equ 1072h
+   MI_DEVT_REM	equ 1073h
+	 MI_DEVT_REL	equ 1074h
+   
 	MP_CONF   		equ 1080h
 	MP_HELP   		equ 1090h
 
@@ -152,6 +161,9 @@
 	UZ_DATEFRM		 equ 203Ah
 	UZ_TIMEFRM		 equ 203Bh
 	UZ_DEFUSER		 equ 203Ch
+	UZ_TOOLCMD		 equ 203Dh
+	UZ_TOOLDESCR	 equ 203Eh
+	UZ_TOOLBYG		 equ 203Fh
 
 	;--- hash equ for config/config.utf8 items
   macro @cfg_hash [argid]{

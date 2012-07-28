@@ -83,7 +83,8 @@ APIBRIDGE equ \
 	lay64.panel,\
 	lay64.release,\
 	lay64.resize,\
-	dlg.open
+	dlg.open,\
+	bk64.listfiles
 
 ;	gdip.startup,\
 ;	gdip.shutdown,\

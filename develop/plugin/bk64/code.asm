@@ -122,115 +122,304 @@ bk64:
 	jmp	.attachA
 
 
-;.opend:
-	;--- in RCX parent
-	;--- in RDX flags
-	;--- in R8 title
-	;--- in R9 
 
-;proc openfile def_uses,\
-;	_parent,\
-;	_flags,\
-;	_title,\
-;	_filter
-;	
-;	local .curdir:[512]:BYTE
-;	local .errmsg[1024]:BYTE
+	;#---------------------------------------------ö
+	;|            bk64.listfiles                   |
+	;ö---------------------------------------------ü
 
-;.retry_openfile:
-;	lea edi,[.curdir]
+.listfiles:
+	;---	in RCX upath		;--- example "E:" or "E:\mydir"
+	;---	in RDX uattr		;--- FILE_ATTRIBUTE_HIDDEN
+	;---	in R8  ulevel		;--- nesting level to stop search 0=all
+	;---	in R9  ufilter	;--- "*.asm"
+	;---	in R10 ucback   ;--- address of a calback
+	;---	in R11 uparam   ;--- user param
+	;---------------------------------------------------
+	;---  the calback receives those args
+	;--- 
+	;--- in RCX path
+	;--- in RDX w32fnd 
+	;--- in R8h lenpath
+	;--- in R9 uparam
+	;--- ret RAX = 1 continue search, 0 stop search
 
-;	push 512
-;	push edi
-;	call shared.memzero
-;	mov esi,edi
+	xor eax,eax
+	test r10,r10
+	jnz	@f
+	ret 0
 
-;	mov eax,edi
-;	call shared.curdir
+	align 2
+	.uzDot			du ".",0
+	.uzAsterisk	du "*",0
 
-;	mov ebx,[pOpenBuffer]
-;	push [sizeBuffer]
-;	push ebx
-;	call shared.memzero
+@@:
+	test ecx,ecx
+	jnz	@f
+	mov rcx,.uzDot
+@@:
+	test r9,r9
+	jnz	@f
+	mov r9,.uzAsterisk	
+@@:
+	push rbx
+	push r12
+	push r13
+	push r14
+	push r15
 
-;	mov edi,ofn
-;	push sizeof.OPENFILENAME
-;	push edi
-;	call shared.memzero
-;	
-;	mov [edi+OPENFILENAME.lpstrInitialDir],esi
-;	mov [edi+OPENFILENAME.lStructSize],sizeof.OPENFILENAME
-;	m2m [edi+OPENFILENAME.lpstrFile],ebx
+	dec edx
+	mov ebx,edx
+	inc edx
+	or ebx,edx
 
-;	m2m	[edi+OPENFILENAME.hwndOwner],[_parent]
-;	mov	[edi+OPENFILENAME.nFilterIndex],1
-;	m2m	[edi+OPENFILENAME.hInstance],[wcx.hInstance]
-;	m2m	[edi+OPENFILENAME.lpstrFilter],[_filter]
-;	m2m	[edi+OPENFILENAME.lpstrTitle],[_title]
+	and ebx,\
+		FILE_ATTRIBUTE_READONLY\
+		or FILE_ATTRIBUTE_HIDDEN\
+		or FILE_ATTRIBUTE_SYSTEM\
+		or FILE_ATTRIBUTE_DIRECTORY\
+		or FILE_ATTRIBUTE_ARCHIVE\
+		or FILE_ATTRIBUTE_NORMAL\
+		or FILE_ATTRIBUTE_TEMPORARY\
+		or FILE_ATTRIBUTE_COMPRESSED
 
-;	mov eax,OFN_EXPLORER or\
-;		OFN_PATHMUSTEXIST or \
-;		OFN_FILEMUSTEXIST or \
-;		OFN_LONGNAMES or \
-;		OFN_HIDEREADONLY or \
-;		OFN_ENABLESIZING
+	mov r12,r8
+	mov r13,r9
+	mov r14,r10
+	mov r15,r11
 
-;	or eax,[_flags]
-;	mov	[edi+OPENFILENAME.Flags],eax
-;	m2m	[edi+OPENFILENAME.nMaxFile],[sizeBuffer]
+	call .listit
+	
+.listfilesE:
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop rbx
+	ret 0
 
-;	push edi
-;	GetOpenFileName
-;	test eax,eax
-;	jz	.err_open
-;	mov edx,[edi+OPENFILENAME.lpstrFile]
-;	movzx ecx,[edi+OPENFILENAME.nFileOffset]
-;	mov eax,[edx]
+.listit:
+	;--- in RCX upath
+	;--- (in RBX uattr)
+	;--- (in R12 ulevel)
+	;--- (in R13 ufilter)
+	;--- (in R14 ucback)
+	;--- (in R15 uparam)
 
-;	rol eax,16
-;	test ax,ax
-;	jz	.err_open1
-;	mov eax,edx
-;	ret
+	push rbp
+	mov rbp,rsp
+	and rsp,-16
 
-;.err_open:
-;	xor eax,eax
-;	ret
+	xor eax,eax
+	sub rsp,\
+		210h+\ ;--- FILE_BUFLEN
+		250h+\ ;--- WIN32_FIND_DATAW
+		8+\    ;--- RDI home
+		8+\		 ;--- RSI home
+		8+\		 ;---
+    4+\		 ;---
+		4+\	   ;--- .flags for matching all/filter
+		8+\		 ;--- .hFFile
+		4+\		 ;--- .lenpath
+		4		   ;--- .nitems
 
-;.err_open1:
-;	rol eax,16
-;	test ax,ax
-;	jz	.err_open
-;	movzx ebx,ax
-;	lea edx,[.errmsg]
-;	push 0
-;	push [hBkModule]
-;	push USE_DLGERRSTR
-;	push 1024
-;	push edx
-;	call shared.get_errstr
-;	cmp edx,FNERR_BUFFERTOOSMALL
-;	jz	.try_realloc
+	label .path\
+		qword at rbp-\
+		(210h+250h+30h)
+	label .w32fd\
+		qword at rbp-\
+		(250h+30h)
+	label .rdi\
+		qword at rbp-30h
+	label .rsi\
+		qword at rbp-28h
+	label .flags\
+		dword at rbp-14h
+	label .hFFile\
+		qword at rbp-10h
+	label .lenpath\
+		dword at rbp-8
+	label .nitems\
+		dword at rbp-4
 
-;.try_realloc:
-;	lea edx,[.errmsg]
-;	push pOpenBuffer
-;	call shared.vfree
-;	test eax,eax
-;	jz	.err_open
+	mov [.rdi],rdi
+	mov [.rsi],rsi
 
-;	shl ebx,1
-;	add ebx,0FFFh
-;	and ebx,not 0FFFh		;not necessary
+	mov [.nitems],eax
+	mov [.lenpath],eax
+	mov [.flags],eax
+	mov [.hFFile],rax
+	dec r12
 
-;	mov eax,ebx				
-;	call shared.valloc
-;	test eax,eax
-;	jz	.err_open
+	lea rdi,[.path]
+	mov rsi,rcx
+	mov r8,rdi
 
-;	mov [pOpenBuffer],eax
-;	mov [sizeBuffer],ebx
-;	jmp	.retry_openfile	
-;endp
+@@:
+	lodsw
+	stosw
+	test eax,eax
+	jnz	@b
+	sub rdi,2
+	mov rdx,rdi
+	sub rdx,r8
+	mov [.lenpath],edx
+	mov rsi,r13
+	mov ax,"\"
+	stosw
 
+@@:
+	lodsw
+	stosw
+	test eax,eax
+	jnz	@b
+
+	lea rsi,[.w32fd]
+	mov rdx,rsi
+	mov rcx,r8
+	call apiw.ff_file
+	mov [.flags],eax
+	test eax,eax
+	jg .listitA
+
+.listitA2:
+	mov ecx,[.lenpath]
+	xor eax,eax
+	lea rdi,[.path]
+	add rdi,rcx
+
+	mov ax,"\"
+	stosw
+	mov ax,"*"
+	stosw
+	xor eax,eax
+	stosw
+	mov [.flags],eax
+
+	mov rdx,rsi
+	lea rcx,[.path]
+	call apiw.ff_file
+	test eax,eax
+	jg .listitA
+	xor eax,eax
+
+.listitA1:
+	inc eax
+	jmp	.listitE
+
+.listitA:
+	mov [.hFFile],rax
+	
+.listitN:
+	lea rdx,[rsi+\
+		WIN32_FIND_DATA.cFileName]
+
+	mov r8d,[rsi+\
+		WIN32_FIND_DATA.dwFileAttributes]
+
+	mov eax,[rdx]
+	cmp ax,002Eh
+	jz	.listitB
+	cmp eax,002E002Eh
+	jz	.listitB
+
+	;---  match attribs ----------
+	mov rcx,rbx
+	and rcx,r8
+	jz	.listitC
+
+	;--- directory override to report 
+	;--- PATH and matched files
+
+	test ecx,\
+		FILE_ATTRIBUTE_DIRECTORY
+	jnz	.listitM
+
+	;--- feed RCX path
+	;--- feed RDX w32fnd 
+	;--- feed R8 lenpath
+	;--- feed R9 param
+
+	mov eax,[.flags]
+	test eax,eax
+	jz	.listitC
+
+.listitM:
+	mov r8d,[.lenpath]
+	xor eax,eax
+	lea rdi,[.path]
+	mov rcx,rdi
+	add rdi,r8
+	stosw
+	mov r9,r15
+	mov rdx,rsi
+	call r14
+	mov word[rdi-2],"\"
+	test eax,eax
+	jz	.listitF
+
+.listitC:
+	mov eax,[rsi+\
+		WIN32_FIND_DATA.dwFileAttributes]
+	test al,\
+		FILE_ATTRIBUTE_DIRECTORY
+	jz	.listitB
+
+	;--------- match level -------
+	test r12,r12
+	jz	.listitB
+
+	lea rdi,[.path]
+	mov ecx,[.lenpath]
+
+	lea rdx,[rsi+\
+		WIN32_FIND_DATA.cFileName]
+	add rdi,rcx
+
+	push rdi
+	push rsi
+	mov al,"\"
+	mov rsi,rdx
+	stosw
+@@:
+	lodsw
+	stosw
+	test ax,ax
+	jnz	@b
+
+	lea rcx,[.path]
+	call .listit
+	xor edx,edx
+	pop rsi
+	pop rdi
+	mov [.flags],edx	;--- no reloop after dirs
+	test eax,eax
+	mov word[edi],dx
+	jz	.listitF
+
+.listitB:
+	mov rdx,rsi
+	mov rcx,[.hFFile]
+	call apiw.fn_file
+	test eax,eax
+	jnz	.listitN
+	inc eax
+
+.listitF:
+	push rax
+	mov rcx,[.hFFile]
+	call apiw.f_close
+	mov edx,[.flags]
+	pop rax
+
+	test edx,edx
+	jnz	.listitA2
+
+.listitE:
+	mov rdi,[.rdi]
+	mov rsi,[.rsi]
+	mov ecx,[.nitems]
+	mov rsp,rbp
+	inc r12
+	pop rbp
+	ret 0
 

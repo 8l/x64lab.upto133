@@ -18,7 +18,9 @@
  top64.free
 
 @i_rva bk64,\
-	dlg.open
+	dlg.open,\
+	bk64.listfiles
+
 ; log.open,\
 ; inet.check,\
 ; inet.state,\

@@ -1692,10 +1692,17 @@ end if
 	;ö---------------------------------------------------ü
 
 @using .stamp2ft
+	;--- http://src.chromium.org/svn/trunk/src/base/time_win.cc
+	;--- The internal representation of Time uses FILETIME, whose epoch is 1601-01-01
+	;--- 00:00:00 UTC. ((1970-1601)*365+89)*24*60*60*1000*1000, where 89 is the
+	;--- number of leap year days between 1601 and 1970: (1970-1601)/4 excluding
+	;--- 1700, 1800, and 1900.
+	;--- kTimeTToMicrosecondsOffset 11644473600000000 i.e 019DB1DE'D53E8000h
+
 .stamp2ft:
 	;--- in RAX fstamp
 	;--- RET RAX = dwHighDateTime | dwLowDateTime
-	mov ecx,989680h ;= 10000000
+	mov ecx,989680h ;= 10'000'000
 	mul ecx
 	add eax,0D53E8000h
 	adc edx,019DB1DEh
@@ -1709,6 +1716,13 @@ end if
 	;ö---------------------------------------------------ü
 
 @using .ft2stamp
+	;--- http://www.frenk.com/2009/12/convert-filetime-to-unix-timestamp/
+	;--- A UNIX timestamp contains the number of seconds from Jan 1, 1970, 
+	;--- while the FILETIME documentation says: Contains a 64-bit value representing 
+	;--- the number of 100-nanosecond intervals since January 1, 1601 (UTC).
+	;--- Between Jan 1, 1601 and Jan 1, 1970 there are 11644473600 seconds, 
+	;--- so we will just subtract that value:
+
 .ft2stamp:
 	;--- IN RAX = ftime
 	;--- RET EAX = timestamp or ZF or CF
@@ -1969,243 +1983,6 @@ end if
 ;	mov eax,szTime2Name
 ;	pop esi
 ;	ret 0
-;@endusing
-
-
-	;#---------------------------------------------------ö
-	;|         LISTFILE      				                     |
-	;|     list all files in a dir/subdir                |    
-	;|         Thanks tips and assistance                |
-	;|         Borsuc,baldr                              |
-	;ö---------------------------------------------------ü
-
-;@using .listfiles
-;--------------- example for a call --------------------
-	;RET EAX=num found items
-	;szPath	db "J:\fasmlab\develop\plugin",0
-	;szPath	db "J:",0   
-	;szFilt		db "*.asm",0    or NULL --> *.*
-
-	; push 0					;eventual param for callback
-	;	push callback
-	;	push FILE_ATTRIBUTE_READONLY; or FILE_ATTRIBUTE_DIRECTORY
-	;	push 1				;maxlevel = -1 all / 0=current N=depth
-	;	push 0;szMaskFile
-	;	push szPath
-	;	call listfiles
-
-;--------------- example of a calback ------------------
-;proc callback\
-;	_w32fd,\
-;	_numitems,\
-;	_userparam
-;---------- PUSH EBX/EDI/ESI
-;IN EAX=dirname
-;IN EDX= filename or dir
-;IN CX = LEVEL 
-;IN SHR ECX,16 len of EAX
-;RET EAX=0 stop execution
-;	push edx
-;	push eax
-;	push szFormat
-;	cinvoke printf
-;	add esp,12
-;	xor eax,eax
-;	inc eax
-;	ret
-; endp
-;-------------------------------------------------------
-
-;.listfiles:
-;	push ebp
-;	mov ebp,esp
-;	sub esp,512+320+4+4+4
-;	label .upath dword at ebp+8
-;	label .umask dword at ebp+12
-;	label .ulevel  dword at ebp+16
-;	label .ufilter dword at ebp+20
-;	label .ucback dword at ebp+24
-;	label .uparam dword at ebp+28
-;	
-;	label .path dword at ebp-(512+320+12)
-;	label .w32fd dword at ebp-(320+12)
-;	label .nitems dword at ebp-12
-;	label .level dword at ebp-8
-;	label .mask dword at ebp-4
-;	
-;	push ebx
-;	push edi
-;	push esi
-
-;	mov esi,[.upath]	;user path
-;	lea ecx,[.path]
-;	mov edx,[.umask]
-;	xor eax,eax
-;	test esi,esi
-;	mov [.level],eax
-;	mov [.nitems],eax
-;	jz	.err_lf
-;	mov edi,ecx
-;@@:
-;	lodsb
-;	stosb
-;	test al,al
-;	jnz	@b
-;	sub edi,ecx
-;	dec edi
-;	xchg ecx,edi		;len of path
-;	lea esi,[.w32fd]
-;	test edx,edx
-;	jnz	@f
-;	mov edx,.def_mask
-;@@:
-;	push .err_lf
-;	mov [.mask],edx
-
-;.listit:	
-;	;IN EDI path
-;	;IN ESI w32fd
-;	;IN ECX len
-;	push ebx
-;	sub esp,4
-;	xor eax,eax
-;	mov [esp],ecx
-;	inc [.level]
-;	mov [esi+2ch],eax
-
-;	push esi
-;	push edi
-
-;	push esi
-;	push edi
-;	
-;	mov al,"\"
-;	add edi,ecx
-;	stosb
-;	mov esi,[.mask]
-;@@:
-;	lodsb
-;	stosb
-;	test al,al
-;	jnz	@b
-;	invoke FindFirstFile
-;	pop edi
-;	pop esi
-;	or eax,eax
-;	jle	.err_liB
-;	mov ebx,eax
-
-;.next_liA:
-;	lea edx,[esi+2Ch] ;WIN32_FIND_DATA.cFileName
-;	mov eax,[edx]
-;	cmp ax,002Eh
-;	jz	.next_liB
-;	cmp eax,2E2Eh
-;	jz	.next_liB
-
-;	;--------- match filter ------
-;	mov ecx,[.ufilter]
-;	and ecx,[esi]
-;	test ecx,ecx
-;	jz	.next_liC
-
-;	inc [.nitems]
-;	mov ecx,[esp]		
-;	mov eax,edi
-
-;	push ebx
-;	push edi
-;	xor ebx,ebx
-;	push ebp
-;	mov dword [edi+ecx],ebx
-;	push esi
-
-;	rol ecx,16
-;	mov ebx,[.ucback]
-;	mov cx,word[.level]
-;	test ebx,ebx
-;	jz	.next_liE
-;	dec ecx
-
-;	push [.uparam]
-;	push [.nitems]
-;	push esi
-;	call ebx
-
-;.next_liE:
-;	pop esi
-;	pop ebp
-;	pop edi
-;	pop ebx
-;	test eax,eax
-;	jz	.next_liD
-
-;.next_liC:
-;	mov eax,[esi]	;	+WIN32_FIND_DATA.dwFileAttributes
-;	mov ecx,[esp]
-;	test al,FILE_ATTRIBUTE_DIRECTORY
-;	jz	.next_liB
-
-;	;--------- match level -------
-;	mov eax,[.ulevel]
-;	inc eax
-;	jz	@f
-;	cmp eax,[.level]
-;	jbe	.next_liB
-
-;@@:
-;	push esi
-;	push edi
-
-;	mov al,"\"
-;	add edi,ecx
-;	stosb
-;	lea esi,[esi+2Ch]	;WIN32_FIND_DATA.cFileName
-;@@:
-;	lodsb
-;	stosb
-;	inc ecx
-;	test al,al
-;	jnz	@b
-
-;	pop edi
-;	pop esi
-;	call .listit
-;	test eax,eax
-;	jz	.next_liD
-;	
-;.next_liB:
-;	push esi
-;	push ebx
-;	invoke FindNextFile
-;	test eax,eax
-;	jnz	.next_liA
-;	inc eax
-
-;.next_liD:	
-;	push eax
-;	push ebx
-;	invoke FindClose
-;	dec [.level]
-;	pop eax
-
-;.err_liB:
-;	add esp,4
-;	pop ebx
-;	ret 0
-
-;.err_lf:
-;	pop esi
-;	pop edi
-;	pop ebx
-;	mov eax,[.nitems]
-;	add esp,4+4+4+320+512
-;	pop ebp
-;	ret 24
-;align 4
-;.def_mask:
-;	db "*",0,0,0
-;;display_decimal $-.listfiles
 ;@endusing
 
 
