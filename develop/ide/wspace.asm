@@ -1800,9 +1800,9 @@ mov [r9+\
 	;	jnz	.load_kdirsB
 	inc qword[rsp]
 
-	; mov r8,rdi         ;<-------------------
-	; mov rdx,r9
-	; call art.cout2XU
+	 mov r8,rdi         ;<-------------------
+	 mov rdx,r9
+	 call art.cout2XU
 
 .load_kdirsB:
 	mov esi,\

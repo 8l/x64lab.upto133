@@ -19,4 +19,4 @@ plugin\SciLexer64.dll
 
 project\welcome.x64lab
 
-help\*.*
+help\*

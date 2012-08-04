@@ -523,7 +523,6 @@ devtool:
 	stosb
 	@do_eol
 
-
 	test [rsi+\
 		TITEM.type],TPARAM
 	jz	.writeTN
@@ -597,15 +596,9 @@ devtool:
 	push rdi
 	push rsi
 	push r12
-	push r13
 
 	mov rsi,rcx
 	mov rbx,[pCp]
-
-	mov rcx,[rbx+\
-		CPROP.hCbxCat]
-	call cbex.get_cursel
-	mov r13,rax
 
 	mov rcx,[rbx+\
 		CPROP.hCbxFilt]
@@ -631,33 +624,14 @@ devtool:
 
 	call .reload
 
-	mov r8,r13
-	mov rcx,[rbx+\
-		CPROP.hCbxCat]
-	call cbex.sel_item
+	mov ecx,iCAT_CBX_DEVT
+	call prop.sel_icat
 
-	mov r8,CBN_SELCHANGE
-	shl r8,16
-	mov rdx,WM_COMMAND
-	mov rcx,[rbx+CPROP.hDlg]
-	mov r9,[rbx+CPROP.hCbxCat]
-	call apiw.sms
-
-	mov r8,r12
-	inc r8
-	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
-	call cbex.sel_item
-
-	mov r8,CBN_SELCHANGE
-	shl r8,16
-	mov rdx,WM_COMMAND
-	mov rcx,[rbx+CPROP.hDlg]
-	mov r9,[rbx+CPROP.hCbxFilt]
-	call apiw.sms
+	mov rcx,r12
+	inc ecx
+	call prop.sel_ifilt
 
 .addgroupE:
-	pop r13
 	pop r12
 	pop rsi
 	pop rdi
@@ -803,33 +777,10 @@ devtool:
 	call cbex.get_cursel
 	mov rdi,rax
 
-	mov rcx,[rbx+\
-		CPROP.hCbxCat]
-	call cbex.get_cursel
-
-	mov r8,rax
-	mov rcx,[rbx+\
-		CPROP.hCbxCat]
-	call cbex.sel_item
-
-	mov r8,CBN_SELCHANGE
-	shl r8,16
-	mov rdx,WM_COMMAND
-	mov rcx,[rbx+CPROP.hDlg]
-	mov r9,[rbx+CPROP.hCbxCat]
-	call apiw.sms
-
-	mov r8,rdi
-	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
-	call cbex.sel_item
-
-	mov r8,CBN_SELCHANGE
-	shl r8,16
-	mov rdx,WM_COMMAND
-	mov rcx,[rbx+CPROP.hDlg]
-	mov r9,[rbx+CPROP.hCbxFilt]
-	call apiw.sms
+	mov ecx,iCAT_CBX_DEVT
+	call prop.sel_icat
+	mov ecx,edi
+	call prop.sel_ifilt
 
 .addtoolE:
 	add rsp,\
@@ -889,13 +840,14 @@ devtool:
 	jz .remgroupE	
 	add rax,[pTopDevT]
 
+;@break
 	mov rdx,rsp
 	lea rcx,[rax+TITEM.value]
 	call utf8.to16
 
 	mov rdi,rsp
 	add rdi,rax
-	@nearest 8,rdi
+	@nearest 16,rdi
 	
 	mov r8,rdi
 	mov edx,U16
@@ -906,13 +858,11 @@ devtool:
 	add r12,rax
 	@nearest 16,r12
 
- 	mov r9,rsp
-	mov r8,rdi
-	mov edx,FILE_BUFLEN
+ 	mov r8,rsp
+	mov rdx,rdi
 	mov rcx,r12
-
 	sub rsp,20h
-	call [swprintf_s]
+	call [swprintf]
 	add rsp,20h
 
 	mov r8,uzTitle
@@ -934,8 +884,11 @@ devtool:
 
 	mov r8,r13
 	mov rcx,[rbx+\
-		CPROP.hLview]
+		CPROP.hCbxFilt]
 	call cbex.del_item
+
+	xor ecx,ecx
+	call prop.sel_ifilt
 
 .remgroupE:
 	mov rsp,rbp
@@ -1014,29 +967,10 @@ devtool:
 	call cbex.get_cursel
 	mov rdi,rax
 	
-	mov r8,rsi
-	mov rcx,[rbx+\
-		CPROP.hCbxCat]
-	call cbex.sel_item
-
-	mov r8,CBN_SELCHANGE
-	shl r8,16
-	mov rdx,WM_COMMAND
-	mov rcx,[rbx+CPROP.hDlg]
-	mov r9,[rbx+CPROP.hCbxCat]
-	call apiw.sms
-
-	mov r8,rdi
-	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
-	call cbex.sel_item
-
-	mov r8,CBN_SELCHANGE
-	shl r8,16
-	mov rdx,WM_COMMAND
-	mov rcx,[rbx+CPROP.hDlg]
-	mov r9,[rbx+CPROP.hCbxFilt]
-	call apiw.sms
+	mov ecx,iCAT_CBX_DEVT
+	call prop.sel_icat
+	mov ecx,edi
+	call prop.sel_ifilt
 
 .remtoolE:
 	add rsp,\
@@ -1045,3 +979,5 @@ devtool:
 	pop rdi
 	pop rbx
 	ret 0
+
+

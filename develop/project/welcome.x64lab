@@ -5,6 +5,14 @@
 	k:(
 		.:"%X64LABD%"
 		.:"E:\x64lab\develop"
+		.:"%X64LABD%\help"
+		.:"%X64LABD%\help\en"
 	)
 	04:0402E79AC91795914h,"README.TXT"
 	04:0402E79AC91795914h,"WHATSNEW.TXT"
+  03:048FFF5BB543AAAC9h,"help" (
+		03:033582C52E3F9679Ch,"en" (
+			04:033582C52E3F9679Ch,"devtool.txt"
+		)
+	)
+	

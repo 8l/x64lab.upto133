@@ -538,8 +538,11 @@ winproc:
 .mi_devt_rel:
 	call devtool.discard
 	call devtool.load
+	mov ecx,iCAT_CBX_DEVT
+	call prop.sel_icat
+	xor ecx,ecx
+	call prop.sel_ifilt
 	jmp	.ret0
-
 
 	;ü------------------------------------------ö
 	;|     DEVT_MAN                             |

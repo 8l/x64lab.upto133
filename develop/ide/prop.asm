@@ -272,7 +272,6 @@ prop:
 
 .cat_commandA:
 	inc eax
-
 	sub rsp,\
 		FILE_BUFLEN
 	mov r8,rsp
@@ -389,11 +388,6 @@ prop:
 	mov rcx,rax
 	call cbex.set_iml
 
-	; mov edx,GW_CHILD	
-	; mov rcx,rax
-	; call apiw.get_win
-	; mov [.cp.hCbCat],rax
-
 	sub rsp,\
 		FILE_BUFLEN
 	mov rdi,rsp
@@ -480,11 +474,7 @@ prop:
 	mov rcx,rsi
 	call lvw.set_txtbkcol
 
-;		xor ecx,ecx
-;	call apiw.co_init
-
-
-.ret1:				;message processed
+.ret1:
 	xor rax,rax
 	inc rax
 	jmp	.exit
@@ -572,7 +562,7 @@ prop:
 .cat_sel_devt:
 	;--- in RCX text buf 512
 	;--- (in RBX pCp)
-	;--- in RDX iCat = param = MP_DEVT
+	;--- in RDX idCat = param = MP_DEVT
 	
 	push rdi
 	push rsi
@@ -852,4 +842,27 @@ prop:
 	ret 0
 
 
+.sel_ifilt:
+	;--- in RCX iindex
+	mov eax,CPROP.hCbxFilt
+	jmp	.sel_cbxitem
 
+.sel_icat:
+	;--- in RCX iindex
+	mov eax,CPROP.hCbxCat
+	jmp	.sel_cbxitem
+
+.sel_cbxitem:
+	mov r8,rcx
+	mov rdx,[pCp]
+	mov rcx,[rax+rdx]
+	push [rdx+CPROP.hDlg]
+	push rcx
+	call cbex.sel_item
+	pop r9
+	mov r8,CBN_SELCHANGE
+	shl r8,16
+	mov edx,WM_COMMAND
+	pop rcx
+	call apiw.sms
+	ret 0

@@ -437,6 +437,7 @@
 		scanf,"scanf",\
 		scanf_s,"scanf_s",\
 		strchr,"strchr",\
+		swprintf,"swprintf",\
 		swprintf_s,"swprintf_s",\
 		wprintf, "wprintf",\
 		wcschr,"wcschr",\		;find first occurrence of cp in a string

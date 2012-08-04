@@ -14,7 +14,7 @@ copy plugin\dock64.dll ..\plugin /Y
 copy plugin\bk64.dll ..\plugin /Y
 copy plugin\top64.dll ..\plugin /Y
 copy plugin\Scilexer64.dll ..\plugin /Y
-xcopy help ..\help\*.* /E
+xcopy help ..\help\*.* /E /Y
 
 
 set /p vers=<version.txt
