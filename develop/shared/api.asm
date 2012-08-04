@@ -385,6 +385,13 @@ apiw:
 	jmp	.prolog0
 @endusing
 
+@using .copyf
+.copyf:
+	mov rax,[CopyFileW]
+	jmp	.prolog0
+@endusing
+
+
    ;ü------------------------------------------ö
    ;|   thread and process                     |
    ;#------------------------------------------ä
@@ -1156,6 +1163,12 @@ apiw:
 	jmp .prologP
 @endusing
 
+@using .shget_kfpath
+.shget_kfpath:
+	mov rax,[SHGetKnownFolderPath]
+	jmp	.prolog0
+@endusing
+
 
 	;#---------------------------------------------------ö
 	;|                   .messages                       |
@@ -1165,6 +1178,14 @@ apiw:
 .msg_ok:
 	mov r9,\
 		MB_OK or MB_ICONINFORMATION
+	jmp	.msg_exec
+@endusing
+
+@using .msg_yn
+.msg_yn:
+	mov r9,\
+		MB_YESNO \
+		or MB_ICONQUESTION
 	jmp	.msg_exec
 @endusing
 

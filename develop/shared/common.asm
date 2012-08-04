@@ -13,7 +13,7 @@
 
 
 	;#---------------------------------------------ü
-	;| Common Stub Dll Module  (BSD License)       |
+	;| Common Stub Dll Module                      |
 	;ä---------------------------------------------ö
 
 	;PACKVERSION equ 0

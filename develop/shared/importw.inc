@@ -236,6 +236,7 @@
 		AllocConsole,"AllocConsole",\
 		AttachConsole,"AttachConsole",\
 		CloseHandle,"CloseHandle",\
+		CopyFileW,"CopyFileW",\
 		CreateDirectoryW,"CreateDirectoryW",\
 		CreateFileW,"CreateFileW",\
 		CreateProcessW,"CreateProcessW",\
@@ -290,6 +291,7 @@
 		CommandLineToArgvW,"CommandLineToArgvW",\
 		SHCreateItemFromParsingName,"SHCreateItemFromParsingName",\
 		SHGetFileInfoW,"SHGetFileInfoW",\
+		SHGetKnownFolderPath,"SHGetKnownFolderPath",\
 		Shell_GetImageLists,"Shell_GetImageLists",\
 		ShellExecuteW,"ShellExecuteW"
 
@@ -424,17 +426,18 @@
 		_aligned_malloc,"_aligned_malloc",\
 		_beginthread,"_beginthread",\
 		_getwch,"_getwch",\
+		_mbschr,"_mbschr",\
 		_wsystem,"_wsystem",\
 		free,"free",\
 		freopen,"freopen",\
 		gets,"gets",\
 		malloc,"malloc",\
-		wprintf, "wprintf",\
-		wcschr,"wcschr",\		;find first occurrence of cp in a string
-		wscanf_s,"wscanf_s",\
-		_mbschr,"_mbschr",\
+		printf,"printf",\
 		rand,"rand",\
-		strchr,"strchr",\
 		scanf,"scanf",\
 		scanf_s,"scanf_s",\
-		printf,"printf"
+		strchr,"strchr",\
+		swprintf_s,"swprintf_s",\
+		wprintf, "wprintf",\
+		wcschr,"wcschr",\		;find first occurrence of cp in a string
+		wscanf_s,"wscanf_s"

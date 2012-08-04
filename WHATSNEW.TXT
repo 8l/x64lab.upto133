@@ -1,4 +1,32 @@
 
+- version 0.0.106 (released on 04.08.2012 ) alpha 
+  +DIR create the [help] directory
+  +MNU "[path]|"Browse" to explore folder
+  +MNU "Developer tools"|"Add a new Group label"
+  +MNU "Developer tools"|"Remove group"
+
+- version 0.0.105 (released on 03.08.2012 ) alpha 
+  +MNU "Developer tools"|"Reload tools"
+  +MNU "Developer tools"|"Manage tools file (expert user)"
+
+- version 0.0.104 (released on 03.08.2012 ) " ... " 
+  * We start using the following prefixing to describe
+    updates and type of corrections. prefixes are affecting
+    - ALG affeting change in the algorithms
+    - BEH behaviour/interaction
+    - CFG configuration files
+    - DIR paths and directory
+    - FIL inserted or deleted files
+    - GUI related modifications
+    - MNU affeting menus
+    - RES resources
+
+  +MNU "Developer tools"|"Browse to add new tool"
+  +MNU "Developer tools"|"Remove tool"
+
+- version 0.0.102 (released on 28.07.2012 ) " ... " 
+  + corrected behaviour details by Open Documents
+
 - version 0.0.101 (released on 28.07.2012 ) " ... " 
   + "Properties|Developer Tools" load and set from [config\devtool.utf8]
 

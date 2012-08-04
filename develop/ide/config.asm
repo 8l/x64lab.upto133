@@ -90,6 +90,7 @@ config:
 	push uzPlugName
 	;push uzMountName
 	;push uzLogName
+	push uzHelpName
 	push uzConfName
 	push uzBackName
 	push r8

@@ -74,71 +74,15 @@ iodlg:
 	jmp	.ret0
 
 .io_btn:
-	mov r12,[pHu]
-	mov rcx,[.hu.hCbx]
-	call cbex.get_cursel
-	mov rdx,rax
-	inc rax
-	jz	.ret0
-
-	sub rsp,\
-		FILE_BUFLEN
-
-	mov rcx,[.hu.hCbx]
-	mov r8,rsp
-	call cbex.get_item
-	test rdx,rdx
-	jz	.ret0
-
-	mov r10,[rdx+DIR.rdir]
-	lea r9,[rdx+DIR.dir]
-	test [rdx+DIR.type],\
-		DIR_HASREF
-	jz	.io_btnB
-	lea r9,[r10+DIR.dir]
-
-.io_btnB:
+	xor r9,r9
 	mov r8,FOS_PICKFOLDERS\
 	 or FOS_NODEREFERENCELINKS\
 	 or FOS_PATHMUSTEXIST
-	xor edx,edx
-	xor ecx,ecx
-	call [dlg.open]
-	test rax,rax
-	jz	.ret0
 
-	mov rdi,rax
-	xor r8,r8
-	xor edx,edx
-	mov rcx,rdi				;--- path+fname
-	call wspace.set_dir
-	test eax,eax
-	jz	.io_btnE
-
-	;--- bug: on no selection on Explorer's root (edit = "Computer") gets back
-	;--- C:\Users\marc\AppData\Roaming\Microsoft\Windows\Network Shortcuts
-	;--- but no Computer exists
-
-	mov rbx,rax
-	mov rdx,rax
-	mov rcx,[.hu.hCbx]
-	call cbex.is_param
-	mov r8,rax
-	inc rax
-	jnz	.io_btnA
-
-	mov rcx,rbx
-	call .fill_kdirs
-	mov r8,rcx
-
-.io_btnA:
-	mov rcx,[.hu.hCbx]
-	call cbex.sel_item
-
-.io_btnE:
-	mov rcx,rdi
-	call apiw.co_taskmf
+	mov rcx,[pHu]
+	call .set_browsedir
 	jmp	.ret0
+
 	
 .id_ok:
 .id_cancel:
@@ -154,22 +98,12 @@ iodlg:
 	jz	.id_cancelA
 	mov rsi,rax
 
-	mov rcx,[.hu.hCbx]
-	call cbex.get_cursel
-	mov r8,rax
-	inc rax
-	cmovz r8,rax
+	mov rcx,[pHu]
+	mov rdx,rsi
+	call .store_lastdir
 
 	sub rsp,\
 		FILE_BUFLEN
-
-	mov rdx,r8
-	mov rcx,[.hu.hCbx]
-	mov r8,rsp
-	call cbex.get_item
-	inc rax
-	cmovz rdx,rax
-	mov [.io.ldir],rdx
 
 	xor r8,r8
 	lea rdx,[.io.buf]
@@ -323,32 +257,9 @@ iodlg:
 	mov rcx,rbx
 	call .set_pos
 
-	;--- set imagelists on known directories ----
-	mov r9,[hsmSysList]
-	mov rcx,[.hu.hCbx]
-	call cbex.set_iml
-
-	;--- set known dirs -------------
-	xor edx,edx
-	mov rcx,.fill_kdirs
-	call wspace.list_dir
-
-	;--- try set last dir -------------
-	mov r8,[.io.ldir]
-	test r8,r8
-	jz	.wm_initdE
-
-	mov rdx,r8
-	mov rcx,[.hu.hCbx]
-	call cbex.is_param
-	mov r8,rax
-	inc rax
-	cmovz r8,rax
-
-.wm_initdE:
-	;--- select default kdir
-	mov rcx,[.hu.hCbx]
-	call cbex.sel_item
+	mov rdx,rsi
+	mov rcx,[pHu]
+	call .set_kdirs
 
 	;--- try set edit
 	mov rax,qword[.io.buf]
@@ -388,7 +299,6 @@ iodlg:
 
 .exit:
 	@wepi
-
 
 	;#---------------------------------------------ö
 	;|             .SET_POS                        |
@@ -446,6 +356,234 @@ iodlg:
 	mov [rdx+8],rax
 	add rsp,\
 		sizeof.RECT
+	ret 0
+
+
+	;#---------------------------------------------ö
+	;|             .SET_BROWSEDIR                  |
+	;ö---------------------------------------------ü
+
+.set_browsedir:
+	;--- in RCX pHu
+	;--- in R8 flags dialog
+	;--- in R9 ret buffer
+	push rbx
+	push rdi
+	push rsi
+	push r12
+	push r13
+	sub rsp,\
+		FILE_BUFLEN
+
+	mov rdi,rsp
+	xor esi,esi
+	mov r12,rcx
+	xor eax,eax
+	test r9,r9
+	mov r13,r8
+
+
+	cmovnz rdi,r9
+	cmovnz rsi,r9
+	stosq
+
+	mov rcx,[.hu.hCbx]
+	call cbex.get_cursel
+	mov rdx,rax
+	inc rax
+	jz	.set_browsdirE
+
+	mov rcx,[.hu.hCbx]
+	mov r8,rsp
+	call cbex.get_item
+	test rdx,rdx
+	jz	.set_browsdirE
+
+	mov r10,[rdx+DIR.rdir]
+	lea r9,[rdx+DIR.dir]
+	test [rdx+DIR.type],\
+		DIR_HASREF
+	jz	.set_browsdirB
+	lea r9,[r10+DIR.dir]
+
+.set_browsdirB:
+	mov r8,r13
+	xor edx,edx
+	xor ecx,ecx
+	call [dlg.open]
+	test rax,rax
+	jz	.set_browsdirE
+	mov rdi,rax
+
+	test esi,esi
+	jz	.set_browsdirB1
+
+	mov rdx,rsi
+	mov rcx,rax
+	call utf16.copyz
+
+.set_browsdirB1:
+	test r13,FOS_PICKFOLDERS
+	jnz	.set_browsdirC
+
+	mov rcx,rdi
+	call art.get_fname
+
+	;--- RET EAX 0,numchars
+	;--- RET ECX total len
+	;--- RET EDX pname "file.asm"
+	;--- RET R8 string
+
+	xor r11,r11
+	test eax,eax	;--- err get_fname
+	jz	.set_browsdirF
+	cmp eax,ecx
+	jz	.set_browsdirF		;--- nopath
+	mov [rdx-2],r11w
+
+.set_browsdirC:
+	xor r8,r8
+	xor edx,edx
+	mov rcx,rdi				;--- path+fname
+	call wspace.set_dir
+	test eax,eax
+	jz	.set_browsdirF
+
+	;--- bug: on no selection on Explorer's root (edit = "Computer") gets back
+	;--- C:\Users\marc\AppData\Roaming\Microsoft\Windows\Network Shortcuts
+	;--- but no Computer exists
+
+	mov rbx,rax
+	mov rdx,rax
+	mov rcx,[.hu.hCbx]
+	call cbex.is_param
+	mov r8,rax
+	inc rax
+	jnz	.set_browsdirF
+
+	mov rcx,rbx
+	call .fill_kdirs
+	mov r8,rcx
+
+.set_browsdirA:
+	mov rcx,[.hu.hCbx]
+	call cbex.sel_item
+
+.set_browsdirF:
+	mov rcx,rdi
+	call apiw.co_taskmf
+
+.set_browsdirE:
+	add rsp,\
+		FILE_BUFLEN
+	pop r13
+	pop r12
+	pop rsi
+	pop rdi
+	pop rbx
+	ret 0
+
+	;#---------------------------------------------ö
+	;|             .STORE_LASTDIR                  |
+	;ö---------------------------------------------ü
+
+.store_lastdir:
+	;--- in RCX pHu
+	;--- in RDX pIo referenced
+	push rsi
+	push r12
+
+	mov r12,rcx
+	mov rsi,rdx
+
+	mov rcx,[.hu.hCbx]
+	call cbex.get_cursel
+	mov rdx,rax
+	inc rax
+	cmovz rdx,rax
+
+	mov rcx,[.hu.hCbx]
+	call cbex.get_param
+	inc rax
+	cmovz rdx,rax
+	mov [.io.ldir],rdx
+
+	pop r12
+	pop rsi
+	ret 0
+
+	;#---------------------------------------------ö
+	;|             .SET_KDIRS                      |
+	;ö---------------------------------------------ü
+.set_kdirs:
+	;--- in RCX pHu
+	;--- in RDX pIo
+
+	push rsi
+	push r12
+
+	mov r12,rcx
+	mov rsi,rdx
+
+	;--- set imagelists on known directories
+	mov r9,[hsmSysList]
+	mov rcx,[.hu.hCbx]
+	call cbex.set_iml
+
+	;--- set known dirs
+	xor edx,edx
+	mov rcx,.fill_kdirs
+	call wspace.list_dir
+
+	;--- try set last dir
+	mov r8,[.io.ldir]
+	test r8,r8
+	jz	.set_kdirsE
+
+	mov rdx,r8
+	mov rcx,[.hu.hCbx]
+	call cbex.is_param
+	mov r8,rax
+	inc rax
+	cmovz r8,rax
+
+.set_kdirsE:
+	;--- select default kdir
+	mov rcx,[.hu.hCbx]
+	call cbex.sel_item
+
+	pop r12
+	pop rsi
+	ret 0
+
+	;#---------------------------------------------ö
+	;|             .FILL_KDIRS                     |
+	;ö---------------------------------------------ü
+
+.fill_kdirs:
+	;--- in RCX dir
+	;--- in R12 pHu
+
+	;--- in RCX hCb
+	;--- in RDX string
+	;--- in R8 imgindex
+	;--- in R9 param
+	;--- in R10 indent r10b,index overlay rest R10)
+	;--- in R11 selimage
+
+	push rbx
+	mov rbx,rcx
+	lea rdx,[.dir.dir]
+	mov r11d,[.dir.iIcon]
+	xor r10,r10
+	mov r9,rbx
+	mov r8d,[.dir.iIcon]
+	mov rcx,[.hu.hCbx]
+	call cbex.ins_item
+	mov ecx,eax
+	xor eax,eax
+	inc eax
+	pop rbx
 	ret 0
 
 
@@ -542,34 +680,3 @@ iodlg:
 	pop r12
 	pop rdi
 	ret 0
-
-	;#---------------------------------------------ö
-	;|             .FILL_KDIRS                     |
-	;ö---------------------------------------------ü
-
-.fill_kdirs:
-	;--- in RCX dir
-	;--- in R12 pHu
-
-	;--- in RCX hCb
-	;--- in RDX string
-	;--- in R8 imgindex
-	;--- in R9 param
-	;--- in R10 indent r10b,index overlay rest R10)
-	;--- in R11 selimage
-
-	push rbx
-	mov rbx,rcx
-	lea rdx,[.dir.dir]
-	mov r11d,[.dir.iIcon]
-	xor r10,r10
-	mov r9,rbx
-	mov r8d,[.dir.iIcon]
-	mov rcx,[.hu.hCbx]
-	call cbex.ins_item
-	mov ecx,eax
-	xor eax,eax
-	inc eax
-	pop rbx
-	ret 0
-

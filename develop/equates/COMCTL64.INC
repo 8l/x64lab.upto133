@@ -1955,13 +1955,6 @@ TCN_SELCHANGING = TCN_FIRST - 2
 
 
 
-
-
-
-
-
-
-
 ; Animation control styles
 
 ACS_CENTER	= 1
@@ -2214,11 +2207,11 @@ struct NMCBEDRAGBEGINW
 	szText du CBEMAXSTRLEN+2 dup(?)
 ends
 
-struct NMCBEENDEDITW
-	hdr NMHDR
-	fChanged dd ?
-	iNewSelection dd ?
-	szText dw CBEMAXSTRLEN dup(?)
-	iWhy dd ?,?
-ends
+	struct NMCBEENDEDITW
+		hdr NMHDR
+		fChanged dd ?
+		iNewSelection dd ?
+		szText dw CBEMAXSTRLEN dup(?)
+		iWhy dd ?,?
+	ends
 

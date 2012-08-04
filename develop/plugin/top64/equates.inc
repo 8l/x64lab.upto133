@@ -34,7 +34,8 @@ ends
 		next		dd 0	;--- item
 		hash		dd 0	;--- item
 		attrib	dd 0
-		
+		param		dq 0	;--- TPARAM
+
 		union
 			qword_val	dd 0
 			lo_dword	dd 0	;--- number
@@ -71,7 +72,18 @@ ends
 	TCOMMENT	equ 8
 	TOBJECT		equ 10h
 
-	TALL			equ 80h
+	;--- user post parsing flags that apply
+	;--- to mark items AFTER parsing. not involved
+	;--- during parsing
+
+	TDELETED	equ 20h
+	TPARAM		equ 40h
+
+
+	;--- by TNUMBER/TOBJECT: keep symple dqword storage
+	;--- by TLABEL/TQUOTED storage pointer qword_val points
+  ;--- to new substituting item
+
 
 	F_NAME		equ 1
 	F_VALUE		equ 2

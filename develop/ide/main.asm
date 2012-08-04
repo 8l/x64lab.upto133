@@ -362,6 +362,10 @@ winproc:
 	end virtual
 
 	virtual at rbx
+		.dir DIR
+	end virtual
+
+	virtual at rbx
 		.conf CONFIG
 	end virtual
 
@@ -453,14 +457,150 @@ winproc:
 	jz	.mi_ed_lnk
 	cmp ax,MI_DEVT_ADD
 	jz	.mi_devt_add
+	cmp ax,MI_DEVT_REM
+	jz	.mi_devt_rem
+	cmp ax,MI_DEVT_MAN
+	jz	.mi_devt_man
+	cmp ax,MI_DEVT_REL
+	jz	.mi_devt_rel
+	cmp ax,MI_DEVT_REMG
+	jz	.mi_devt_remg
+	cmp ax,MI_DEVT_ADDG
+	jz	.mi_devt_addg
+	cmp ax,MI_PA_BROWSE
+	jz	.mi_pa_browse
 	jmp	.defwndproc
+
+	;ü------------------------------------------ö
+	;|     PA_BROWSE                            |
+	;#------------------------------------------ä
+.mi_pa_browse:
+	sub rsp,\
+		sizea16.MENUITEMINFOW
+
+	mov r9,rsp
+	mov [r9+\
+		MENUITEMINFOW.fMask],\
+		MIIM_DATA
+	mov edx,MP_PATH
+	mov rcx,[hMnuMain]
+	call apiw.mni_get_byid
+	mov rbx,[rsp+\
+		MENUITEMINFOW.dwItemData]
+	test rbx,rbx
+	jz	.ret0
+
+	mov rax,rbx
+	test [.dir.type],\
+		DIR_HASREF
+	jz @f
+	mov rax,[.dir.rdir]
+@@:
+	lea r8,[rax+DIR.dir]
+	mov r11,SW_SHOWNORMAL	
+	xor r10,r10
+	xor r9,r9
+	mov edx,uzExplore
+	xor ecx,ecx
+	call apiw.shexec
+	
+	jmp	.ret0
+
+	;ü------------------------------------------ö
+	;|     DEVT_ADDG                            |
+	;#------------------------------------------ä
+.mi_devt_addg:
+	sub rsp,\
+		FILE_BUFLEN
+	mov r8,rsp
+	mov edx,U16
+	mov ecx,UZ_MSG_U_TADDG
+	call [lang.get_uz]
+
+	mov r8,uzTitle
+	mov rdx,rsp
+	mov rcx,[hMain]
+	call apiw.msg_ok
+	jmp	.ret0
+
+	;ü------------------------------------------ö
+	;|     DEVT_REMG                            |
+	;#------------------------------------------ä
+.mi_devt_remg:
+	call devtool.remgroup
+	jmp	.ret0
+
+
+	;ü------------------------------------------ö
+	;|     DEVT_REL                             |
+	;#------------------------------------------ä
+
+.mi_devt_rel:
+	call devtool.discard
+	call devtool.load
+	jmp	.ret0
+
+
+	;ü------------------------------------------ö
+	;|     DEVT_MAN                             |
+	;#------------------------------------------ä
+.mi_devt_man:
+	sub rsp,\
+		FILE_BUFLEN
+	xor edx,edx
+	mov rax,rsp
+
+	push rdx
+	push uzUtf8Ext
+	push uzDevTName
+	push rax
+	push rdx
+	call art.catstrw
+
+	mov rax,[confDir]
+	lea rcx,[rax+DIR.dir]
+
+	mov r8,\
+		LF_FILE or\
+		LF_TXT
+	mov rdx,rsp
+	call wspace.new_labf
+	test eax,eax
+	jz .ret0
+
+	mov rcx,rax
+	call wspace.open_file
+	test eax,eax
+	jz .ret0
+
+	mov rcx,rax
+	call edit.view
+
+	mov r8,rsp
+	mov edx,U16
+	mov ecx,UZ_INFO_TREL
+	call [lang.get_uz]
+
+	mov r8,uzTitle
+	mov rdx,rsp
+	mov rcx,[hMain]
+	call apiw.msg_ok
+	jmp	.ret0
+
+	;ü------------------------------------------ö
+	;|     DEVT_REM                             |
+	;#------------------------------------------ä
+.mi_devt_rem:
+	call devtool.remtool
+	jmp	.ret0
 
 	;ü------------------------------------------ö
 	;|     DEVT_ADD                             |
 	;#------------------------------------------ä
+
 .mi_devt_add:
-	call devtool.start
-	jmp	.ret0
+	call devtool.addtool
+	jmp .ret0
 
 	;ü------------------------------------------ö
 	;|     WS_EXIT                              |
@@ -521,10 +661,12 @@ winproc:
 	push r12
 	push r13
 	push r14
+	push r15
 
 	mov r12,.mi_fi_openI
 	mov r13,rdx	;--- parent
 	mov r14,r8	;--- insafter
+	xor r15,r15
 
 	mov rax,[.labf.dir]
 	lea r9,[rax+DIR.dir]
@@ -556,11 +698,13 @@ winproc:
 	push r12
 	push r13
 	push r14
+	push r15
 
 	mov r12,.mi_fi_openO
 	xor r13,r13
 	xor r14,r14
 	xor r9,r9
+	xor r15,r15
 
 .mi_fi_openA:
 	mov r8,FOS_ALLOWMULTISELECT\
@@ -587,6 +731,8 @@ winproc:
 	call wspace.new_labf
 
 	call r12
+	test eax,eax
+	cmovnz r15,rax		
 
 	mov rcx,[rdi]
 	call apiw.co_taskmf
@@ -600,13 +746,21 @@ winproc:
 	call art.a16free
 
 	cmp r12,.mi_fi_openI
-	jnz .mi_fi_openE
+	jz .mi_fi_openM
 
+	test r15,r15
+	jz	.mi_fi_openE
+	mov rcx,r15
+	call edit.view
+	jmp	.mi_fi_openE
+
+.mi_fi_openM:
 	mov rbx,[pLabfWsp]
 	or [.labf.type],\
 		LF_MODIF
 
 .mi_fi_openE:
+	pop r15
 	pop r14
 	pop r13
 	pop r12
@@ -749,10 +903,10 @@ winproc:
 .mi_ed_lnkA:
 	mov rsi,[pIo]
 	mov rcx,IO_NEWLNK
+	add rsi,rcx
 	mov rdx,rbx
 	mov rax,[.labf.dir]
 
-	add rsi,rcx
 	mov [.io.ldir],rax
 	call iodlg.start
 
@@ -912,6 +1066,11 @@ winproc:
 	mov rax,rsi
 	jmp .exit
 
+
+	;ü------------------------------------------ö
+	;|     FI_NEW                               |
+	;#------------------------------------------ä
+
 .mi_fi_newf:
 	mov rcx,[hTree]
 	call tree.get_sel
@@ -1009,8 +1168,6 @@ winproc:
 	;--- devtool item -----------
 	;@break
 	jmp	.ret0
-
-
 
 .wm_dis_mnuA1:
 	push r12

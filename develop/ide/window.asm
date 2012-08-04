@@ -613,43 +613,6 @@ lvw:
    ;#------------------------------------------ä
 
 cbex:
-;.create_ddl:
-;	mov r9,WS_CHILD \
-;		or WS_VISIBLE\
-;		or CBS_DROPDOWNLIST
-;	jmp	.createA
-
-;.create_dd:
-;	;--- in RCX parent
-;	mov r9,WS_CHILD \
-;		or WS_VISIBLE\
-;		or CBS_DROPDOWN
-
-;.createA:
-;	push rbp
-;	mov rbp,rsp
-;	and rsp,-16
-;	sub rsp,60h
-;	lea rdx,[rsp+20h]
-;	xor eax,eax
-
-;	mov r8,[hInst]
-;	mov [rdx+38h],rax
-;	mov [rdx+30h],r8
-;	mov [rdx+28h],rax
-;	mov [rdx+20h],rcx
-;	mov [rdx+18h],rax
-;	mov [rdx+10h],rax
-;	mov [rdx+8h],rax
-;	mov [rdx],rax
-;	mov rdx,uzCbexClass
-;	xor r8,r8
-;	xor ecx,ecx
-;	call [CreateWindowExW]
-;	mov rsp,rbp
-;	pop rbp
-;	ret 0
-
 .get_count:
 	xor r8,r8
 	xor r9,r9
@@ -672,6 +635,41 @@ cbex:
 	xor r8,r8
 	mov edx,CB_GETCURSEL
 	jmp	apiw.sms
+
+
+.get_param:
+	;--- in RCX hCbx
+	;--- in RDX item
+	;--- ret RDX param
+	;--- ret RAX -1/index
+
+	sub rsp,\
+		sizeof.COMBOBOXEXITEMW
+	mov r9,rsp
+
+	mov [r9+\
+		COMBOBOXEXITEMW.iItem],rdx
+
+	mov [r9+\
+		COMBOBOXEXITEMW.mask],\
+		CBEIF_LPARAM
+
+	push rdx
+	xor r8,r8
+	mov edx,CBEM_GETITEMW
+	call apiw.sms
+	xor edx,edx
+	pop r8
+	dec eax
+	mov r9,[rsp+\
+		COMBOBOXEXITEMW.lParam]
+	cmovge rax,r8
+	cmovge rdx,r9
+	add rsp,\
+		sizeof.COMBOBOXEXITEMW
+	ret 0
+
+
 
 .reset:
 	xor r9,r9
@@ -737,11 +735,12 @@ cbex:
 		sizeof.COMBOBOXEXITEMW
 	ret 0
 
-;.del_item:
-;	xor r9,r9
-;	mov edx,CBEM_DELETEITEM
-;	jmp	apiw.sms
-;	
+.del_item:
+	xor r9,r9
+	mov edx,CBEM_DELETEITEM
+	jmp	apiw.sms
+
+	
 ;.get_itemh:
 ;	xor r9,r9
 ;	mov edx,CB_GETITEMHEIGHT
@@ -794,6 +793,7 @@ cbex:
 ;	xor r9,r9
 ;	mov edx,CBEM_GETCOMBOCONTROL
 ;	jmp	apiw.sms
+
 
 .get_item:
 	;--- in RCX hCb

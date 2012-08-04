@@ -40,13 +40,114 @@ prop:
 	mov rdx,[r9+NMHDR.hwndFrom]
 	cmp rdx,[.cp.hLview]
 	jz	.lview_notify
+	cmp rdx,[.cp.hCbxFilt]
+	jz	.filt_notify
 	jmp	.ret0
+
+.filt_notify:
+	mov edx,[r9+NMHDR.code]
+	cmp edx,CBEN_ENDEDITW
+	jz	.filt_endedit
+	jmp	.ret0
+
+.filt_endedit:
+	mov eax,[r9+NMCBEENDEDITW.fChanged]
+	test eax,eax
+	jz	.ret0
+	mov eax,[r9+NMCBEENDEDITW.iWhy]
+	cmp eax,CBENF_RETURN
+	jnz	.ret0
+
+	lea rcx,[r9+NMCBEENDEDITW.szText]
+	movzx eax,[.cp.idCat]
+	cmp eax,MP_DEVT
+	jnz	.ret0
+
+	call devtool.addgroup
+	jmp	.ret0
+
+
 
 .lview_notify:
 	mov edx,[r9+NMHDR.code]
 	cmp edx,NM_DBLCLK
 	jz	.lview_dblclk
+	cmp edx,\
+		LVN_ITEMCHANGED
+	jz	.lview_ichged
 	jmp .ret0
+
+.lview_ichged:
+	mov rcx,\
+		[r9+NM_LISTVIEW.lParam]
+	test rcx,rcx
+	jz	.ret0
+
+	test [r9+\
+		NM_LISTVIEW.uNewState],\
+		LVIS_FOCUSED \
+		or LVIS_SELECTED
+	jz	.ret0
+
+	movzx eax,[.cp.idCat]
+	cmp eax,MP_DEVT
+	jnz	.ret0
+
+	mov rbx,[pTopDevT]
+	mov rdi,rcx		;--- save topitem
+	test ebx,ebx
+	jz	.ret0
+
+	mov rax,[rcx+\
+		TITEM.param]
+	test rax,rax
+	jnz .lview_ichgedA
+
+	sub rsp,\
+		FILE_BUFLEN
+
+	mov r8d,[rcx+\
+		TITEM.attrib]
+	test r8,r8
+	jz	.ret0
+	add r8,rbx
+
+	mov rdx,rsp
+	lea rcx,[r8+\
+		TITEM.value]
+	call utf8.to16
+
+	mov rcx,rsp
+	call art.get_fname
+
+	;--- RET EAX 0,numchars
+	;--- RET ECX total len
+	;--- RET EDX pname "file.asm"
+	;--- RET R8 string
+
+	test eax,eax	;--- err get_fname
+	jz	.ret0
+	cmp eax,ecx
+	jz	.ret0		;--- nopath
+
+	xor eax,eax
+	xchg rcx,rdx
+	mov word[rcx-2],ax
+	xor edx,edx
+	mov rcx,r8
+	call wspace.set_dir
+	test rax,rax
+	jz .ret0
+
+	mov [rdi+\
+		TITEM.param],rax
+
+.lview_ichgedA:
+	mov rcx,rax
+	call mnu.set_dir
+	jmp	.ret0
+
+
 
 .lview_dblclk:
 	mov edx,[r9+\
@@ -73,14 +174,12 @@ prop:
 	test ecx,ecx
 	jz	.ret0
 
-	movzx edx,[.cp.iCat]
+	movzx edx,[.cp.idCat]
 	cmp edx,MP_DEVT
 	jnz	@f
 	call .lvw_dblclk_devt
 @@:
 	jmp	.ret0
-
-
 
 .wm_command:
 	mov rbx,[pCp]
@@ -131,7 +230,7 @@ prop:
 	jz	.ret0
 
 	mov [.cp.iFilt],ax
-	cmp [.cp.iCat],\
+	cmp [.cp.idCat],\
 		MP_DEVT
 	jnz	@f
 	call .filt_devt_group
@@ -150,7 +249,7 @@ prop:
 	jnz	.ret0
 
 	xor eax,eax
-	mov [.cp.iCat],ax
+	mov [.cp.idCat],ax
 
 	mov rcx,r9
 	call cbex.get_cursel
@@ -160,7 +259,7 @@ prop:
 	dec eax
 	jns	.cat_commandA
 
-	mov [.cp.iCat],ax
+	mov [.cp.idCat],ax
 	mov [.cp.iFilt],ax
 
 	mov rcx,[.cp.hCbxFilt]
@@ -226,7 +325,8 @@ prop:
 	call apiw.set_wpos
 
 	;----------------------------------
-	mov eax,SWP_NOZORDER
+	mov eax,\
+		SWP_NOZORDER
 	mov r11,rdi
 	
 	mov r10,rsi
@@ -239,7 +339,8 @@ prop:
 	call apiw.set_wpos
 
 	;----------------------------------
-	mov eax,SWP_NOZORDER ;or SWP_NOSENDCHANGING ;or SWP_NOREDRAW
+	mov eax,\
+		SWP_NOZORDER
 	mov r11,rdi
 	shr r11,1
 	mov r10,rsi
@@ -252,14 +353,15 @@ prop:
 	call apiw.set_wpos
 
 	;--------------------------------------------
-	mov eax,SWP_NOZORDER ;or SWP_DRAWFRAME
+	mov eax,SWP_NOZORDER
 	mov r10,rsi
 	mov r9,rdi
 	shr r9,1
 	add r9,rdi
 	add r9,rdi
 	add r9,CY_GAP*4
-	mov r11d,[rsp+RECT.bottom]
+	mov r11d,[rsp+\
+		RECT.bottom]
 	sub r11,r9
 	sub r11,CY_GAP
 	mov r8d,0;CX_GAP
@@ -274,6 +376,8 @@ prop:
 
 .wm_initd:
 	mov rbx,[pCp]
+	mov [.cp.hDlg],rcx
+
 	mov rdx,PROP_CBX_CAT
 	mov rcx,[.hwnd]
 	call apiw.get_dlgitem
@@ -344,6 +448,10 @@ prop:
 	test rcx,rcx
 	jnz .wm_initdA	
 
+	xor r8,r8
+	mov rcx,[.cp.hCbxCat]
+	call cbex.sel_item
+
 	mov rdx,PROP_CBX_FILT
 	mov rcx,[.hwnd]
 	call apiw.get_dlgitem
@@ -362,13 +470,19 @@ prop:
 	mov rsi,rax
 	mov rbx,[pConf]
 
-	mov r9d,[.conf.prop.bkcol]
+	mov r9d,\
+		[.conf.prop.bkcol]
 	mov rcx,rsi
 	call lvw.set_bkcol
 
-	mov r9d,[.conf.prop.bkcol]
+	mov r9d,\
+		[.conf.prop.bkcol]
 	mov rcx,rsi
 	call lvw.set_txtbkcol
+
+;		xor ecx,ecx
+;	call apiw.co_init
+
 
 .ret1:				;message processed
 	xor rax,rax
@@ -382,13 +496,16 @@ prop:
 .exit:
 	@wepi
 
+	;#---------------------------------------------------ö
+	;|      LVW_DBLCLK_DEVT                              |
+	;ö---------------------------------------------------ü
 
 .lvw_dblclk_devt:
 	;--- in RCX param = topitem
 	;--- (in RBX pCp)
 	;--- in RDX iCat = param = MP_DEVT
 
-	mov rax,[pDevT]
+	mov rax,[pTopDevT]
 	mov r8d,[rcx+\
 		TITEM.attrib]
 	add r8,rax
@@ -431,12 +548,14 @@ prop:
 	;	call wspace.spawn
 	;jmp	.lddE
 
+
 	mov r11,SW_SHOWDEFAULT
 	xor r10,r10
 	xor r9,r9
 	lea r8,[rsp+\
 		FILE_BUFLEN]
 	xor edx,edx
+	;mov rcx,[hMain]
 	xor ecx,ecx
 	call apiw.shexec
 
@@ -461,7 +580,7 @@ prop:
 	mov rdi,rcx
 
 	xor eax,eax
-	mov [.cp.iCat],dx
+	mov [.cp.idCat],dx
 	mov [.cp.iFilt],ax
 
 	mov rcx,[.cp.hCbxFilt]
@@ -484,7 +603,7 @@ prop:
 	mov rcx,[.cp.hCbxFilt]
 	call cbex.ins_item
 
-	mov r12,[pDevT]
+	mov r12,[pTopDevT]
 	mov rsi,r12
 	xor eax,eax
 	test r12,r12
@@ -549,7 +668,8 @@ prop:
 	;--- in RCX text buf 512
 	;--- (in RBX pCp)
 	;--- in RDX iFilt = param = pointer to top Group
-	
+
+	push rbx
 	push rdi
 	push rsi
 	push r12
@@ -566,7 +686,9 @@ prop:
 	test edx,edx
 	jz	.fdgE
 
-	mov r12,[pDevT]
+;@break
+
+	mov r12,[pTopDevT]
 	mov rsi,rdx
 	test r12,r12
 	jz	.fdgE
@@ -678,6 +800,7 @@ prop:
 	pop r12
 	pop rsi
 	pop rdi
+	pop rbx
 	ret 0
 
 	;#---------------------------------------------------ö

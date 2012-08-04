@@ -20,8 +20,6 @@ top64:
 		.thead THEADER
 	end virtual
 
-
-
 	;ü------------------------------------------ö
 	;|     LOCATE                               |
 	;#------------------------------------------ä
@@ -232,7 +230,6 @@ top64:
 	test bl,F_NAME
 	jnz	.err_name
 
-;@break
 	mov bl,F_NAME
 	mov [.titem.level],bh
 	mov [.titem.type],TLABEL
@@ -292,7 +289,7 @@ top64:
 .setchild:
 	;--- in R13 parent
 	;--- in R15 child
-;@break
+
 	cmp r13,r15			;--- parent is root
 	jz	.ok_setchild
 
@@ -348,7 +345,7 @@ top64:
 
 .readV:
 	xor ecx,ecx
-;	or bl,F_VALUE
+
 	;ü------------------------------------------ö
 	;|     VALUE                                |
 	;#------------------------------------------ä
@@ -444,13 +441,15 @@ add [.thead.dsize],edx
 .setvalue:
 	;--- in RDI value
 	;--- in R15 parent
-;@break
+
 	mov rax,r15
 	mov rdx,r15
 	sub rax,[.thead.pmem]
 	mov [.titem.parent],eax
+
 	;--- must be the same level for now,
 	;--- p:1 (.a:),"qqq" not allowed
+
 	movzx eax,[.titem.level]
 	sub al,[r15+TITEM.level]
 	jnz	.ok_setvalue
@@ -467,7 +466,6 @@ add [.thead.dsize],edx
 	jmp	.setvalueB
 	
 .setvalueA:
-;@break
 	mov rax,rdi
 	sub rax,[.thead.pmem]
 	mov [rdx+TITEM.attrib],eax
@@ -488,7 +486,8 @@ add [.thead.dsize],edx
 ;	mov rax,r15
 ;	sub rax,[.thead.pmem]
 ;	mov [.titem.parent],eax
-inc [.thead.items]
+
+	inc [.thead.items]
 	mov [.titem.level],bh
 	mov [.titem.type],TQUOTED
 	mov r14,rdi
@@ -509,7 +508,6 @@ inc [.thead.items]
 	jnz	.readS2
 
 .readS3:
-;@break
 	mov rax,rsi
 	mov rdi,r14
 	sub rax,[.thead.psrc]
@@ -534,13 +532,13 @@ inc [.thead.items]
 	@nearest 4,rdi
 	xchg rsi,r8
 	add [r10+TITEM.len],r9w
-add [.thead.dsize],r9d
+	add [.thead.dsize],r9d
+
 	;---
 	and bl,F_NAME  or F_VALUE
 	jmp	.readV
 
 .readOP:
-;@break
 	add rsi,rcx
 	inc bh
 	jz .err_level
@@ -616,199 +614,4 @@ add [.thead.dsize],r9d
 	;--- in RCX mem to be freed
 	jmp art.a16free
 
-
-
-;	;ü------------------------------------------ö
-;	;|     GETSTR                               |
-;	;#------------------------------------------ä
-;.getstr:
-;	;--- in RCX pobject
-;	;--- ret RAX pstring / 0 carry on error
-;	;--- ret RCX eventual hash
-;	;--- ret RDX pobject
-;	;--- ret R8 len
-;	xor r9,-1
-;	jmp	.gnC
-
-;	;ü------------------------------------------ö
-;	;|     GETNUM                               |
-;	;#------------------------------------------ä
-
-;.getnum:
-;	;--- in RCX pobject
-;	;--- ret RAX value /carry on error
-;	;--- ret RDX valid bytes
-;	;--- ret RCX past string if ok
-;	xor r9,r9
-
-;.gnC:
-;	mov rax,rcx
-;	test rax,rax
-;	jz .err_gn
-;	xchg rax,rdx
-;	xor rcx,rcx
-;	mov rax,[rdx]
-;	
-;	test al,TROOT
-;	jnz .err_gn
-;	cmp al,TOBJECT
-;	jz .err_gn
-;	test r9,r9
-;	jnz	.gsA
-
-;	lea r8,[rdx+TITEM.pstuff]
-;	test ah,ah
-;	jnz	.gnB
-
-;.gnA:	
-;	cmp [rdx+TITEM.dlen],ecx
-;	jz	.err_gn
-
-;.gnB:
-;	mov rcx,r8
-;	jmp	art.u2dq
-
-;.err_gn:
-;	xchg rax,rcx
-;	sub rax,1
-;	ret 0
-
-;.gsA:
-;	;--- ret RAX pstring / 0 carry on error
-;	;--- ret RCX eventual hash
-;	;--- ret RDX pobject
-;	;--- ret R8 len
-;	lea r9,[rdx+TITEM.pstuff]
-;	mov r8d,[rdx+TITEM.hash]
-;	test ah,ah
-;	jz	.gsC
-;	movzx ecx,ah
-;	jmp	.gsB
-
-;.gsC:	
-;	test r8,r8
-;	jz	.err_gn
-;	mov rcx,r8
-
-;.gsB:
-;	xchg rax,r9
-;	xchg rcx,r8
-;	ret 0
-
-
-
-
-;			;ü------------------------------------------ö
-;			;|     RAWNEXT                              |
-;			;#------------------------------------------ä
-;.rawnext:
-;	;--- in RCX pobject
-;	test rcx,rcx
-;	jz .err_rn
-
-;	xor edx,edx
-;	mov rax,[rcx]
-;	test eax,eax
-;	jz	.err_rnA
-
-;	test al,TLAST
-;	jz	.rn_itemA
-;	xor ecx,ecx
-;	jmp	.err_rn
-
-;.rn_itemA:
-;	mov dl,sizeof.THEADER
-;	test al,TROOT
-;	jnz .rn_root
-;	mov dl,byte[rcx+TITEM.len]
-;	test al,TLABEL
-;	jnz	.rn_item
-;	mov edx,[rcx+TITEM.dlen]
-
-;.rn_item:
-;	sub edx,3		;--- count 0+
-;	adc edx,3
-;	and edx,-4
-;	add rcx,sizeof.TITEM
-
-;.rn_root:
-;	add ecx,edx
-
-;.err_rn:
-;	xchg rax,rcx
-;.err_rnA:
-;	ret 0
-
-;;.rawnext:
-;;	;--- in RCX pobject
-;;	test rcx,rcx
-;;	jz .err_rn
-
-;;	mov rax,[rcx]
-;;	test eax,eax
-;;	jz	.err_rnA
-
-;;	test al,TROOT
-;;	jnz .rn_root
-;;	movzx rdx,byte[rcx+TITEM.len]
-;;	test al,TLABEL
-;;	jnz	.rn_item
-;;	mov edx,[rcx+TITEM.dlen]
-
-;;.rn_item:
-;;	sub edx,4
-;;	adc edx,3
-;;	and edx,-4
-;;	jmp .rn_rootA
-
-;;.rn_root:
-;;	xor rdx,rdx
-
-;;.rn_rootA:
-;;	add rcx,sizeof.TITEM
-;;	add rcx,rdx
-
-;;.err_rn:
-;;	xchg rax,rcx
-;;.err_rnA:
-;;	ret 0
-
-
-;			;ü------------------------------------------ö
-;			;|     NEXT                                 |
-;			;#------------------------------------------ä
-;.next:
-;	;--- in RCX pobject
-;	;--- in RDX flags
-;	;--- RET RAX=0/pobject
-;	mov rax,rcx
-;	mov r8,rcx
-;	mov r9,rdx
-;	test rax,rax
-;	jnz .n_require
-
-;.err_n:
-;	xchg rax,rcx
-;.n_last:
-;.n_found:
-;	ret 0
-
-;.n_include:
-;	test byte[eax],r9l
-;	jnz	.n_found
-
-;.n_require:
-;	mov rcx,rax
-;	call .rawnext
-;	test eax,eax
-;	jz	.n_last
-;	test r9l,TALL
-;	jnz	.n_include
-;	cmp byte[eax],r9l
-;	jnz .n_require
-;	ret 0
-
-
-
-
-display_decimal $-.parse
+;display_decimal $-.parse

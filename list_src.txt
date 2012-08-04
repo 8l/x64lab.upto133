@@ -28,6 +28,8 @@ develop\equates\KERNEL64.INC
 develop\equates\SHELL64.INC
 develop\equates\USER64.INC
 
+develop\help\*.*
+
 develop\ide\bridge.inc 
 develop\ide\config.asm 
 develop\ide\console.asm

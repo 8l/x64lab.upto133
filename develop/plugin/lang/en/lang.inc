@@ -54,6 +54,7 @@
 		UZ_TOOLCMD,0,U8+UR,db "Tool command",\
 		UZ_TOOLDESCR,0,U8+UR,db "Select executable/batch/help file etc.",\
 		UZ_TOOLBYG,0,U8+UR,db "[Tools listed by Groups]",\
+		UZ_TOOLPICK,0,U8+UR,db "Pick tool",\
 		MP_WSPACE,0,U8+UR,db "Work&space",\
 			MI_WS_LOAD,0,U8+UR,db "&Load",\
 			MI_WS_NEW,0,U8+UR,db "&New",\
@@ -83,6 +84,10 @@
 		MP_DEVT,0,U8+UR,db "Developer tools",\
 			MI_DEVT_ADD,0,U8+UR,db "Browse to add new tool",\
 			MI_DEVT_REM,0,U8+UR,db "Remove tool",\
+			MI_DEVT_ADDG,0,U8+UR,db "Add a new GROUP label",\
+			MI_DEVT_REMG,0,U8+UR,db "Remove GROUP",\
+			MI_DEVT_MAN,0,U8+UR,db "Manage tools file (expert user)",\
+			MI_DEVT_REL,0,U8+UR,db "Reload tools",\
 		MP_CONF,0,U8+UR,db "Configurator",\
 		MP_HELP,0,U8+UR,db "Help",\
 		MP_PATH,0,U8+UR,db "[?]",\
@@ -116,5 +121,17 @@
 			UZ_LNK_DESC,0,U8+UR,db "Choose a directory as reference",\
 			UZ_DATEFRM,0,U8+UR,db "dddd','dd'.'MMMM'.'yyyy",\
 			UZ_TIMEFRM,0,U8+UR,db "HH':'mm':'ss",\
-			UZ_DEFUSER,0,U8+UR,db "Mr.Biberkopf"
+			UZ_DEFUSER,0,U8+UR,db "Mr.Biberkopf",\
+			UZ_TOOLGEN,0,U8+UR,db "All purpose tools",\
+			UZ_INFO_TREL,0,U8+UR,<db \
+				"After editing the file [config\devtool.utf8], dont forget",13,10,\
+				"to reload all tools by choosing the menu item [Reload tools]">,\
+			UZ_MSG_U_TGREM,0,U8+UR,<db \
+				"Removing group [%ls] cannot be undone. ",13,10,\
+				"Tools contained into it will be removed too !",13,10,\
+				"Remove it permanently ?">,\
+			UZ_MSG_U_TADDG,0,U8+UR,<db \
+				"- Select 'Developer Tools' in the 'Properties' Window",13,10,\
+				"- Type something in the comboedit of the listed groups",13,10,\
+				"- Press <Enter> to accept the label as group name">
 

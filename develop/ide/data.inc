@@ -26,12 +26,14 @@ section '.data' data readable writeable
 	pTime		dq sizeof.SYSTIME
 	pKeya		dq (MI_OTHER-MNU_X64LAB) * sizeof.KEYA
 	NUM_ITEMS = ($-curDir)/8
-	
 
 	pOmni		dq 0
 	hSciDll	dq 0
 	hDocker	dq 0
-	pDevT		dq 0	;--- top file
+
+	pTopDevT	dq 0
+	 .dsize		dd 0
+	 .items		dd 0
 
 	hTree			dq 0
 	hRootWsp	dq 0
@@ -54,6 +56,7 @@ section '.data' data readable writeable
 	confDir		dq 0
 	;logDir		dq 0
 	;mountDir	dq 0
+	helpDir		dq 0
 	plugDir		dq 0
 	projDir		dq 0
 	templDir	dq 0
@@ -80,6 +83,7 @@ section '.data' data readable writeable
 		uzAccelName du "accel",0
 		uzConfName	du "config",0
 		uzLogName   du "log",0
+		uzHelpName	du "help",0
 		uzMountName	du "mount",0
 		uzPlugName	du "plugin",0
 		uzLangName	du "lang",0
@@ -89,6 +93,7 @@ section '.data' data readable writeable
 		uzToolName 	du "tool",0
 		uzDevTName	du "devtool",0
 		uzMenuName	du "menu",0
+		uzExplore		du "explore",0
 
 		uzDefault  du "default"		;<--- follows
 		uzLabExt   du "."
@@ -163,14 +168,21 @@ section '.data' data readable writeable
 			
 		@mnp MP_DEVT,		11,OWN,DIF or MIIM_SUBMENU,\
 			MI_DEVT_ADD,	10,OWN,DIF,\
-			MI_DEVT_REM,	12,OWN,DIF
+			MI_DEVT_REM,	12,OWN,DIF,\
+			-1,\
+			MI_DEVT_ADDG,	0,OWN,DIF,\
+			MI_DEVT_REMG,	0,OWN,DIF,\
+			-1,\
+			MI_DEVT_MAN,	0,OWN,DIF,\
+			MI_DEVT_REL,	0,OWN,DIF
 
-		@mnp MP_PATH,		26,RJU,ISS or MIIM_FTYPE,\
-			MI_PA_CONS,		18,OWN,DIF,\
-			MI_PA_BROWSE,	18,OWN,DIF,\
-			MI_PA_FIND,		18,OWN,DIF,\
-			MI_PA_COPY,		18,OWN,DIF,\
-			MI_PA_SETPROP,18,OWN,DIF
+		@mnp MP_PATH,		0,RJU,ISS or MIIM_FTYPE,\
+			MI_PA_BROWSE,	0,OWN,DIF
+
+		;	MI_PA_CONS,		18,OWN,DIF,\
+		;	MI_PA_FIND,		18,OWN,DIF,\
+		;	MI_PA_COPY,		18,OWN,DIF,\
+		;	MI_PA_SETPROP,18,OWN,DIF
 		
 		;--- utf8 strings for config/config.utf8 items
 		macro @cfg_items [argid,argval]{

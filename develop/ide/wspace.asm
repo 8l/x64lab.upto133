@@ -253,6 +253,11 @@ wspace:
 
 	mov r9,rsp
 	mov [r9+LVITEMW.iItem],eax
+
+	xor r10,r10
+mov [r9+\
+	LVITEMW.iSubItem],r10d
+
 	mov rcx,[hDocs]
 	call lvw.get_param
 
@@ -2330,7 +2335,7 @@ wspace:
 	jmp	.dir2hashA
 
 .dir2hash:
-	;--- in RCX dir
+	;--- in RCX path
 	;--- RET R8 len
 	;--- RET additional data from .is_dhash
 	push .is_dhash

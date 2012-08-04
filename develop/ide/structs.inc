@@ -11,45 +11,12 @@
   ;| filename:
   ;ö-------------------------------------------------ä
 
-
 	MAX_MNUCPTS	 = 80h
 	MAX_MNULEN	=  MAX_MNUCPTS*2 + 10h
 	MAX_EXTLEN equ 78
 
-	;struct ICONINFO
-	;	fIcon	dd ?
-	;	xHotspot dd ?
-	;	yHotspot dd ?
-	;	hbmMask dd ?
-	;	hbmColor dd ?
-	;ends
-
 	SLOT_CREATEDIR	equ 1
 	SLOT_UPDATE			equ 2
-
-	TAB_CONSOLE = 0
-	TAB_CALC = 1
-
-	MPOS_WS		equ 0
-	MPOS_FILE	equ 1
-	MPOS_EDIT	equ 2
-	MPOS_WIN	equ 3
-
-	WSP_COL_BUF	 equ 0
-	WSP_COL_TYPE equ 1
-	WSP_COL_SIZE equ 2
-	WSP_COL_CDATE equ 3
-
-;	APPDIR		equ 0
-;	BACKDIR		equ 1
-;	CONFDIR		equ 2
-;	LOGDIR		equ 3
-;	MOUNTDIR	equ 4
-;	PLUGDIR		equ 5
-;	PROJDIR		equ 6
-;	TEMPLDIR	equ 7
-;	TMPDIR		equ 8
-;	TOOLDIR		equ 9
 
 	DIR_DEFDIR		equ 1
 	DIR_HASREF		equ 2
@@ -251,18 +218,18 @@ ends
 	ends
 
 	struct CPROP
+		hDlg			dq 0
 		hCbxCat		dq 0
-		hCbCat		dq 0	;--- child original ComboBox					
 
+		hCbCat		dq 0	;--- child original ComboBox					
 		hCbxFilt	dq 0
 		hPrg			dq 0
-
 		hLview		dq 0
-		iCat			dw 0	;--- 
-		iFilt			dw 0
-							dd 0
 
-							dq 0
+		idCat			dw 0	;--- id category
+		iFilt			dw 0	;--- item position
+							dw 0	
+							dw 0
 							dq 0
 	ends
 
@@ -308,16 +275,6 @@ ends
 	ends
 
 
-	struct DEVTOOL
-		type	dw 0
-		id		dw 0
-		lenP	dw 0
-		group	db 0
-		flags db 0
-		hIcon	dq 0
-		cmd		db FILE_BUFLEN dup (?)
-		paras	db 128 dup (0)
-	ends
 
 
 	;---------- scintilla related -------------
