@@ -37,6 +37,7 @@ develop\ide\console.asm
 develop\ide\data.inc
 develop\ide\devtool.asm
 develop\ide\edit.asm   
+develop\ide\ext.asm  
 develop\ide\iodlg.asm  
 develop\ide\main.asm   
 develop\ide\menu.asm   
