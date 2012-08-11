@@ -13,6 +13,7 @@
 
 sci:
 
+;--- hash for classes and styles
 @szhash lexer,\
 	multisel,\
 	stylebits,\
@@ -21,10 +22,18 @@ sci:
 	keyword,\
 	style,\
 	back,\
+	bold,\
 	fore,\
 	font,\
 	fontsize,\
-	clearall
+	italic,\
+	clearall,\
+	sci,\
+	env,\
+	exec,\
+	cmd,\
+	class
+	
 
 	;#---------------------------------------------------ö
 	;|                CREATE                             |
@@ -146,7 +155,7 @@ sci:
 
 	mov r8,2
 	mov rcx,rbx
-	call .set_tabs
+	call .set_tabwidth
 
 	pop rbx
 	ret 0
@@ -425,75 +434,45 @@ sci:
 	pop rbp
 	ret 0
 
-.set_selbackF:
-	mov r9d,[rdx+1]
-	movzx r8,byte[rdx]
-
 .set_selback:
+	;--- R8
 	mov edx,SCI_SETSELBACK
 	jmp	apiw.sms
-
-.set_fontsizeF:
-	movzx r9,byte[rdx+1]
-	movzx r8,byte[rdx]
 
 .set_fontsize:
 	mov edx,SCI_STYLESETSIZE
 	jmp	apiw.sms
 
-.set_fontF:
-	lea r9,[rdx+1]
-	movzx r8,byte[rdx]
-
 .set_font:
 	mov edx,SCI_STYLESETFONT
 	jmp	apiw.sms
 
-.set_keywordF:
-	lea r9,[rdx+1]
-	movzx r8,byte[rdx]
 .set_keyword:
 	mov edx,SCI_SETKEYWORDS
 	jmp	apiw.sms
-
-.set_backcolorF:
-	mov r9d,[rdx+1]
-	movzx r8,byte[rdx]
 
 .set_backcolor:
 	mov edx,SCI_STYLESETBACK
 	jmp	apiw.sms
 
-.set_forecolorF:
-	mov r9d,[rdx+1]
-	movzx r8,byte[rdx]
-
 .set_forecolor:
 	mov edx,SCI_STYLESETFORE
 	jmp	apiw.sms
 
-.set_tabsF:
-	movzx r8,byte[rdx]
-.set_tabs:
+.set_tabwidth:
+	;--- in R8 value
 	mov edx,SCI_SETTABWIDTH
 	jmp	apiw.sms
 
-.set_multiselF:
-	movzx r8,byte[rdx]
 .set_multisel:
+	;--- in R8 value
 	mov edx,SCI_SETMULTIPLESELECTION
 	jmp	apiw.sms
-
-.set_stylebitsF:
-	movzx r8,byte[rdx]
 
 .set_stylebits:
 	mov edx,SCI_SETSTYLEBITS
 	jmp	apiw.sms
 
-
-.set_lexerF:
-	movzx r8,byte[rdx]
 .set_lexer:
 	;--- in R8 lexer
 	mov edx,SCI_SETLEXER
@@ -507,54 +486,13 @@ sci:
 	mov edx,SCI_STYLECLEARALL
 	jmp	apiw.sms
 
-;	push 00F2F2F7h
-;	push back.hash
-;	push edi
-;	call esi
+.set_bold:
+	mov edx,SCI_STYLESETBOLD
+	jmp	apiw.sms
 
-;	push 0h
-;	push fore.hash
-;	push edi
-;	call esi
-
-;	push szCourier
-;	push font.hash
-;	push edi
-;	call esi
-
-;	push 12
-;	push fontsize.hash
-;	push edi
-;	call esi
-
-;	push 1
-;	push clearall.hash
-;	push edi
-;	call esi
-
-;	mov edi,STYLE_LINENUMBER
-;	push 00AABBCCh
-;	push back.hash
-;	push edi
-;	call esi
-
-;	push 8
-;	push fontsize.hash
-;	push edi
-;	call esi	
-
-;	push 1
-;	push bold.hash
-;	push edi
-;	call esi	
-
-;.exit_hili:
-;	pop esi
-;	pop edi
-;	pop ebx
-;	ret
-;endp
-
+.set_italic:
+	mov edx,SCI_STYLESETITALIC
+	jmp	apiw.sms
 
 
 ;	;#---------------------------------------------------ö
@@ -612,14 +550,6 @@ sci:
 
 ;.set_charset:
 ;	mov eax,SCI_STYLESETCHARACTERSET
-;	jmp	.sci_message0
-
-;.set_bold:
-;	mov eax,SCI_STYLESETBOLD
-;	jmp	.sci_message0
-
-;.set_italic:
-;	mov eax,SCI_STYLESETITALIC
 ;	jmp	.sci_message0
 
 ;.replsel:

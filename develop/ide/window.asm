@@ -310,6 +310,14 @@ statb:
 	mov edx,SB_SETTEXTW
 	jmp	apiw.sms
 
+.get_text:
+	;--- in R8 part/flags
+	;--- in R9 buffer
+	mov edx,SB_GETTEXTW
+	jmp	apiw.sms
+
+
+
    ;ü------------------------------------------ö
    ;|   TAB                                    |
    ;#------------------------------------------ä

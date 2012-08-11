@@ -87,28 +87,31 @@
 	ends
 
 
-	;--- common to EXT/HILI/CFG
-	struct SLOT
-		hash	dq ?
+	struct EXT_CLASS
+		top		dq ?	;--- TOP mem of [config\ext\name.utf8]
+		next	dq ?	;--- next top class
+		id		dq ?	;--- hash class ID
+
+		dsize	dd ?	;--- top
+		items	dd ?	;--- top
+
+		oCls	dd ?
+		oCmd	dd ?	;--- offset of cmd: in the TOP file
+		oEnv	dd ?
+		oSci	dd ?
+
+		oExec	dd ?
+					dd ?
+					dq ?
+
+		name	db (256-64) dup (0)
+	ends
+
+	struct EXT_SLOT
+		class	dq ?
 		next	dq ?
-		;-------------
-		type		db ?
-		len			db ?
-		stype		db ?	;--- slot type
-						db ?
-		used		dd ?
-						dq ?
-		;-------------
-		union
-			cfg			dq ?	;--- EXT
-			param1	dq ?	;--- CFG
-		ends
-		union
-			hili		dq ?	;--- EXT
-			param2	dq ?	;--- CFG
-			stuff		dq ?	;--- HILI formatted bin stuff
-		ends
-		name		db (MAX_EXTLEN+2) dup (?)
+		hash	dq ?
+					dq ?
 	ends
 
 
@@ -188,24 +191,24 @@ ends
 
 	MAX_PLUG	equ 15
 
-;	struct PLUG
-;		hPanel	dq 0
-;		hDlg		dq 0
-;		hTab		dq 0
-;		selplug	db 0
-;		cy_tab	db 0
-;						dw 0
-;						dd 0
-;						dq 0
-;		plugs		dq MAX_PLUG dup (0)
-;	ends
+	;	struct PLUG
+	;		hPanel	dq 0
+	;		hDlg		dq 0
+	;		hTab		dq 0
+	;		selplug	db 0
+	;		cy_tab	db 0
+	;						dw 0
+	;						dd 0
+	;						dq 0
+	;		plugs		dq MAX_PLUG dup (0)
+	;	ends
 
-;	struct XCOMP
-;			dq 0
-;			dq 0
-;			dq 0
-;			dq 0
-;	ends
+	;	struct XCOMP
+	;			dq 0
+	;			dq 0
+	;			dq 0
+	;			dq 0
+	;	ends
 
 	struct CONS
 		hCbx			dq 0
@@ -274,9 +277,6 @@ ends
 		wsp		db FILE_BUFLEN*2 dup (?)
 	ends
 
-
-
-
 	;---------- scintilla related -------------
 	LINE_COMMENT		= 1
 	LINE_DECOMMENT	= 2
@@ -285,38 +285,35 @@ ends
 	CX_GAP equ 3
 	CY_GAP equ 3
 
+	;struct TOOL_SLOT
+	;	hash		dd 0
+	;	name		dd 0
+	;	exec		dd 0
+	;	path			dd 0
+	;	descript	dd 0
+	;	numcmd	dw 0
+	;	numenv	dw 0
+	;ends		
 
+	;struct TINFO
+	;	lenname 	dw 0
+	;	lenvalue 	dw 0
+	;ends
 
+	;struct CMD_STRUCT
+	;	hOutput		dd 0
+	;	pCommand 	dd 0
+	;	paramA		dd 0
+	;	retvalue	dd 0
+	;ends
 
-;struct TOOL_SLOT
-;	hash		dd 0
-;	name		dd 0
-;	exec		dd 0
-;	path			dd 0
-;	descript	dd 0
-;	numcmd	dw 0
-;	numenv	dw 0
-;ends		
-
-;struct TINFO
-;	lenname 	dw 0
-;	lenvalue 	dw 0
-;ends
-
-;struct CMD_STRUCT
-;	hOutput		dd 0
-;	pCommand 	dd 0
-;	paramA		dd 0
-;	retvalue	dd 0
-;ends
-
-;struct CUTITEM TV_ITEM
-;	hChild			dd 0	;current window to disable
-;	hText				dd 0	;current edit/hex disable window
-;	fDragItem		dd 0	;flag if dragging 
-;	cutItem			dd 0	;flag if cutting /it is an hItem or a pointer to hItems
-;	pLabFile		dd 0
-;	numitems		dd 0
-;ends
+	;struct CUTITEM TV_ITEM
+	;	hChild			dd 0	;current window to disable
+	;	hText				dd 0	;current edit/hex disable window
+	;	fDragItem		dd 0	;flag if dragging 
+	;	cutItem			dd 0	;flag if cutting /it is an hItem or a pointer to hItems
+	;	pLabFile		dd 0
+	;	numitems		dd 0
+	;ends
 
 

@@ -212,12 +212,12 @@ struct WINDOWPOS
   flags dd ?,?
 ends
 
-struct NMHDR
- hwndFrom dq ?
- idFrom	dq ?
- code		dd ?
-			  dd ?
-ends
+	struct NMHDR
+	 hwndFrom dq ?
+	 idFrom	dq ?
+	 code		dd ?
+					dd ?
+	ends
 
 
 struct COPYDATASTRUCT

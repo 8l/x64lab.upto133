@@ -221,6 +221,7 @@
 		SetWindowRgn,"SetWindowRgn",\
 		ShowWindow,"ShowWindow",\
 		SubtractRect,"SubtractRect",\
+		TrackPopupMenu,"TrackPopupMenu",\
 		TranslateAcceleratorW,"TranslateAcceleratorW",\
 		TranslateMessage,"TranslateMessage",\
 		TranslateMDISysAccel,"TranslateMDISysAccel",\

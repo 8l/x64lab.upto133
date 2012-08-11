@@ -654,24 +654,25 @@ devtool:
 	mov rbx,[pCp]
 	xor esi,esi
 
-	mov rcx,[rbx+\
-		CPROP.hLview]
-	call apiw.set_focus
+	cmp [rbx+\
+		CPROP.idCat],MP_DEVT
+	jz .addtoolB
 
-	movzx eax,[rbx+\
-		CPROP.idCat]
-	test eax,eax
-	jz	.addtoolE		;--- msg select cat/filt/item
+	mov ecx,iCAT_CBX_DEVT
+	call prop.sel_icat
 
-	movzx edx,[rbx+\
+.addtoolB:
+	movzx edi,[rbx+\
 		CPROP.iFilt]
+	test edi,edi
+	jnz	.addtoolB1
 
-	cmp eax,MP_DEVT
-	jnz	.addtoolE		;--- msg select cat/filt/item
+	inc edi
+	mov ecx,edi
+	call prop.sel_ifilt
 
-	test edx,edx
-	jz	.addtoolE		;--- msg select cat/filt/item
-
+.addtoolB1:
+	mov edx,edi
 	mov rcx,[rbx+\
 		CPROP.hCbxFilt]
 	call cbex.get_param
@@ -680,6 +681,10 @@ devtool:
 
 	mov rsi,rdx		;--- in RSI param
 	xor edi,edi		;--- in RDI 0,dir
+
+	mov rcx,[rbx+\
+		CPROP.hLview]
+	call apiw.set_focus
 
 .addtoolA:
 	mov r9,\

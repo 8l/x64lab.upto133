@@ -910,8 +910,8 @@ align 8
 	;--- IN RCX 0/module filename
 	;--- IN RDX buffer to fill; must be MAX_UA_FILELEN
 	;--- RET RAX = num codepoints in buffer
-	;--- HI/LOW SURROGATES are CODEPOINTS !!!!!!!!!!!!!!!!!!!!
-	;--- D800 is considered 1 cpt !!!!!!!!!!!!!!!!!
+	;--- HI/LOW SURROGATES are CODEPOINTS !
+	;--- D800 is considered 1 cpt !
 	push rdx
 	test rcx,rcx
 	jz .ganA
@@ -968,13 +968,17 @@ align 8
 @using .get_ext
 .get_ext:
 	;--- in RCX uzString: path+file.ext
+
 	;--- RET RAX 0,pExtension	"asm"
-	;--- RET RCX numchars		3
+	;--- RET RCX numchars	3
+	;--- RET RDX original string
+
 	mov rdx,rcx
+	mov r9,rcx
 	xor eax,eax
 	sub rcx,2
 	mov r8,rdx
-
+	
 .ge2:
 	cmp ax,002Eh
 	jnz .ge1
@@ -997,6 +1001,7 @@ align 8
 	mov rax,rdx
 	add rax,2
 .ge3:
+	mov rdx,r9
 	ret 0
 @endusing
 
@@ -1192,38 +1197,6 @@ end if
 	xchg rbx,r10
 	ret 0
 @endusing
-
-;@using .xsdbm
-;	;--- in RSI string
-;	;--- in RCX len
-;	;--- RET RAX hash 
-;.xsdbm:
-;	push rbx
-;	push rcx
-;	push rsi
-;	xor rax,rax
-;	mov r8,rcx
-;	;xor rbx,rbx
-;	mov rbx,6121
-;.xsdbmA:
-;	mov al,[rsi]
-;	mov ecx,ebx
-;	mov edx,ebx
-;	shl ecx,17
-;	shl ebx,6
-;	inc rsi
-;	add ebx,eax
-;	add ebx,ecx
-;	sub ebx,edx
-;	dec r8
-;	jnz	.xsdbmA
-;	xchg ebx,eax
-;	pop rsi
-;	pop rcx
-;	pop rbx
-;	ret 0
-;@endusing
-
 
 	;#---------------------------------------------------ö
 	;|         .LOADFILE           	                     |

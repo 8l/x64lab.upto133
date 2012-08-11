@@ -20,9 +20,11 @@ console:
 @wpro rbp,\
 		rbx rsi rdi
 
-	cmp rdx,WM_INITDIALOG
+	cmp edx,\
+		WM_INITDIALOG
 	jz	.wm_initdialog
-	cmp rdx,WM_WINDOWPOSCHANGED
+	cmp edx,\
+		WM_WINDOWPOSCHANGED
 	jz	.wm_poschged
 	jmp	.ret0
 

@@ -18,6 +18,7 @@ develop\config\config.utf8
 develop\config\devtool.utf8
 develop\config\accel.utf8
 develop\config\x64lab.bmp
+develop\config\ext\*
 develop\project\welcome.x64lab
 
 develop\equates\COMCTL64.INC

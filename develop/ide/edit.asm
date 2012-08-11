@@ -73,7 +73,6 @@ edit:
 
 	mov rcx,rdi
 	call art.is_file
-
 	jz .openE
 	
 	;--- 2) TODO: check type
@@ -83,11 +82,15 @@ edit:
 	;----TODO: review ---------------
 	or [.labf.type],\
 		LF_TXT
+
 	;----------------------- 
-;@break
 	mov rsi,[pEdit]
 	mov rcx,rdi
 	call art.fload
+
+	;--- RET RAX pmem,0,-err
+	;--- RET RCX original file size
+	;--- RET RDX pextension / flag error
 
 	mov r13,rcx
 	mov r12,rax
@@ -109,10 +112,21 @@ edit:
 	mov rcx,[.labf.hSci]
 	call sci.set_defprop
 
-	;--- eventual unicode conversion
-	;--- RET RAX pmem,0,-err
-	;--- RET RCX original file size
-	;--- RET RDX pextension / flag error
+	;--- TODO: eventual unicode conversion
+
+	mov rcx,rbx
+	add rcx,\
+		sizeof.LABFILE
+	call ext.load
+	test eax,eax
+	jz	.openB2
+
+	mov rdx,rbx
+	mov rcx,rax
+	call ext.apply
+
+
+.openB2:
 	test r12,r12
 	jz	.openB1
 
@@ -408,6 +422,8 @@ edit:
 
 	mov rax,[r9+\
 		NMHDR.hwndFrom]
+	cmp rax,[.pEdit.hStb]
+	jz	.wm_notifyS
 	cmp rax,[.labf.hView]
 	jnz	.ret0
 	test [.labf.type],\
@@ -434,6 +450,37 @@ edit:
 		LF_MODIF
 	jmp	.ret1
 
+	;#---------------------------------------------------ö
+	;|             STAT_NOTIFY                           |
+	;ö---------------------------------------------------ü
+
+.wm_notifyS:
+	mov edx,[r9+\
+		NMHDR.code]
+	cmp edx,NM_CLICK
+	jz	.wm_notifyS1
+	jmp	.ret0
+
+.wm_notifyS1:
+	sub rsp,\
+		FILE_BUFLEN
+	mov r9,rsp	
+	xor r8,r8
+	mov rcx,[.pEdit.hStb]
+	call statb.get_text
+
+	mov rcx,rsp
+	call art.is_file
+	jz	.ret0
+
+	mov rcx,rsp
+	call wspace.dir2hash
+	jnc	.ret0
+
+	mov rcx,rax
+	call mnu.set_dir
+	jmp	.ret0
+	
 	
 	;#---------------------------------------------------ö
 	;|             EDIT.wm_size                          |

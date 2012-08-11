@@ -97,7 +97,7 @@ accel:
 	jae .setupA
 
 	sub ax,MNU_X64LAB
-	shl eax,5			;--- x 8 sizeof.KEYA
+	shl eax,5			;--- x 32 sizeof.KEYA
 	add rax,r13
 
 	mov [rax+KEYA.fVirt],r8l

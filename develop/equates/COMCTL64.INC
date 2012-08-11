@@ -340,6 +340,17 @@ ends
 	@sizea16 NMITEMACTIVATE
 
 
+	struct NMMOUSE
+		hdr        NMHDR     
+		dwItemSpec dd ?,?
+		dwItemData dd ?,?
+		pt         POINT     
+		dwHitInfo  dd ?
+							 dd ?
+	ends
+	@sizea16 NMMOUSE
+
+
 	struct NM_LISTVIEW
 	  hdr	    	NMHDR
 	  iItem     dd ?

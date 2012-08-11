@@ -9,6 +9,7 @@ config\devtool.utf8
 config\config.utf8
 config\accel.utf8
 config\x64lab.bmp
+config\ext\*
 
 plugin\bk64.dll
 plugin\lang\en\lang.dll

@@ -1800,9 +1800,9 @@ mov [r9+\
 	;	jnz	.load_kdirsB
 	inc qword[rsp]
 
-	 mov r8,rdi         ;<-------------------
-	 mov rdx,r9
-	 call art.cout2XU
+	; mov r8,rdi         ;<-------------------
+	; mov rdx,r9
+	; call art.cout2XU
 
 .load_kdirsB:
 	mov esi,\
@@ -2035,8 +2035,10 @@ mov [r9+\
 
 	test r12,LF_FILE
 	jnz	.new_labfF
+
 	test r12,LF_LNK
 	jnz	.new_labfL
+
 	test r12,LF_PRJ
 	jnz	.new_labfP
 

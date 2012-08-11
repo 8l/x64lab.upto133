@@ -1,4 +1,22 @@
 
+- version 0.0.114 (released on 11.08.2012 ) Alfa 
+  +GUI Added Syntax Colouring
+  +DIR [config\ext] Class and extension informations
+  +FIL [help\en\syntax_colouring.txt]
+
+  +FIL [config\ext\assembly.utf8] Class for assembly files
+  +FIL [config\ext\asm.assembly] Extension file
+  +FIL [config\ext\inc.assembly] Extension file
+  +FIL [config\ext\equ.assembly] Extension file
+
+- version 0.0.113 (released on 07.08.2012 ) " ... " 
+  +BEH menu "Developer Tools"|"Add new Tool"
+
+- version 0.0.112 (released on 05.08.2012 ) " ... " 
+  +BEH Lx Click on Editor Statusbar sets the directory
+   to be browsable on mnu general path. Useful for
+   Open Documents not included in the Workspace.
+
 - version 0.0.111 (released on 04.08.2012 ) " ... " 
   instructional video (no audio) about how-to
   "Developer Tools" at http://youtu.be/HNe_6yt4i6U

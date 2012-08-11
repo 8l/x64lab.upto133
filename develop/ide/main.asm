@@ -77,6 +77,7 @@ section '.code' code readable executable
 	include "wspace.asm"
 	include "iodlg.asm"
 	include "devtool.asm"
+	include "ext.asm"
 
 start:
 	;	call get_version
@@ -98,7 +99,7 @@ start:
 		sizeof.DIR+\
 		400h*8+\	;--- dirHash
 		80h*8+\		;--- envHash
-		200h*8+\	;--- extHash
+		100h*8+\	;--- extHash
 		((MI_OTHER-MNU_X64LAB) * sizeof.KEYA)+\
 		sizeof.SYSTIME+\
 		sizeof.HU+\
@@ -149,6 +150,8 @@ start:
 	jz	.err_start
 
 	call config.setup_gui
+
+	call ext.setup
 
 
 .winmain:
@@ -204,7 +207,7 @@ start:
 	;	mov [hMnuUnb],rax
 
 	call mnu.setup
-	
+
 	mov edx,IDC_ARROW
 	xor ecx,ecx
 	call apiw.loadcurs
@@ -337,6 +340,7 @@ start:
 	;--- error loading sci
 
 .err_start:
+	call ext.discard
 	call config.unset_lang
 	call config.unset_libs
 

@@ -48,7 +48,6 @@
 		;--- hash X64LAB\help equ 0AEDA4C8C2E06E2Bh
 		;--- hash %X64LAB%\help\en equ 0E728CA7598D7CDBAh
 
-
 	iCAT_CBX_DEVT	equ 1
 
 	MNU_X64LAB equ 1000h
@@ -56,7 +55,7 @@
 	MI_OTHER	 equ 1200h
 
 	MI_FIRSTOOL equ 1400h
-	MI_LASTTOOL	equ 1800h
+	MI_LASTTOOL	equ 1500h
 	MAX_TOOLS		equ MI_LASTTOOL - MI_FIRSTOOL
 
 	MP_WSPACE      equ 1001h
@@ -106,7 +105,10 @@
    MI_PA_COPY    equ 10A4h
    MI_PA_SETPROP equ 10A5h
 
+	;----------------------------------------------------
 	;--- strings id usable in lang.dll ------------------
+	;----------------------------------------------------
+
   UZ_ERR_NOFILE  equ 2000h
   UZ_ERR_NODIR   equ 2001h
   UZ_HOME        equ 2002h
@@ -165,7 +167,7 @@
   BB_REG         equ 2036h
   BB_RET         equ 2037h
 	BB_SYS				 equ 2038h
-	BB_AKEY				 equ 2039h
+	BB_KEY				 equ 2039h
 
 	UZ_DATEFRM		 equ 203Ah
 	UZ_TIMEFRM		 equ 203Bh
@@ -178,8 +180,6 @@
 	UZ_INFO_TREL   equ 2042h
 	UZ_MSG_U_TGREM equ 2043h
 	UZ_MSG_U_TADDG equ 2044h
-
-
 
 	;--- hash equ for config/config.utf8 items
   macro @cfg_hash [argid]{

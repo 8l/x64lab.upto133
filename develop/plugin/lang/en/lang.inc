@@ -114,7 +114,7 @@
 			BB_REG,0,U8+UR,db "Registers",\
 			BB_RET,0,U8+UR,db "Returns",\
 			BB_SYS,0,U8+UR,db "System",\
-			BB_AKEY,0,U8+UR,db "Assigned Key",\
+			BB_KEY,0,U8+UR,db "Shortcuts and Keys",\
 			UZ_INFO_LNK,0,U8+UR,db "Create a new smartlink",\
 			UZ_LNK_NAME,0,U8+UR,db "smartlinkname",\
 			UZ_LNK_MAP,0,U8+UR,db "mapped by",\

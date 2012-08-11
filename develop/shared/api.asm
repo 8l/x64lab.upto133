@@ -197,6 +197,39 @@ apiw:
 	jmp	.prolog0
 @endusing
 
+@using .track_pmnu
+.track_pmnu:
+	push rbp
+	mov rbp,rsp
+	xor eax,eax
+	and rsp,-16
+	sub rsp,40h
+	mov [rsp+20h],rax
+	mov [rsp+28h],r10
+	mov [rsp+30h],r11
+
+  ;--- in RCX hMenu
+  ;--- in RDX uFlags
+	;--- in R8 x
+	;--- in R9 y 
+	;--- in R10 hwnd
+	;--- in R11 rect
+
+	;--- original --------------------------
+  ;--- in RCX hMenu
+  ;--- in RDX uFlags
+  ;--- in R8 x  horz pos, in screen coord
+  ;--- in R9 y  vert pos, in screen coord
+  ;--- in R10 nReserved
+  ;--- in R11 hWnd	handle of owner window
+  ;--- in RSP prcRect	RECT no-dismissal area
+
+	call [TrackPopupMenu]
+	jmp	.epilog1
+@endusing
+
+
+
 	;#---------------------------------------------------ö
 	;|           THEMES                                  |
 	;ö---------------------------------------------------ü

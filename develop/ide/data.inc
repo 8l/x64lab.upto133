@@ -15,7 +15,7 @@ section '.data' data readable writeable
 	curDir	dq sizeof.DIR
 	dirHash	dq 400h*8
 	envHash	dq 80h*8
-	extHash dq 200h*8
+	extHash dq 100h*8
 	
 	pConf		dq sizeof.CONFIG
 	pCons 	dq sizeof.CONS
@@ -34,6 +34,8 @@ section '.data' data readable writeable
 	pTopDevT	dq 0
 	 .dsize		dd 0
 	 .items		dd 0
+
+	pExtClass	dq 0
 
 	hTree			dq 0
 	hRootWsp	dq 0
@@ -78,7 +80,7 @@ section '.data' data readable writeable
 		szCharExt 	db "_999999",0
 
 		align 2
-		uzExtension	du "extension",0
+		uzExtName		du "ext",0
 		uzBackName	du "backup",0
 		uzAccelName du "accel",0
 		uzConfName	du "config",0
@@ -114,7 +116,6 @@ section '.data' data readable writeable
 		uzStbClass	du "msctls_statusbar32",0
 		uzSciDll		du "Scilexer64.dll",0
 		uzSciClass	du "Scintilla",0
-		uzLnkSpec	  du "*.lnk",0
 
 		uzCourierN	db "Courier New",0
 		
