@@ -49,6 +49,7 @@ wspace:
 		FILE_BUFLEN*2
 	mov rdi,rsp
 
+	mov rdx,[hRootWsp]
 	mov rcx,\
 		.close_asksave
 	call .list
@@ -98,6 +99,7 @@ wspace:
 	call wspace.save_wsp
 
 .checkB:
+	mov rdx,[hRootWsp]
 	mov rcx,\
 		.discard
 	call .list
@@ -255,8 +257,8 @@ wspace:
 	mov [r9+LVITEMW.iItem],eax
 
 	xor r10,r10
-mov [r9+\
-	LVITEMW.iSubItem],r10d
+	mov [r9+\
+		LVITEMW.iSubItem],r10d
 
 	mov rcx,[hDocs]
 	call lvw.get_param
@@ -294,17 +296,16 @@ mov [r9+\
 	;--- delete items when blanks
 	;--- and untouched ----------
 
-;	and [.labf.type],\
-;		not LF_BLANK
-;	mov r9,[.labf.hItem]
-;	test r9,r9
-;	jz	.close_fileB
+	;	and [.labf.type],\
+	;		not LF_BLANK
+	;	mov r9,[.labf.hItem]
+	;	test r9,r9
+	;	jz	.close_fileB
 
-;	mov rcx,[hTree]
-;	call tree.del_item
+	;	mov rcx,[hTree]
+	;	call tree.del_item
 
-;.close_fileF:	
-;@break
+	;.close_fileF:	
 	mov rcx,rbx
 	call art.a16free
 
@@ -539,18 +540,23 @@ mov [r9+\
 	ret 0
 
 	;#---------------------------------------------------ö
-	;|               Discard Workspace                   |
+	;|               list for actions to be executed     |
 	;ö---------------------------------------------------ü
 .list:
-	;--- in RCX how
+	;--- in RCX howlabel
+	;--- in RDX starting hItem
 	push rbp
 	push rbx
 	push rdi
 	push rsi
 	push r12
+	push r13
+
 	mov rbp,rsp
 
 	mov r12,rcx
+	mov r13,rdx
+
 	mov rcx,[hTree]
 	call tree.countall
 	test eax,eax
@@ -567,7 +573,7 @@ mov [r9+\
 	xor ebx,ebx	;--- setup level
 	xor esi,esi	;--- datalen text of labf
 	mov rdi,rax	;--- setup buffer
-	mov rdx,[hRootWsp]
+	mov rdx,r13;[hRootWsp]
 	call tree.list
 
 	mov rbx,rsi	;--- save datasize
@@ -604,6 +610,34 @@ mov [r9+\
 	jnz .askscC
 	jmp	.list1
 
+	;--- list to close items 
+	;--- by user deleting them on WSP
+.askscD:
+	test [.labf.type],\
+		LF_FILE
+	jz	.close_delitem
+
+	test [.labf.type],\
+		LF_OPENED
+	jz	.close_delitem
+
+	test [.labf.type],\
+		LF_MODIF
+	jz	.close_delitem
+
+	mov edx,ASK_SAVE
+	call .close_file
+	test eax,eax
+	jle	.listE
+
+.close_delitem:
+	pop rcx
+	test rcx,rcx
+	mov rbx,rcx
+	jnz .askscD
+	jmp	.list1
+
+
 	;--- list to discard items in treeview
 .discard:
 	mov r9,TVI_ROOT
@@ -612,12 +646,17 @@ mov [r9+\
 
 	xor eax,eax
 	mov rcx,[pConf]
-
 	mov [hRootWsp],rax
 	mov [pLabfWsp],rax
+	jmp	.discardD
 
-;	mov qword[rcx+\
-;		CONFIG.wsp],rax	;--- reset pConf.wsp
+
+	;--- list to discard items in treeview
+	;--- by user deleting them
+.discard_delitem:
+	mov r9,r13
+	mov rcx,[hTree]
+	call tree.del_item
 	jmp	.discardD
 
 .discardC:
@@ -628,6 +667,9 @@ mov [r9+\
 	call .close_file
 
 .discardA:
+	;	mov r9,[.labf.hItem]
+	;	mov rcx,[hTree]
+	;	call tree.del_item
 	mov rcx,rbx
 	call art.a16free
 
@@ -643,6 +685,7 @@ mov [r9+\
 
 .listE:	
 	mov rsp,rbp
+	pop r13
 	pop r12
 	pop rsi
 	pop rdi
@@ -735,7 +778,8 @@ mov [r9+\
 	;--- copy path+name to cfg wsp
 
 	mov r8,[pConf]
-	lea rdx,[r8+CONFIG.wsp]
+	lea rdx,[r8+\
+		CONFIG.wsp]
 	mov rcx,rdi
 	call utf16.copyz
 	add rsp,\
@@ -975,7 +1019,6 @@ mov [r9+\
 .save_wspT:
 	;--- in RDI dest buffer
 	;--- in RBX labf
-
 	movzx eax,\
 		[.labf.type]
 
@@ -1800,9 +1843,11 @@ mov [r9+\
 	;	jnz	.load_kdirsB
 	inc qword[rsp]
 
-	; mov r8,rdi         ;<-------------------
-	; mov rdx,r9
-	; call art.cout2XU
+	;-----------------------------
+	 mov r8,rdi         
+	 mov rdx,r9
+	 call art.cout2XU
+	;-----------------------------
 
 .load_kdirsB:
 	mov esi,\

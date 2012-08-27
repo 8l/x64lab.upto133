@@ -54,13 +54,19 @@ mnu:
 	mov rcx,[hMnuMain]
 	call .mp_add
 
+	mov r9,3
+	mov r8,rax
+	mov rdx,tMP_CONF
+	mov rcx,[hMnuMain]
+	call .mp_add
+
 		mov r9,1
 		mov r8,rax
 		mov rdx,tMP_DEVT
-		mov rcx,[tMP_EDIT]
+		mov rcx,[tMP_CONF]
 		call .mp_add
 
-	mov r9,3
+	mov r9,4
 	mov r8,rax
 	mov rdx,tMP_PATH
 	mov rcx,[hMnuMain]

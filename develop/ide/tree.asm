@@ -214,6 +214,7 @@ tree:
 	jmp	apiw.sms
 
 .del_item:
+	xor r8,r8
 	mov edx,TVM_DELETEITEM
 	jmp	apiw.sms
 
@@ -278,12 +279,13 @@ tree:
 	;ä-----------------------------------------ü
 
 .list:
+	;--- uses RBX level check
 	;--- uses RDX startitem
 	;--- uses RDI capable buffer nItems * 8
 	;--- uses RSI datalen of text
-
 	sub rsp,\
 		sizeof.TVITEMW
+	inc ebx
 
 .listD:
 	mov r9,rsp
@@ -292,7 +294,7 @@ tree:
 	test eax,eax
 	jz	.listE
 
-	mov rbx,[rsp+\
+	mov rax,[rsp+\
 		TVITEMW.lParam]
 	
 	mov ecx,[rsp+\
@@ -302,11 +304,11 @@ tree:
 	mov rdx,[rsp+\
 		TVITEMW.hItem]
 	
-	test rbx,rbx
+	test rax,rax
 	jz	.listE
 
-	mov rax,rbx
-	movzx r8,[.labf.alen]
+	movzx r8,[rax+\
+		LABFILE.alen]
 	add rsi,r8
 	stosq
 	dec ecx
@@ -322,6 +324,10 @@ tree:
 	pop rdx
 
 .listA:
+	mov eax,ebx
+	dec eax
+	jz	.listE
+
 	;--- check .sibling
 	mov r9,rdx
 	mov rcx,[hTree]
@@ -333,6 +339,7 @@ tree:
 .listE:
 	add rsp,\
 		sizeof.TVITEMW
+	dec ebx
 	ret 0
 
 

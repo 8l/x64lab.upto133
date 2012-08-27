@@ -11,9 +11,9 @@
   ;| filename:
   ;ö-------------------------------------------------ä
 
-prop:
+mpurp:
 	virtual at rbx
-		.cp CPROP
+		.mp MPURP
 	end virtual
 
 	virtual at rbx
@@ -24,9 +24,11 @@ prop:
 @wpro rbp,\
 		rbx rsi rdi
 
-	cmp edx,WM_INITDIALOG
+	cmp edx,\
+		WM_INITDIALOG
 	jz	.wm_initd
-	cmp edx,WM_WINDOWPOSCHANGED
+	cmp edx,\
+		WM_WINDOWPOSCHANGED
 	jz	.wm_poschged
 	cmp edx,WM_COMMAND
 	jz	.wm_command
@@ -36,13 +38,15 @@ prop:
 
 
 .wm_notify:
-	mov rbx,[pCp]
-	mov rdx,[r9+NMHDR.hwndFrom]
-	cmp rdx,[.cp.hLview]
+	mov rbx,[pMp]
+	mov rdx,[r9+\
+		NMHDR.hwndFrom]
+	cmp rdx,[.mp.hLview]
 	jz	.lview_notify
-	cmp rdx,[.cp.hCbxFilt]
+	cmp rdx,[.mp.hCbxFilt]
 	jz	.filt_notify
 	jmp	.ret0
+
 
 .filt_notify:
 	mov edx,[r9+NMHDR.code]
@@ -51,25 +55,27 @@ prop:
 	jmp	.ret0
 
 .filt_endedit:
-	mov eax,[r9+NMCBEENDEDITW.fChanged]
+	mov eax,[r9+\
+		NMCBEENDEDITW.fChanged]
 	test eax,eax
 	jz	.ret0
-	mov eax,[r9+NMCBEENDEDITW.iWhy]
+	mov eax,[r9+\
+		NMCBEENDEDITW.iWhy]
 	cmp eax,CBENF_RETURN
 	jnz	.ret0
 
-	lea rcx,[r9+NMCBEENDEDITW.szText]
-	movzx eax,[.cp.idCat]
+	lea rcx,[r9+\
+		NMCBEENDEDITW.szText]
+	movzx eax,[.mp.idCat]
 	cmp eax,MP_DEVT
 	jnz	.ret0
 
 	call devtool.addgroup
 	jmp	.ret0
 
-
-
 .lview_notify:
-	mov edx,[r9+NMHDR.code]
+	mov edx,[r9+\
+		NMHDR.code]
 	cmp edx,NM_DBLCLK
 	jz	.lview_dblclk
 	cmp edx,\
@@ -79,7 +85,8 @@ prop:
 
 .lview_ichged:
 	mov rcx,\
-		[r9+NM_LISTVIEW.lParam]
+		[r9+\
+		NM_LISTVIEW.lParam]
 	test rcx,rcx
 	jz	.ret0
 
@@ -89,7 +96,7 @@ prop:
 		or LVIS_SELECTED
 	jz	.ret0
 
-	movzx eax,[.cp.idCat]
+	movzx eax,[.mp.idCat]
 	cmp eax,MP_DEVT
 	jnz	.ret0
 
@@ -148,7 +155,6 @@ prop:
 	jmp	.ret0
 
 
-
 .lview_dblclk:
 	mov edx,[r9+\
 		NMITEMACTIVATE.iItem]
@@ -166,7 +172,7 @@ prop:
 		LVITEMW.iItem],edx
 	mov [r9+\
 		LVITEMW.iSubItem],eax
-	mov rcx,[.cp.hLview]
+	mov rcx,[.mp.hLview]
 	call lvw.get_param
 
 	mov rcx,[rsp+\
@@ -174,7 +180,7 @@ prop:
 	test ecx,ecx
 	jz	.ret0
 
-	movzx edx,[.cp.idCat]
+	movzx edx,[.mp.idCat]
 	cmp edx,MP_DEVT
 	jnz	@f
 	call .lvw_dblclk_devt
@@ -182,10 +188,10 @@ prop:
 	jmp	.ret0
 
 .wm_command:
-	mov rbx,[pCp]
-	cmp r9,[.cp.hCbxCat]
+	mov rbx,[pMp]
+	cmp r9,[.mp.hCbxCat]
 	jz	.cat_command
-	cmp r9,[.cp.hCbxFilt]
+	cmp r9,[.mp.hCbxFilt]
 	jz	.filt_command
 	jmp	.ret0
 
@@ -200,7 +206,7 @@ prop:
 	jnz	.ret0
 
 	xor eax,eax
-	mov [.cp.iFilt],ax
+	mov [.mp.iFilt],ax
 
 	mov rcx,r9
 	call cbex.get_cursel
@@ -215,7 +221,7 @@ prop:
 		FILE_BUFLEN
 	mov r8,rsp
 	mov edx,eax
-	mov rcx,[.cp.hCbxFilt]
+	mov rcx,[.mp.hCbxFilt]
 	call cbex.get_item
 
 	;--- RET RAX index,-1
@@ -229,8 +235,8 @@ prop:
 	test edx,edx
 	jz	.ret0
 
-	mov [.cp.iFilt],ax
-	cmp [.cp.idCat],\
+	mov [.mp.iFilt],ax
+	cmp [.mp.idCat],\
 		MP_DEVT
 	jnz	@f
 	call .filt_devt_group
@@ -249,7 +255,7 @@ prop:
 	jnz	.ret0
 
 	xor eax,eax
-	mov [.cp.idCat],ax
+	mov [.mp.idCat],ax
 
 	mov rcx,r9
 	call cbex.get_cursel
@@ -259,13 +265,13 @@ prop:
 	dec eax
 	jns	.cat_commandA
 
-	mov [.cp.idCat],ax
-	mov [.cp.iFilt],ax
+	mov [.mp.idCat],ax
+	mov [.mp.iFilt],ax
 
-	mov rcx,[.cp.hCbxFilt]
+	mov rcx,[.mp.hCbxFilt]
 	call cbex.reset
 
-	mov rcx,[.cp.hLview]
+	mov rcx,[.mp.hLview]
 	call lvw.del_all
 	jmp	.ret1
 
@@ -276,7 +282,7 @@ prop:
 		FILE_BUFLEN
 	mov r8,rsp
 	mov edx,eax
-	mov rcx,[.cp.hCbxCat]
+	mov rcx,[.mp.hCbxCat]
 	call cbex.get_item
 
 	;--- RET RAX index,-1
@@ -299,14 +305,14 @@ prop:
 
 .wm_poschged:
 ;@break
-	mov rbx,[pCp]
+	mov rbx,[pMp]
 	sub rsp,sizeof.RECT*2
 	lea rdx,[rsp]
 	mov rcx,[.hwnd]
 	call apiw.get_clirect
 
 	lea rdx,[rsp+16]
-	mov rcx,[.cp.hCbxCat]
+	mov rcx,[.mp.hCbxCat]
 	call apiw.get_winrect
 	;----------------------------------
 	mov eax,SWP_NOZORDER
@@ -320,7 +326,7 @@ prop:
 	mov r9,CY_GAP
 	mov r8d,0;CX_GAP
 	mov rdx,HWND_TOP
-	mov rcx,[.cp.hCbxCat]
+	mov rcx,[.mp.hCbxCat]
 	call apiw.set_wpos
 
 	;----------------------------------
@@ -334,7 +340,7 @@ prop:
 
 	mov r8d,0;CX_GAP
 	mov rdx,HWND_TOP
-	mov rcx,[.cp.hCbxFilt]
+	mov rcx,[.mp.hCbxFilt]
 	call apiw.set_wpos
 
 	;----------------------------------
@@ -348,7 +354,7 @@ prop:
 	add r9,CY_GAP*3
 	mov r8d,0;CX_GAP
 	mov rdx,HWND_TOP
-	mov rcx,[.cp.hPrg]
+	mov rcx,[.mp.hPrg]
 	call apiw.set_wpos
 
 	;--------------------------------------------
@@ -365,7 +371,7 @@ prop:
 	sub r11,CY_GAP
 	mov r8d,0;CX_GAP
 	mov rdx,HWND_TOP
-	mov rcx,[.cp.hLview]
+	mov rcx,[.mp.hLview]
 	call apiw.set_wpos
 	jmp	.ret0
 
@@ -374,13 +380,13 @@ prop:
 	;ö---------------------------------------------------ü
 
 .wm_initd:
-	mov rbx,[pCp]
-	mov [.cp.hDlg],rcx
+	mov rbx,[pMp]
+	mov [.mp.hDlg],rcx
 
-	mov rdx,PROP_CBX_CAT
+	mov rdx,MPURP_CBX_CAT
 	mov rcx,[.hwnd]
 	call apiw.get_dlgitem
-	mov [.cp.hCbxCat],rax
+	mov [.mp.hCbxCat],rax
 	mov rsi,rax
 
 	mov r9,[hBmpIml]
@@ -411,6 +417,10 @@ prop:
 	; push BB_AKEY
 	; push BB_FOLDER
 	; push BB_WSP
+	
+	;push 0
+	;push MP_SCI_CLS
+
 	push 11
 	push MP_DEVT
 
@@ -443,23 +453,23 @@ prop:
 	jnz .wm_initdA	
 
 	xor r8,r8
-	mov rcx,[.cp.hCbxCat]
+	mov rcx,[.mp.hCbxCat]
 	call cbex.sel_item
 
-	mov rdx,PROP_CBX_FILT
+	mov rdx,MPURP_CBX_FILT
 	mov rcx,[.hwnd]
 	call apiw.get_dlgitem
-	mov [.cp.hCbxFilt],rax
+	mov [.mp.hCbxFilt],rax
 
-	mov rdx,PROP_PRG
+	mov rdx,MPURP_PRG
 	mov rcx,[.hwnd]
 	call apiw.get_dlgitem
-	mov [.cp.hPrg],rax
+	mov [.mp.hPrg],rax
 
-	mov rdx,PROP_LVIEW
+	mov rdx,MPURP_LVIEW
 	mov rcx,[.hwnd]
 	call apiw.get_dlgitem
-	mov [.cp.hLview],rax
+	mov [.mp.hLview],rax
 
 	mov rsi,rax
 	mov rbx,[pConf]
@@ -553,15 +563,14 @@ prop:
 	add rsp,\
 		FILE_BUFLEN*2
 	ret 0
-	
 
 	;#---------------------------------------------------ö
-	;|      CAT_SEL.DEVT                                 |
+	;|      CAT_SEL_DEVT                                 |
 	;ö---------------------------------------------------ü
 
 .cat_sel_devt:
 	;--- in RCX text buf 512
-	;--- (in RBX pCp)
+	;--- (in RBX pMp)
 	;--- in RDX idCat = param = MP_DEVT
 	
 	push rdi
@@ -570,13 +579,13 @@ prop:
 	mov rdi,rcx
 
 	xor eax,eax
-	mov [.cp.idCat],dx
-	mov [.cp.iFilt],ax
+	mov [.mp.idCat],dx
+	mov [.mp.iFilt],ax
 
-	mov rcx,[.cp.hCbxFilt]
+	mov rcx,[.mp.hCbxFilt]
 	call cbex.reset
 	
-	mov rcx,[.cp.hLview]
+	mov rcx,[.mp.hLview]
 	call lvw.del_all
 
 	mov r8,rdi
@@ -590,7 +599,7 @@ prop:
 	xor r9,r9
 	xor r8,r8
 	mov rdx,rdi
-	mov rcx,[.cp.hCbxFilt]
+	mov rcx,[.mp.hCbxFilt]
 	call cbex.ins_item
 
 	mov r12,[pTopDevT]
@@ -612,7 +621,7 @@ prop:
 	jnz	.csdN
 
 	xor r8,r8
-	mov rcx,[.cp.hCbxFilt]
+	mov rcx,[.mp.hCbxFilt]
 	call cbex.sel_item
 	jmp	.csdE
 
@@ -640,7 +649,7 @@ prop:
 	mov r9,rsi
 	xor r8,r8
 	mov rdx,rdi
-	mov rcx,[.cp.hCbxFilt]
+	mov rcx,[.mp.hCbxFilt]
 	call cbex.ins_item
 	jmp	.csdN1
 
@@ -649,6 +658,13 @@ prop:
 	pop rsi
 	pop rdi
 	ret 0
+
+	;#---------------------------------------------------ö
+	;|      FILT_SCI_CLS                                 |
+	;ö---------------------------------------------------ü
+.filt_sci_cls:
+	ret 0
+
 
 	;#---------------------------------------------------ö
 	;|      FILT_DEVT_GROUP                              |
@@ -683,16 +699,16 @@ prop:
 	test r12,r12
 	jz	.fdgE
 
-	mov rcx,[.cp.hLview]
+	mov rcx,[.mp.hLview]
 	call lvw.del_all
 
 	mov r9,[hlaSysList]
 	mov r8,LVSIL_NORMAL
-	mov rcx,[.cp.hLview]
+	mov rcx,[.mp.hLview]
 	call lvw.set_iml
 
 	mov r8,LV_VIEW_ICON
-	mov rcx,[.cp.hLview]
+	mov rcx,[.mp.hLview]
 	call lvw.set_view
 	
 	mov esi,[rsi+\
@@ -747,8 +763,8 @@ prop:
 		sizeof.SHFILEINFOW
 
 	mov r10,\
-		SHGFI_SYSICONINDEX\
-		or SHGFI_USEFILEATTRIBUTES
+		SHGFI_SYSICONINDEX or \
+		SHGFI_USEFILEATTRIBUTES
 
 	mov r9,\
 		sizeof.SHFILEINFOW
@@ -821,7 +837,7 @@ prop:
 	mov [rsp+\
 		LVITEMW.pszText],rdx
 
-	mov rcx,[.cp.hLview]
+	mov rcx,[.mp.hLview]
 	call lvw.get_count
 
 	mov [rsp+\
@@ -834,7 +850,7 @@ prop:
 		LVIF_PARAM
 
 	mov r9,rsp
-	mov rcx,[.cp.hLview]
+	mov rcx,[.mp.hLview]
 	call lvw.ins_item
 
 	add rsp,\
@@ -844,19 +860,19 @@ prop:
 
 .sel_ifilt:
 	;--- in RCX iindex
-	mov eax,CPROP.hCbxFilt
+	mov eax,MPURP.hCbxFilt
 	jmp	.sel_cbxitem
 
 .sel_icat:
 	;--- in RCX iindex
-	mov eax,CPROP.hCbxCat
+	mov eax,MPURP.hCbxCat
 	jmp	.sel_cbxitem
 
 .sel_cbxitem:
 	mov r8,rcx
-	mov rdx,[pCp]
+	mov rdx,[pMp]
 	mov rcx,[rax+rdx]
-	push [rdx+CPROP.hDlg]
+	push [rdx+MPURP.hDlg]
 	push rcx
 	call cbex.sel_item
 	pop r9

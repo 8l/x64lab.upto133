@@ -72,7 +72,7 @@ section '.code' code readable executable
 	include "tree.asm"
 	include "accel.asm"
 	include "console.asm"
-	include "prop.asm"
+	include "mpurp.asm"
 	include "sciwrap.asm"
 	include "wspace.asm"
 	include "iodlg.asm"
@@ -105,7 +105,7 @@ start:
 		sizeof.HU+\
 		sizeof.CONFIG+\
 		sizeof.CONS+\
-		sizeof.CPROP+\
+		sizeof.MPURP+\
 		(sizeof.IODLG*5)+\
 		sizeof.EDIT
 
@@ -406,10 +406,17 @@ winproc:
 
 .wm_impup:
 	;--- init menupopup
-	cmp r8,[tMP_DEVT]
-	jnz	.ret0
+	;cmp r8,[tMP_SCI_CLS]
+	;jnz	.ret0
+	;cmp r9,iMNP_SCI_CLS
+	;jz	.impup_sci_cls
+	;cmp r8,[tMP_DEVT]
+	;jnz	.ret0
 	;call devtool.load
 	jmp	.ret0
+
+;.impup_sci_cls:
+;	jmp	.ret0
 
 
 .wm_close:
@@ -459,6 +466,8 @@ winproc:
 	jz	.mi_ws_exit
 	cmp ax,MI_ED_LNK
 	jz	.mi_ed_lnk
+	cmp ax,MI_ED_REMITEM
+	jz	.mi_ed_remitem
 	cmp ax,MI_DEVT_ADD
 	jz	.mi_devt_add
 	cmp ax,MI_DEVT_REM
@@ -473,11 +482,14 @@ winproc:
 	jz	.mi_devt_addg
 	cmp ax,MI_PA_BROWSE
 	jz	.mi_pa_browse
+	cmp ax,MI_ED_RELSCICLS
+	jz	.mi_ed_relscicls
 	jmp	.defwndproc
 
 	;ü------------------------------------------ö
 	;|     PA_BROWSE                            |
 	;#------------------------------------------ä
+
 .mi_pa_browse:
 	sub rsp,\
 		sizea16.MENUITEMINFOW
@@ -507,18 +519,29 @@ winproc:
 	mov edx,uzExplore
 	xor ecx,ecx
 	call apiw.shexec
-	
 	jmp	.ret0
+
+	;ü------------------------------------------ö
+	;|     MI_ED_RELSCICLS                      |
+	;#------------------------------------------ä
+.mi_ed_relscicls:
+	call ext.discard
+	call ext.setup
+	mov ecx,UZ_MSG_SCIREL
+	jmp	.mi_devt_addgA
 
 	;ü------------------------------------------ö
 	;|     DEVT_ADDG                            |
 	;#------------------------------------------ä
 .mi_devt_addg:
+	mov ecx,\
+		UZ_MSG_TADDG
+
+.mi_devt_addgA:
 	sub rsp,\
 		FILE_BUFLEN
 	mov r8,rsp
 	mov edx,U16
-	mov ecx,UZ_MSG_U_TADDG
 	call [lang.get_uz]
 
 	mov r8,uzTitle
@@ -543,9 +566,9 @@ winproc:
 	call devtool.discard
 	call devtool.load
 	mov ecx,iCAT_CBX_DEVT
-	call prop.sel_icat
+	call mpurp.sel_icat
 	xor ecx,ecx
-	call prop.sel_ifilt
+	call mpurp.sel_ifilt
 	jmp	.ret0
 
 	;ü------------------------------------------ö
@@ -845,7 +868,96 @@ winproc:
 	jmp	.mi_ws_newA
 
 	;ü------------------------------------------ö
-	;|     WS_NEWLNK                            |
+	;|     MI_ED_REMITEM                        |
+	;#------------------------------------------ä
+
+.mi_ed_remitem:
+	sub rsp,\
+		FILE_BUFLEN
+
+	mov rcx,[hTree]
+	call tree.get_sel
+	test eax,eax
+	jz .ret0
+
+	cmp rax,[hRootWsp]	;--- no action on wsp
+	jz	.ret0
+	mov rdi,rax
+
+	mov r9,rsp
+	mov rdx,rax
+	mov rcx,[hTree]
+	call tree.get_param
+
+	mov rbx,[rsp+\
+		TVITEMW.lParam]
+	
+	mov ecx,[rsp+\
+		TVITEMW.cChildren]
+	dec ecx
+	jz	.mi_ed_remitemA
+
+	test ebx,ebx
+	jz	.ret0
+
+	test [.labf.type],\
+		LF_OPENED
+	jz	.mi_ed_remitemB
+	
+	mov edx,NOASK_SAVE
+	mov eax,ASK_SAVE
+	test [.labf.type],\
+		LF_MODIF
+	cmovnz edx,eax
+
+	mov rcx,rbx
+	call wspace.close_file
+	test eax,eax
+	jle	.ret0
+
+.mi_ed_remitemB:
+	mov rcx,rbx
+	call art.a16free
+
+	mov r9,rdi
+	mov rcx,[hTree]
+	call tree.del_item
+	jmp	.mi_ed_remitemE
+
+.mi_ed_remitemA:
+	;--- item has subitems
+	mov r8,rsp
+	mov edx,U16
+	mov ecx,UZ_MSG_REMITEM
+	call [lang.get_uz]
+
+	mov r8,uzTitle
+	mov rdx,rsp
+	mov rcx,[hMain]
+	call apiw.msg_yn
+	cmp eax,IDNO
+	jz	.ret0
+
+	mov rdx,rdi
+	mov rcx,\
+		wspace.close_delitem
+	call wspace.list
+	test eax,eax
+	jle .ret0
+
+	mov rdx,rdi
+	mov rcx,\
+		wspace.discard_delitem
+	call wspace.list
+
+.mi_ed_remitemE:
+	mov rbx,[pLabfWsp]
+	or [.labf.type],\
+		LF_MODIF
+	jmp	.ret0
+
+	;ü------------------------------------------ö
+	;|     .MI_ED_LNK                           |
 	;#------------------------------------------ä
 
 .mi_ed_lnk:

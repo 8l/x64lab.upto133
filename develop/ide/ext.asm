@@ -15,7 +15,6 @@ ext:
 	virtual at rbx
 		.extc EXT_CLASS
 	end virtual
-	
 
 	;#---------------------------------------------------ö
 	;|             EXT.SETUP                             |
@@ -100,53 +99,40 @@ ext:
 	;--- in RCX class file [assembly.utf8]
 	push rbx
 	push rdi
-	push r12
 
 	mov rdi,rcx
+	xor ebx,ebx
 
 	;--- check for class ID if already there
-	mov rbx,[pExtClass]
-
 	call .fn2hash
 	test eax,eax
-	jz .setup_classE	
-	mov r12,rax
-	
-	test ebx,ebx
-	jz	.setup_classA
-
-.setup_classC:
-	cmp r12,[.extc.id]
-	jz	.setup_classB
-
-	mov rax,[.extc.next]
-	test eax,eax
-	jz	.setup_classA
-
+	jz .setup_classE
 	mov rbx,rax
-	jmp	.setup_classC
-	
-.setup_classA:
+
+	mov rcx,rax
+	call .is_class
+	test rax,rax
+	jnz .setup_classE
+
 	mov ecx,\
 		sizeof.EXT_CLASS
 	call art.a16malloc
 	test eax,eax
 	jz	.setup_classE
 
+	mov rdx,rbx
 	push [pExtClass]
 	mov rbx,rax
-	pop [rax+EXT_CLASS.next]
+	pop [rax+\
+		EXT_CLASS.next]
 	mov [pExtClass],rax
-	mov [.extc.id],r12
+	mov [.extc.id],rdx
 	mov rcx,rdi
 	lea rdx,[.extc.name]
 	call utf16.copyz
-
-.setup_classB:
 	mov rax,rbx
 
 .setup_classE:	
-	pop r12
 	pop rdi
 	pop rbx
 	ret 0
@@ -218,6 +204,7 @@ ext:
 	call .fe2hash
 	test eax,eax
 	jz	.loadE
+
 	mov rdi,rcx	;--- save ppart "asm"
 	mov r12,rax	;--- save hash "asm"
 	mov r13,rcx
@@ -225,6 +212,7 @@ ext:
 	;--- check for EXT_SLOT "asm" hash
 	mov rcx,rax
 	call .is_ext
+
 	test eax,eax
 	jnz	.loadA
 
@@ -287,6 +275,7 @@ ext:
 	;--- check for EXT_SLOT "assembly" hash
 	mov rcx,rax
 	call .is_class
+
 	test eax,eax
 	jz	.loadE
 	mov rbx,rax	;--- in RBX class
@@ -307,7 +296,7 @@ ext:
 	mov [rdi+\
 		EXT_SLOT.hash],r12
 	mov [rdi+\
-		EXT_SLOT.class],rbx
+		EXT_SLOT.clsid],r14
 	mov [rdi+\
 		EXT_SLOT.next],rax
 	mov [rdx+rcx*8],rdi
@@ -347,380 +336,6 @@ ext:
 	xor eax,eax
 	ret 0
 
-	;#---------------------------------------------------ö
-	;|             EXT.APPLY                             |
-	;ö---------------------------------------------------ü
-
-.apply:
-	;--- in RCX eslot
-	;--- in RDX labf
-	push rbp
-	push rbx
-	push rdi
-	push rsi
-	push r12
-	push r13
-	push r14
-	push r15
-
-	mov rbp,rsp
-	sub rsp,\
-		FILE_BUFLEN
-
-	xor eax,eax
-	mov r13,rdx
-
-	test rcx,rcx
-	jz	.applyE
-
-	mov rbx,[rcx+\
-		EXT_SLOT.class]
-
-	test rbx,rbx
-	jz	.applyE
-
-	mov rax,[.extc.top]
-	test rax,rax
-	jnz .applyB
-
-	mov rdx,rsp
-	lea rcx,[.extc.name]
-
-	push rax
-	push rcx
-	push uzSlash
-	push uzExtName
-	push uzSlash
-	push uzConfName
-	push rdx
-	push rax
-	call art.catstrw
-
-	mov rcx,rsp
-	call [top64.parse]
-	test rax,rax
-	jz	.applyE
-
-	;--- RET RCX datasize
-	;--- RET RDX numitems
-
-	mov [.extc.top],rax
-	mov [.extc.dsize],ecx
-	mov [.extc.items],edx
-	
-.applyB:
-	mov rsi,rax
-	mov r12,rax
-	jmp	.applyM
-
-.applyN:
-	mov esi,[rsi+\
-		TITEM.next]
-	add rsi,r12
-	cmp rsi,r12
-	jz	.applyF
-
-.applyM:
-	;--- main objects ---------
-	mov edx,[rsi+\
-		TITEM.hash]
-	cmp edx,HASH_sci
-	jz	.apply_sci
-	jmp	.applyN
-
-.apply_sci:
-	;--- found sci() node
-	test [rsi+\
-		TITEM.type],\
-		TOBJECT
-	jz	.applyN
-
-	mov rax,rsi
-	sub rax,r12
-	xor r14,r14		;--- current style index
-	mov [.extc.oSci],eax
-
-	mov eax,[rsi+\
-		TITEM.child]
-	test eax,eax
-	jz	.applyN
-
-	add rax,rsi
-	mov rdi,rax
-	
-.apply_sciA:
-	mov eax,[rdi+\
-		TITEM.hash]
-
-	mov edx,[rdi+\
-		TITEM.attrib]
-
-	;---------------------
-	cmp eax,\
-		HASH_style
-	jz .apply_style
-
-	cmp eax,\
-		HASH_back
-	jz .apply_backcolor
-
-	cmp eax,\
-		HASH_fore
-	jz .apply_forecolor
-
-	cmp eax,\
-		HASH_font
-	jz .apply_font
-	
-	cmp eax,\
-		HASH_fontsize
-	jz .apply_fontsize
-
-	cmp eax,\
-		HASH_clearall
-	jz .apply_clearall
-
-	cmp eax,\
-		HASH_keyword
-	jz .apply_keyword
-
-	cmp eax,\
-		HASH_bold
-	jz .apply_bold
-
-	cmp eax,\
-		HASH_italic
-	jz .apply_italic
-
-	cmp eax,\
-		HASH_stylebits
-	jz .apply_stylebits
-
-	cmp eax,\
-		HASH_multisel
-	jz .apply_multisel
-
-	cmp eax,\
-		HASH_tabwidth
-	jz .apply_tabwidth
-
-	cmp eax,\
-		HASH_selback
-	jz .apply_selback
-
-	cmp eax,\
-		HASH_lexer
-	jz .apply_lexer
-
-	;---------------------
-
-.apply_sciB:
-	mov eax,[rdi+\
-		TITEM.next]
-	test eax,eax
-	jz .applyN
-
-	mov rdi,r12
-	add rdi,rax
-	jmp	.apply_sciA
-
-.apply_font:
-	mov r10,\
-		sci.set_font
-		jmp	.apply_R8styleNS
-
-
-.apply_bold:
-	mov r10,\
-		sci.set_bold
-	jmp	.apply_R8styleNN
-
-.apply_italic:
-	mov r10,\
-		sci.set_italic
-	jmp	.apply_R8styleNN
-
-.apply_fontsize:
-	mov r10,\
-		sci.set_fontsize
-	jmp	.apply_R8styleNN
-	
-.apply_forecolor:
-	mov r10,\
-		sci.set_forecolor
-		jmp	.apply_R8styleNN
-	
-.apply_backcolor:
-	mov r10,\
-		sci.set_backcolor
-		jmp	.apply_R8styleNN
-
-.apply_R8styleNS:
-	mov r8,r14
-	test edx,edx
-	jz .apply_sciB
-	add rdx,r12
-	cmp [rdx+\
-		TITEM.type],TQUOTED
-	jnz	.apply_sciB
-	
-	lea r9,[rdx+\
-		TITEM.value]
-	jmp	.apply_call
-
-
-.apply_R8styleNN:
-	mov r8,r14
-
-	test edx,edx
-	jz .apply_sciB
-
-	add rdx,r12
-	cmp [rdx+\
-		TITEM.type],TNUMBER
-	jnz	.apply_sciB
-	
-	mov r9d,[rdx+\
-		TITEM.lo_dword]
-	jmp	.apply_call
-
-.apply_clearall:
-	xor r8,r8
-	xor r9,r9
-	mov r10,\
-		sci.style_clearall
-	jmp	.apply_call
-
-.apply_style:
-	test edx,edx
-	jz .apply_sciB
-
-	add rdx,r12
-	cmp [rdx+\
-		TITEM.type],TNUMBER
-	jnz	.apply_sciB
-	
-	mov r14d,[rdx+\
-		TITEM.lo_dword]
-	and r14d,03Fh
-	jmp	.apply_sciB
-
-.apply_tabwidth:
-	mov r10,\
-	sci.set_tabwidth
-	jmp	.apply_R8N
-	
-.apply_multisel:
-	mov r10,\
-	sci.set_multisel
-	jmp	.apply_R8N
-	
-.apply_stylebits:
-	mov r10,\
-	sci.set_stylebits
-	jmp	.apply_R8N
-
-.apply_lexer:
-	mov r10,\
-		sci.set_lexer
-
-.apply_R8N:
-	test edx,edx
-	jz .apply_sciB
-
-	add rdx,r12
-	cmp [rdx+\
-		TITEM.type],TNUMBER
-	jnz	.apply_sciB
-	
-	mov r8d,[rdx+\
-		TITEM.lo_dword]
-	and r8d,0FFh
-
-.apply_call:
-	mov rcx,[r13+\
-		LABFILE.hSci]
-	call r10
-	jmp	.apply_sciB
-
-
-.apply_selback:
-	mov r10,\
-		sci.set_selback
-	jmp	.apply_R8R9NN
-
-.apply_R8R9NN:
-	test edx,edx
-	jz .apply_sciB
-
-	add rdx,r12
-	cmp [rdx+\
-		TITEM.type],TNUMBER
-	jnz	.apply_sciB
-	
-	mov r8d,[rdx+\
-		TITEM.lo_dword]
-	
-	mov eax,[rdx+\
-		TITEM.attrib]
-	test eax,eax
-	jz .apply_sciB
-
-	add rax,r12
-	cmp [rax+\
-		TITEM.type],TNUMBER
-	jnz	.apply_sciB
-	
-	mov r9d,[rax+\
-		TITEM.lo_dword]
-	jmp	.apply_call
-	
-
-.apply_keyword:
-	mov r10,\
-		sci.set_keyword
-	jmp	.apply_R8R9NS
-
-.apply_R8R9NS:
-	test edx,edx
-	jz .apply_sciB
-
-	add rdx,r12
-	cmp [rdx+\
-		TITEM.type],TNUMBER
-	jnz	.apply_sciB
-	
-	mov r8d,[rdx+\
-		TITEM.lo_dword]
-	
-	mov eax,[rdx+\
-		TITEM.attrib]
-	test eax,eax
-	jz .apply_sciB
-
-	add rax,r12
-	cmp [rax+\
-		TITEM.type],TQUOTED
-	jnz	.apply_sciB
-	
-	lea r9,[rax+\
-		TITEM.value]
-	jmp	.apply_call
-
-.applyF:
-
-	
-.applyE:
-	mov rsp,rbp
-	pop r15
-	pop r14
-	pop r13
-	pop r12
-	pop rsi
-	pop rdi
-	pop rbx
-	pop rbp
-	ret 0
 
 	;#---------------------------------------------------ö
 	;|             EXT.IS_CLASS                          |
@@ -729,6 +344,7 @@ ext:
 .is_class:
 	;--- check for class ID
 	;--- in RCX hash class
+	;--- ret RAX 0,class slot
 
 	mov rdx,[pExtClass]
 	xor eax,eax
@@ -736,7 +352,6 @@ ext:
 	jz	.is_classE
 
 .is_classC:
-	xor eax,eax
 	cmp rcx,[rdx+\
 		EXT_CLASS.id]
 	jz	.is_classB
@@ -797,9 +412,9 @@ ext:
 	;--- discard all mem in EXT_CLASS
 	push rbx
 	push rdi
-
+	xor ebx,ebx
 	call .discard_slot
-	mov rbx,[pExtClass]
+	xchg rbx,[pExtClass]
 
 .discardB:
 	test ebx,ebx
@@ -855,7 +470,355 @@ ext:
 	dec r12
 	jnz	.discard_slotB
 
+	mov rdx,[extHash]
+	mov ecx,100h*8
+	call art.zeromem
+
 	pop r12
 	pop rdi
 	pop rbx
 	ret 0
+
+	;#---------------------------------------------------ö
+	;|             EXT.APPLY                             |
+	;ö---------------------------------------------------ü
+
+.apply:
+	;--- in RCX eslot
+	;--- in RDX labf
+	push rbp
+	push rbx
+	push rdi
+	push rsi
+	push r12
+	push r13
+	push r14
+	push r15
+
+	mov rbp,rsp
+	sub rsp,\
+		FILE_BUFLEN
+
+	xor eax,eax
+	mov r13,rdx
+
+	test rcx,rcx
+	jz	.applyE
+
+	mov rcx,[rcx+\
+		EXT_SLOT.clsid]
+
+	test ecx,ecx
+	jz	.applyE
+
+	call .is_class
+	test rax,rax
+	jz	.applyE
+
+	mov rbx,rax
+	mov rax,[.extc.top]
+	test rax,rax
+	jnz .applyB
+
+	mov rdx,rsp
+	lea rcx,[.extc.name]
+
+	push rax
+	push rcx
+	push uzSlash
+	push uzExtName
+	push uzSlash
+	push uzConfName
+	push rdx
+	push rax
+	call art.catstrw
+
+	mov rcx,rsp
+	call [top64.parse]
+	test rax,rax
+	jz	.applyE
+
+	;--- RET RCX datasize
+	;--- RET RDX numitems
+
+	mov [.extc.top],rax
+	mov [.extc.dsize],ecx
+	mov [.extc.items],edx
+	
+.applyB:
+	mov rsi,rax
+	mov r12,rax	;--- base
+	xor r14,r14	;--- current style index
+	jmp	.applyM
+
+.applyN:
+	mov esi,[rsi+\
+		TITEM.next]
+	add rsi,r12
+	cmp rsi,r12
+	jz	.applyF
+	
+.applyM:
+	mov eax,[rsi+\
+		TITEM.hash]
+
+	mov edx,[rsi+\
+		TITEM.attrib]
+
+	;---------------------
+	cmp eax,\
+		HASH_style
+	jz .apply_style
+
+	cmp eax,\
+		HASH_back
+	jz .apply_backcolor
+
+	cmp eax,\
+		HASH_fore
+	jz .apply_forecolor
+
+	cmp eax,\
+		HASH_font
+	jz .apply_font
+	
+	cmp eax,\
+		HASH_fontsize
+	jz .apply_fontsize
+
+	cmp eax,\
+		HASH_clearall
+	jz .apply_clearall
+
+	cmp eax,\
+		HASH_keyword
+	jz .apply_keyword
+
+	cmp eax,\
+		HASH_bold
+	jz .apply_bold
+
+	cmp eax,\
+		HASH_italic
+	jz .apply_italic
+
+	cmp eax,\
+		HASH_stylebits
+	jz .apply_stylebits
+
+	cmp eax,\
+		HASH_multisel
+	jz .apply_multisel
+
+	cmp eax,\
+		HASH_tabwidth
+	jz .apply_tabwidth
+
+	cmp eax,\
+		HASH_selback
+	jz .apply_selback
+
+	cmp eax,\
+		HASH_lexer
+	jz .apply_lexer
+	jmp	.applyN
+
+	;--------------------
+
+.apply_font:
+	mov r10,\
+		sci.set_font
+		jmp	.apply_R8styleNS
+
+.apply_bold:
+	mov r10,\
+		sci.set_bold
+	jmp	.apply_R8styleNN
+
+.apply_italic:
+	mov r10,\
+		sci.set_italic
+	jmp	.apply_R8styleNN
+
+.apply_fontsize:
+	mov r10,\
+		sci.set_fontsize
+	jmp	.apply_R8styleNN
+	
+.apply_forecolor:
+	mov r10,\
+		sci.set_forecolor
+		jmp	.apply_R8styleNN
+	
+.apply_backcolor:
+	mov r10,\
+		sci.set_backcolor
+		jmp	.apply_R8styleNN
+
+.apply_R8styleNS:
+	mov r8,r14
+	test edx,edx
+	jz .applyN
+
+	add rdx,r12
+	cmp [rdx+\
+		TITEM.type],TQUOTED
+	jnz	.applyN
+	
+	lea r9,[rdx+\
+		TITEM.value]
+	jmp	.apply_call
+
+
+.apply_R8styleNN:
+	mov r8,r14
+
+	test edx,edx
+	jz .applyN
+
+	add rdx,r12
+	cmp [rdx+\
+		TITEM.type],TNUMBER
+	jnz	.applyN
+	
+	mov r9d,[rdx+\
+		TITEM.lo_dword]
+	jmp	.apply_call
+
+.apply_clearall:
+	xor r8,r8
+	xor r9,r9
+	mov r10,\
+		sci.style_clearall
+	jmp	.apply_call
+
+.apply_style:
+	test edx,edx
+	jz .applyN
+
+	add rdx,r12
+	cmp [rdx+\
+		TITEM.type],TNUMBER
+	jnz	.applyN
+	
+	mov r14d,[rdx+\
+		TITEM.lo_dword]
+	and r14d,03Fh
+	jmp	.applyN
+
+.apply_tabwidth:
+	mov r10,\
+	sci.set_tabwidth
+	jmp	.apply_R8N
+	
+.apply_multisel:
+	mov r10,\
+	sci.set_multisel
+	jmp	.apply_R8N
+	
+.apply_stylebits:
+	mov r10,\
+	sci.set_stylebits
+	jmp	.apply_R8N
+
+.apply_lexer:
+	mov r10,\
+		sci.set_lexer
+
+.apply_R8N:
+	test edx,edx
+	jz .applyN
+
+	add rdx,r12
+	cmp [rdx+\
+		TITEM.type],TNUMBER
+	jnz	.applyN
+	
+	mov r8d,[rdx+\
+		TITEM.lo_dword]
+	and r8d,0FFh
+
+.apply_call:
+	mov rcx,[r13+\
+		LABFILE.hSci]
+	call r10
+	jmp	.applyN
+
+.apply_selback:
+	mov r10,\
+		sci.set_selback
+	jmp	.apply_R8R9NN
+
+.apply_R8R9NN:
+	test edx,edx
+	jz .applyN
+
+	add rdx,r12
+	cmp [rdx+\
+		TITEM.type],TNUMBER
+	jnz	.applyN
+	
+	mov r8d,[rdx+\
+		TITEM.lo_dword]
+	
+	mov eax,[rdx+\
+		TITEM.attrib]
+	test eax,eax
+	jz .applyN
+
+	add rax,r12
+	cmp [rax+\
+		TITEM.type],TNUMBER
+	jnz	.applyN
+	
+	mov r9d,[rax+\
+		TITEM.lo_dword]
+	jmp	.apply_call
+	
+
+.apply_keyword:
+	mov r10,\
+		sci.set_keyword
+	jmp	.apply_R8R9NS
+
+.apply_R8R9NS:
+	test edx,edx
+	jz .applyN
+
+	add rdx,r12
+	cmp [rdx+\
+		TITEM.type],TNUMBER
+	jnz	.applyN
+	
+	mov r8d,[rdx+\
+		TITEM.lo_dword]
+	
+	mov eax,[rdx+\
+		TITEM.attrib]
+	test eax,eax
+	jz .applyN
+
+	add rax,r12
+	cmp [rax+\
+		TITEM.type],TQUOTED
+	jnz	.applyN
+	
+	lea r9,[rax+\
+		TITEM.value]
+	jmp	.apply_call
+
+.applyF:
+
+	
+.applyE:
+	mov rsp,rbp
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop rsi
+	pop rdi
+	pop rbx
+	pop rbp
+	ret 0
+

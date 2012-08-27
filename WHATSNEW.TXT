@@ -1,4 +1,13 @@
 
+- version 0.0.118 (released on 27.08.2012 ) " ... " 
+  +GUI Properties windows renamed to "Multipurpose"
+  +MNU add Edit|Remove item from Workspace
+  +MNU add Edit|Reload Scintilla classes
+  +RES purge "sci()" node in class files [config\ext\*.utf8]
+
+- version 0.0.117 (released on 20.08.2012 ) " ... " 
+  +ALG [art.get_fname] bug on name len
+
 - version 0.0.114 (released on 11.08.2012 ) Alfa 
   +GUI Added Syntax Colouring
   +DIR [config\ext] Class and extension informations

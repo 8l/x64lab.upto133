@@ -11,6 +11,26 @@
  - board http://board.flatassembler.net/index.php
  - and on comp.lang.asm.x86 newsgroup
 
+ Important note: x64lab is in Alfa development stage.
+  at the moment i write this file (12.Aug.2012) it is at 
+  its 0.0.114 build. it will become "beta" version after wrapping
+  the last octet to 255. i will try to do my best in max 40 days
+  from the current date. from now up to that beta-date 
+  something may change completely. this is especially intended for
+  those user configuration files in the [config] directory,
+  respectively,
+
+ - [config\accel.utf8]   keyboard accelerators
+ - [config\config.utf8]  general config file
+ - [config\ext\*.*]      classes and file-extensions
+ 
+  please, save them before unpacking a new build.
+  you can stay up to date to check what has changed using 
+  Google Projects and Mercurial feeds from
+
+  http://code.google.com/feeds/p/x64lab/downloads/basic
+  http://code.google.com/feeds/p/x64lab/hgchanges/basic
+
   -----------------------------------------------------------------
 
 Summary:
@@ -60,7 +80,7 @@ Summary:
 -4 Is it only Windows ?
 
    yes, at the moment. i have no idea how *NXes work.
-   If You develop on other OS, make a designed proposal.
+   if you develop on other OS, make a designed proposal.
    nothing is impossible.
 
 -5 Where can i find x64lab code ?
@@ -87,7 +107,7 @@ Summary:
 -7 Compile notes:
    - i am compiling it using fasm 1.69.34. for eventual
      problems using newer versions of fasm, please let me know.
-     i wil try to adapt it.
+     i will try to adapt it.
 
    - download the latest version of fasm assembler
      from http://flatassembler.net/download.php
@@ -122,7 +142,7 @@ Summary:
        it creates or update a version.txt file
 
      # lab_update.bat : to set the current build as the
-       working version (after exiting current x64lab if running)
+       working version (after exiting current x64lab, if running)
 
      # repack.bat     : to pack src/bin zipped file
 
@@ -170,7 +190,7 @@ Summary:
    - x64lab uses a docking system i built taking inspiration from
      Qt. obviously it is not Qt, but something very flexible and
      very easy to use. it doesnt save the position for now but 
-     this last feature is already in my todo list.
+     this last feature is already urgent in my todo list.
 
    - x64lab uses very few unicode routine, whose methods 
      i am very proud of.
@@ -189,7 +209,7 @@ Summary:
    - x64lab uses config files in a proprietary format called
      TOP (Text Object Parser) format. i invented that format and
      that tecnology myself because i was bored of standard .ini files 
-     and the redundancy of .xml&C. formats. i needed something
+     and the redundancy of .xml & C. formats. i needed something
      powerful like CSV files, but capable to store nesting objects too.
 
      a TOP format file is always an utf-8 encoded file. also
@@ -202,6 +222,7 @@ Summary:
      [backup]   backup files
      [config]   for config files
      [plugin]   plugin/dll files
+     [project]  projects and workspaces
      [tool]     to store tools
      [tmp]      tempo files
      [template] template files

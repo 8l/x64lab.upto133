@@ -4,14 +4,21 @@
 
 	k:(
 		.:"%X64LAB%"
-		.:"E:\x64lab\project"
 		.:"%X64LAB%\help"
 		.:"%X64LAB%\help\en"
+		.:"%X64LAB%\config"
+		.:"%X64LAB%\config\ext"
 	)
 	04:02415AF6C27077B32h,"LICENSE.TXT"
 	04:02415AF6C27077B32h,"README.TXT"
 	04:02415AF6C27077B32h,"WHATSNEW.TXT"
 	04:02415AF6C27077B32h,"version.txt"
+
+	03:0C1DCA5E40C09F92Ch,"config"(
+		03:09DF3F8806B4A8DB1h,"ext" (
+			04:09DF3F8806B4A8DB1h,"assembly.utf8"
+		)
+	)
 
   03:0AEDA4C8C2E06E2Bh,"help" (
 		03:0E728CA7598D7CDBAh,"en" (
@@ -19,3 +26,5 @@
 			04:0E728CA7598D7CDBAh,"syntax_colouring.txt"
 		)
 	)
+
+

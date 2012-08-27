@@ -24,7 +24,6 @@ devtool:
 		.dir	DIR
 	end virtual
 
-
 .start:
 	;--- in RCX 0,dir
 	;--- in RDX param top pointer item
@@ -115,8 +114,8 @@ devtool:
 	lea rdi,[.io.buf]
 
 	mov r9,rdi
-	mov r8,\
-		FOS_NODEREFERENCELINKS\
+	mov r8,0\
+		or FOS_NODEREFERENCELINKS\
 		or FOS_ALLNONSTORAGEITEMS\
 		or FOS_PATHMUSTEXIST
 	mov rcx,rbx
@@ -144,8 +143,8 @@ devtool:
 	cmp eax,ecx
 	jz	.ret0		;--- nopath
 
-	mov rcx,[rbx+HU.hEdi]
 	mov r9,rdx
+	mov rcx,[rbx+HU.hEdi]
 	call win.set_text
 
 	jmp	.ret0
@@ -598,10 +597,10 @@ devtool:
 	push r12
 
 	mov rsi,rcx
-	mov rbx,[pCp]
+	mov rbx,[pMp]
 
 	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
+		MPURP.hCbxFilt]
 	call cbex.get_cursel
 
 	mov edx,eax
@@ -610,7 +609,7 @@ devtool:
 	
 	mov r12,rdx
 	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
+		MPURP.hCbxFilt]
 	call cbex.get_param
 	test edx,edx
 	jz	.addgroupE
@@ -625,11 +624,11 @@ devtool:
 	call .reload
 
 	mov ecx,iCAT_CBX_DEVT
-	call prop.sel_icat
+	call mpurp.sel_icat
 
 	mov rcx,r12
 	inc ecx
-	call prop.sel_ifilt
+	call mpurp.sel_ifilt
 
 .addgroupE:
 	pop r12
@@ -651,30 +650,30 @@ devtool:
 		sizeof.LVITEMW+\
 		FILE_BUFLEN
 
-	mov rbx,[pCp]
+	mov rbx,[pMp]
 	xor esi,esi
 
 	cmp [rbx+\
-		CPROP.idCat],MP_DEVT
+		MPURP.idCat],MP_DEVT
 	jz .addtoolB
 
 	mov ecx,iCAT_CBX_DEVT
-	call prop.sel_icat
+	call mpurp.sel_icat
 
 .addtoolB:
 	movzx edi,[rbx+\
-		CPROP.iFilt]
+		MPURP.iFilt]
 	test edi,edi
 	jnz	.addtoolB1
 
 	inc edi
 	mov ecx,edi
-	call prop.sel_ifilt
+	call mpurp.sel_ifilt
 
 .addtoolB1:
 	mov edx,edi
 	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
+		MPURP.hCbxFilt]
 	call cbex.get_param
 	test edx,edx
 	jz	.addtoolE
@@ -683,7 +682,7 @@ devtool:
 	xor edi,edi		;--- in RDI 0,dir
 
 	mov rcx,[rbx+\
-		CPROP.hLview]
+		MPURP.hLview]
 	call apiw.set_focus
 
 .addtoolA:
@@ -691,7 +690,7 @@ devtool:
 		LVNI_SELECTED
 	or r8,-1
 	mov rcx,[rbx+\
-		CPROP.hLview]
+		MPURP.hLview]
 	call lvw.get_next
 
 	inc rax
@@ -706,7 +705,7 @@ devtool:
 	mov [r9+\
 		LVITEMW.iSubItem],r10d
 	mov rcx,[rbx+\
-		CPROP.hLview]
+		MPURP.hLview]
 	call lvw.get_param
 
 	mov rax,[rsp+\
@@ -778,14 +777,14 @@ devtool:
 	call .reload
 
 	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
+		MPURP.hCbxFilt]
 	call cbex.get_cursel
 	mov rdi,rax
 
 	mov ecx,iCAT_CBX_DEVT
-	call prop.sel_icat
+	call mpurp.sel_icat
 	mov ecx,edi
-	call prop.sel_ifilt
+	call mpurp.sel_ifilt
 
 .addtoolE:
 	add rsp,\
@@ -813,9 +812,9 @@ devtool:
 	sub rsp,\
 		FILE_BUFLEN*3
 
-	mov rbx,[pCp]
+	mov rbx,[pMp]
 	movzx eax,[rbx+\
-		CPROP.idCat]
+		MPURP.idCat]
 
 	test eax,eax
 	jz	.remgroupE
@@ -824,7 +823,7 @@ devtool:
 	jnz	.remgroupE
 
 	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
+		MPURP.hCbxFilt]
 	call cbex.get_cursel
 	inc eax
 	jz .remgroupE
@@ -833,7 +832,7 @@ devtool:
 
 	mov edx,eax
 	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
+		MPURP.hCbxFilt]
 	call cbex.get_param
 	test edx,edx
 	jz	.remgroupE
@@ -884,16 +883,16 @@ devtool:
 	call devtool.reload
 
 	mov rcx,[rbx+\
-		CPROP.hLview]
+		MPURP.hLview]
 	call lvw.del_all
 
 	mov r8,r13
 	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
+		MPURP.hCbxFilt]
 	call cbex.del_item
 
 	xor ecx,ecx
-	call prop.sel_ifilt
+	call mpurp.sel_ifilt
 
 .remgroupE:
 	mov rsp,rbp
@@ -917,13 +916,13 @@ devtool:
 	sub rsp,\
 		sizeof.LVITEMW
 
-	mov rbx,[pCp]
+	mov rbx,[pMp]
 	movzx eax,[rbx+\
-		CPROP.idCat]
+		MPURP.idCat]
 	test eax,eax
 	jz	.remtoolE
 	movzx ecx,[rbx+\
-		CPROP.iFilt]
+		MPURP.iFilt]
 	cmp eax,MP_DEVT
 	jnz	.remtoolE
 	test ecx,ecx
@@ -933,7 +932,7 @@ devtool:
 		LVNI_SELECTED
 	or r8,-1
 	mov rcx,[rbx+\
-		CPROP.hLview]
+		MPURP.hLview]
 	call lvw.get_next
 	inc rax
 	jz	.remtoolE
@@ -947,7 +946,7 @@ devtool:
 	mov [r9+\
 		LVITEMW.iSubItem],r10d
 	mov rcx,[rbx+\
-		CPROP.hLview]
+		MPURP.hLview]
 	call lvw.get_param
 
 	mov rax,[rsp+\
@@ -963,19 +962,19 @@ devtool:
 	call devtool.reload
 
 	mov rcx,[rbx+\
-		CPROP.hCbxCat]
+		MPURP.hCbxCat]
 	call cbex.get_cursel
 	mov rsi,rax
 
 	mov rcx,[rbx+\
-		CPROP.hCbxFilt]
+		MPURP.hCbxFilt]
 	call cbex.get_cursel
 	mov rdi,rax
 	
 	mov ecx,iCAT_CBX_DEVT
-	call prop.sel_icat
+	call mpurp.sel_icat
 	mov ecx,edi
-	call prop.sel_ifilt
+	call mpurp.sel_ifilt
 
 .remtoolE:
 	add rsp,\

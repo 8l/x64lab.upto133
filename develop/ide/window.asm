@@ -97,13 +97,13 @@ win:
 	;------------ properties ---------------------
 	mov r8,rdi
 	mov edx,U16
-	mov ecx,UZ_CPWIN
+	mov ecx,UZ_MPWIN
 	call [lang.get_uz]
 
 	mov r10,0
-	mov r9,prop.proc
+	mov r9,mpurp.proc
 	mov r8,rbx
-	mov rdx,PROP_DLG
+	mov rdx,MPURP_DLG
 	mov rcx,rsi
 	call apiw.cdlgp
 

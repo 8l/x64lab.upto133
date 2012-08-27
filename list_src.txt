@@ -41,7 +41,7 @@ develop\ide\ext.asm
 develop\ide\iodlg.asm  
 develop\ide\main.asm   
 develop\ide\menu.asm   
-develop\ide\prop.asm   
+develop\ide\mpurp.asm   
 develop\ide\resource.h 
 develop\ide\sciwrap.asm
 develop\ide\structs.inc

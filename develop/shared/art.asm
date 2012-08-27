@@ -587,36 +587,39 @@ align 8
 	;--- RET R8 string
 	;--- WORKS with dir too example
 	;C:\MYDIR\SUBDIR  EAX=6 /EDX point to "SUBDIR"
+
 	mov rdx,rcx ; path+filename
 	xor eax,eax
 	mov r8,rdx
 	mov r9,rdx
 	test rcx,rcx
-	jz	.gfn3
+	jnz	.gfn1
+	ret 0
+
+.gfn3:
+	add rdx,2
+	cmp eax,"\"
+	jnz .gfn4
+	cmovz rcx,rdx
+
+.gfn4:
+	cmp eax,"/"
+	jnz .gfn1
+	mov rcx,rdx
 
 .gfn1:	
-	movzx rax,word[rdx]
+	mov ax,word[rdx]
 	test eax,eax
-	jz .gfn2
-	add rdx,2
-	cmp al,"\"
-	jz .gfn0
-	cmp al,"/"
-	jnz .gfn1
-.gfn0:
-	mov rcx,rdx
-	jmp	.gfn1
+	jnz .gfn3
 
 .gfn2:
 	sub r9,rdx
 	sub rdx,rcx
 	neg r9
-	shr r9,1
-	shr edx,1
 	xor eax,eax
-	sub r9,rdx
-	cmp edx,MAX_UTF16_FILE_CPTS
-.gfn3:
+	cmp edx,\
+		MAX_UTF16_FILE_CPTS*2
+
 	xchg rcx,r9
 	cmovb rax,rdx
 	cmovb rdx,r9

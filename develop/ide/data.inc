@@ -19,7 +19,7 @@ section '.data' data readable writeable
 	
 	pConf		dq sizeof.CONFIG
 	pCons 	dq sizeof.CONS
-	pCp			dq sizeof.CPROP
+	pMp			dq sizeof.MPURP
 	pIo			dq sizeof.IODLG * 5
 	pHu			dq sizeof.HU
 	pEdit		dq sizeof.EDIT
@@ -130,7 +130,9 @@ section '.data' data readable writeable
 				dw argtysta
 				dw argflags
 			forward
+			if ~args eq
 				dw args
+			end if
 			common	
 				dw 0
 			}
@@ -161,12 +163,17 @@ section '.data' data readable writeable
 			MI_FI_CLOSE,	5,OWN,DIF
 
 		@mnp MP_EDIT,		0,0,ISS,\
-			UZ_CPWIN,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
 			MP_WSPACE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
 			MI_ED_LNK,8,OWN,DIF,\
-			UZ_EDIT_PANE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
+			MI_ED_REMITEM,0,OWN,DIF,\
+			-1,\
+			UZ_EDIT_PANE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
+			MI_ED_RELSCICLS,	0,OWN,DIF
 			;--- MI_ED_REM,7,OWN,DIF
 			
+		@mnp MP_CONF,		0,0,ISS,\
+			UZ_MPWIN,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
+
 		@mnp MP_DEVT,		11,OWN,DIF or MIIM_SUBMENU,\
 			MI_DEVT_ADD,	10,OWN,DIF,\
 			MI_DEVT_REM,	12,OWN,DIF,\

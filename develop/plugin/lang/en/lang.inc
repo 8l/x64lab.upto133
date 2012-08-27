@@ -24,7 +24,7 @@
     UZ_WSPACE,0,U8+UR,db "x64lab Workspace",\
     UZ_CURDIR,0,U8+UR,db "Current directory",\
     UZ_FSAVE,0,U8+UR,db "Save file ",\
-    UZ_CPWIN,0,U8+UR,db "Properties",\
+    UZ_MPWIN,0,U8+UR,db "Multipurpose",\
 		UZ_CPPROCS,0,U8+UR,db "Running Processes",\
     UZ_CPDIRS,0,U8+UR,db "Files and folders",\
     UZ_CPNOSEL,0,U8+UR,db "No selection",\
@@ -79,8 +79,9 @@
 			MI_FI_BACK,0,U8+UR,db "Backup as",\
 		MP_EDIT,0,U8+UR,db "Edit",\
 			MI_ED_LNK,0,U8+UR,db "Insert new smartlink",\
-			MI_ED_REM,0,U8+UR,db "Remove item from workspace",\
-			MP_WIN,0,U8+UR,db "Window",\
+			MI_ED_REMITEM,0,U8+UR,db "Remove item from workspace",\
+			MI_ED_RELSCICLS,0,U8+UR,db "Reload Scintilla classes",\
+		MP_CONF,0,U8+UR,db "Configure",\
 		MP_DEVT,0,U8+UR,db "Developer tools",\
 			MI_DEVT_ADD,0,U8+UR,db "Browse to add new tool",\
 			MI_DEVT_REM,0,U8+UR,db "Remove tool",\
@@ -88,8 +89,6 @@
 			MI_DEVT_REMG,0,U8+UR,db "Remove GROUP",\
 			MI_DEVT_MAN,0,U8+UR,db "Manage tools file (expert user)",\
 			MI_DEVT_REL,0,U8+UR,db "Reload tools",\
-		MP_CONF,0,U8+UR,db "Configurator",\
-		MP_HELP,0,U8+UR,db "Help",\
 		MP_PATH,0,U8+UR,db "[?]",\
 			MI_PA_CONS,0,U8+UR,db "Open console here",\
 			MI_PA_BROWSE,0,U8+UR,db "Browse",\
@@ -130,8 +129,18 @@
 				"Removing group [%ls] cannot be undone. ",13,10,\
 				"Tools contained into it will be removed too !",13,10,\
 				"Remove it permanently ?">,\
-			UZ_MSG_U_TADDG,0,U8+UR,<db \
-				"- Select 'Developer Tools' in the 'Properties' Window",13,10,\
+			UZ_MSG_TADDG,0,U8+UR,<db \
+				"- Select 'Developer Tools' in the 'Multipurpose' Window",13,10,\
 				"- Type something in the comboedit of the listed groups",13,10,\
-				"- Press <Enter> to accept the label as group name">
+				"- Press <Enter> to accept the label as group name">,\
+			UZ_MSG_SCIREL,0,U8+UR,<db \
+				"After saving class files for Scintilla, please close and reopen",13,10,\
+        "current editor open files too in order",13,10,\
+        "to apply syntax colour changes to them">,\
+			UZ_MSG_REMITEM,0,U8+UR,<db \
+				"Warning: Item in workspace contains subitems. Removing it will",13,10,\
+        "remove contained subitems too. This operation cannot be undone.",13,10,\
+        "Remove item and subitems too ?">
+
+
 

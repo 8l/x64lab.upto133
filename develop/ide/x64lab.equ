@@ -13,31 +13,26 @@
 
 	;--- from resource.h x64lab.res --------------------
 
-	define IDC_STATIC (-1)
-	define ICO_X64LAB                              3
-
-	define IO_DLG                                  1024
-	define IO_STC1                                 1025
-	define IO_STC2                                 1026
-	define IO_CBX                                  1027
-	define IO_BTN                                  1028
-	define IO_STC3                                 1029
-	define IO_EDI                                  1030
-
-	define XCOMP_DLG                               1280
-	define CONS_DLG                                1536
-	define CONS_SCI                                1537
-	define CONS_CBX                                1538
-	define PROP_DLG                                2048
-	define PROP_CBX_CAT                            2049
-	define PROP_CBX_FILT                           2050
-	define PROP_PRG                                2051
-	define PROP_LVIEW                              2052
-	define PLUG_DLG                                2560
-	define PLUG_TAB                                2561
-	define EDIT_DLG                                2816
-	define EDIT_STB                                2817
-	define EDIT_STC                                2818
+		define IDC_STATIC    -1
+		define ICO_X64LAB     3
+		define IO_DLG         1024
+		define IO_STC1        1025
+		define IO_STC2        1026
+		define IO_CBX         1027
+		define IO_BTN         1028
+		define IO_STC3        1029
+		define IO_EDI         1030
+		define CONS_DLG       1536
+		define CONS_SCI       1537
+		define CONS_CBX       1538
+		define EDIT_DLG       2816
+		define EDIT_STB       2817
+		define EDIT_STC       2818
+		define MPURP_DLG  		2048
+		define MPURP_CBX_CAT  2049
+		define MPURP_CBX_FILT 2050
+		define MPURP_PRG      2051
+		define MPURP_LVIEW    2052
 
 		;--- hash X64LAB equ  02415AF6C27077B32h
 		;--- hash X64LABD equ 0402E79AC91795914h
@@ -47,6 +42,13 @@
 		;--- hash X64LABD\help\en equ 33582C52E3F9679C
 		;--- hash X64LAB\help equ 0AEDA4C8C2E06E2Bh
 		;--- hash %X64LAB%\help\en equ 0E728CA7598D7CDBAh
+
+		;--- %X64LABD%\config equ 01005ADEF3F97C6CAh
+		;--- %X64LABD%\config\ext equ 0782F12244955FD4Fh
+		;--- %X64LAB%\config equ 0C1DCA5E40C09F92Ch
+		;--- %X64LAB%\config\ext equ 09DF3F8806B4A8DB1h
+
+
 
 	iCAT_CBX_DEVT	equ 1
 
@@ -82,21 +84,22 @@
    MI_FI_ENCO   equ 1029h
    MI_FI_BACK   equ 102Ah
 
-	MP_EDIT   		equ 1040h
-   MI_ED_LNK  	equ 1041h
-   MI_ED_REM 		equ 1042h
+	MP_EDIT   				equ 1040h
+   MI_ED_LNK  			equ 1041h
+   MI_ED_REMITEM		equ 1042h
+	 MI_ED_RELSCICLS	equ 1043h
 
-  MP_WIN    		equ 1060h
+	MP_CONF   		equ 1060h
+
+	
   MP_DEVT   		equ 1070h
 	 MI_DEVT_ADD	equ 1071h
-   MI_DEVT_ADDG equ 1072h
-   MI_DEVT_REM	equ 1073h
-   MI_DEVT_REMG equ 1074h
-   MI_DEVT_MAN  equ 1075h
-   MI_DEVT_REL  equ 1076h
-   
-	MP_CONF   		equ 1080h
-	MP_HELP   		equ 1090h
+	 MI_DEVT_ADDG equ 1072h
+	 MI_DEVT_REM	equ 1073h
+	 MI_DEVT_REMG equ 1074h
+	 MI_DEVT_MAN  equ 1075h
+	 MI_DEVT_REL  equ 1076h
+	
 
 	MP_PATH        equ 10A0h
 	 MI_PA_CONS    equ 10A1h
@@ -104,6 +107,11 @@
    MI_PA_FIND    equ 10A3h
    MI_PA_COPY    equ 10A4h
    MI_PA_SETPROP equ 10A5h
+
+
+;  MP_WIN    		equ 1060h
+;	MP_HELP   		equ 1090h
+
 
 	;----------------------------------------------------
 	;--- strings id usable in lang.dll ------------------
@@ -119,7 +127,7 @@
   UZ_WSPACE      equ 2007h
   UZ_CURDIR      equ 2008h
   UZ_FSAVE       equ 2009h
-  UZ_CPWIN       equ 200Ah
+  UZ_MPWIN       equ 200Ah
   UZ_CPPROCS     equ 200Bh
   UZ_CPDIRS      equ 200Ch
   UZ_CPNOSEL     equ 200Dh
@@ -179,7 +187,9 @@
 	UZ_TOOLGEN		 equ 2041h
 	UZ_INFO_TREL   equ 2042h
 	UZ_MSG_U_TGREM equ 2043h
-	UZ_MSG_U_TADDG equ 2044h
+	UZ_MSG_TADDG 	 equ 2044h
+  UZ_MSG_SCIREL  equ 2045h
+	UZ_MSG_REMITEM equ 2046h
 
 	;--- hash equ for config/config.utf8 items
   macro @cfg_hash [argid]{

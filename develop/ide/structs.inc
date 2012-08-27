@@ -94,22 +94,12 @@
 
 		dsize	dd ?	;--- top
 		items	dd ?	;--- top
-
-		oCls	dd ?
-		oCmd	dd ?	;--- offset of cmd: in the TOP file
-		oEnv	dd ?
-		oSci	dd ?
-
-		oExec	dd ?
-					dd ?
-					dq ?
-
-		name	db (256-64) dup (0)
+		name	db (128-32) dup (0)
 	ends
 
 	struct EXT_SLOT
-		class	dq ?
-		next	dq ?
+		clsid	dq ?
+		next	dq ?	;--- next extension slot
 		hash	dq ?
 					dq ?
 	ends
@@ -121,7 +111,6 @@
 	LF_PRJ		equ 2		;--- project
 	LF_FILE		equ 4		;--- file
 	LF_LNK		equ 8	 	;--- smartlink for dir
-	;LF_UNB		equ 10h	;--- unbound
 
 	LF_TXT		equ 20h	 ;--- text file
 	LF_BIN		equ 40h	 ;--- binary
@@ -133,9 +122,7 @@
 
 	NOASK_SAVE 		= 1
 	ASK_SAVE 			= 2
-	DISCARD				= 4
-
-	PROJ_MODIFIED	= 1
+	
 
 	struct LABFILE
 		dq 0
@@ -220,7 +207,7 @@ ends
 		part_eol	dd 0
 	ends
 
-	struct CPROP
+	struct MPURP
 		hDlg			dq 0
 		hCbxCat		dq 0
 
@@ -284,21 +271,6 @@ ends
 
 	CX_GAP equ 3
 	CY_GAP equ 3
-
-	;struct TOOL_SLOT
-	;	hash		dd 0
-	;	name		dd 0
-	;	exec		dd 0
-	;	path			dd 0
-	;	descript	dd 0
-	;	numcmd	dw 0
-	;	numenv	dw 0
-	;ends		
-
-	;struct TINFO
-	;	lenname 	dw 0
-	;	lenvalue 	dw 0
-	;ends
 
 	;struct CMD_STRUCT
 	;	hOutput		dd 0
