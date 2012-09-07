@@ -144,6 +144,33 @@ art:
 	mov ah,[rdx+rax]
 	mov al,[rdx+rcx]
 	ret 0
+@endusing
+
+@using .w2u
+	;--- in ax word
+.w2u:
+	xor ecx,ecx
+	movzx edx,ax
+	mov r8,.b2at
+	mov cl,dl
+	and eax,0Fh
+	mov al,[r8+rax]
+	rol rax,16
+	mov cl,dl
+	shr cl,4
+	mov al,[r8+rcx]
+	rol rax,16
+	mov cl,dh
+	and cl,0Fh
+	mov al,[r8+rcx]
+	rol rax,16
+	mov cl,dh
+	shr cl,4
+	mov al,[r8+rcx]
+	ret 0
+@endusing
+
+@using .b2at
 align 4
 .b2at:
 	db 30h,31h,32h,33h
@@ -151,6 +178,7 @@ align 4
 	db 38h,39h,41h,42h
 	db 43h,44h,45h,46h
 @endusing
+
 
 @using .popcount64
 	;--- in RCX memory aligned 64

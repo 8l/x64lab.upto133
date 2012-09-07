@@ -206,7 +206,7 @@ devtool:
 	xor edx,edx
 	push rcx
 
-	;--- check load for config\devtool.utf8
+	;--- check load for [config\devtool.utf8]
 	push rdx
 	push uzUtf8Ext
 	push uzDevTName

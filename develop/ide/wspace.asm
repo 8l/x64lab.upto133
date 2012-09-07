@@ -2533,8 +2533,8 @@ wspace:
 		LVS_EX_CHECKBOXES or\
 		LVS_EX_BORDERSELECT 
 		;0
-;		LVS_EX_GRIDLINES or \
-;		0;LVS_EX_AUTOSIZECOLUMNS
+		;	LVS_EX_GRIDLINES or \
+		;	0;LVS_EX_AUTOSIZECOLUMNS
 
 	;LVS_EX_HEADERINALLVIEWS
 	;	LVS_EX_JUSTIFYCOLUMNS
@@ -2695,7 +2695,6 @@ wspace:
 	;--- workaround when selecting
 	;--- the same/other item after
   ;--- gaining focus
-
 	xor r9,r9
 	mov rcx,[hTree]
 	call tree.sel_item

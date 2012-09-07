@@ -1,4 +1,8 @@
 
+- version 0.0.119 (released on 07.09.2012 ) " ... " 
+  +GUI "Key Bindings" dialog
+  +FIL [help\en\key_bindings.txt]
+
 - version 0.0.118 (released on 27.08.2012 ) " ... " 
   +GUI Properties windows renamed to "Multipurpose"
   +MNU add Edit|Remove item from Workspace

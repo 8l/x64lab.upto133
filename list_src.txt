@@ -31,6 +31,7 @@ develop\equates\USER64.INC
 
 develop\help\*
 
+develop\ide\accel.asm
 develop\ide\bridge.inc 
 develop\ide\config.asm 
 develop\ide\console.asm

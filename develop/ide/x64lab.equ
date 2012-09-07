@@ -34,6 +34,16 @@
 		define MPURP_PRG      2051
 		define MPURP_LVIEW    2052
 
+		define KEY_DLG  			1100
+		define KEY_HOT  			1101
+		define KEY_LVW  			1102
+		define KEY_CHK_CTRL		1103
+		define KEY_CHK_ALT		1104
+		define KEY_CHK_SHIFT	1105
+		define KEY_CHK_NOINV	1106
+		define KEY_BTN_SET		1107
+		define KEY_STA_ID  		1108
+
 		;--- hash X64LAB equ  02415AF6C27077B32h
 		;--- hash X64LABD equ 0402E79AC91795914h
 		;--- hash X64LAB\project equ  08035E4A734D7F58Fh
@@ -90,7 +100,7 @@
 	 MI_ED_RELSCICLS	equ 1043h
 
 	MP_CONF   		equ 1060h
-
+	MI_CONF_KEY		equ 1061h
 	
   MP_DEVT   		equ 1070h
 	 MI_DEVT_ADD	equ 1071h
@@ -121,7 +131,7 @@
   UZ_ERR_NODIR   equ 2001h
   UZ_HOME        equ 2002h
   UZ_CONS_WIN    equ 2003h
-  UZ_EXPR_WIN    equ 2004h
+  ;--- UZ_EXPR_WIN    equ 2004h
   UZ_EDIT_PANE   equ 2005h
   UZ_EDIT_UNTL   equ 2006h
   UZ_WSPACE      equ 2007h
@@ -175,8 +185,8 @@
   BB_REG         equ 2036h
   BB_RET         equ 2037h
 	BB_SYS				 equ 2038h
-	BB_KEY				 equ 2039h
-
+								
+	UZ_DESCR			 equ 2039h
 	UZ_DATEFRM		 equ 203Ah
 	UZ_TIMEFRM		 equ 203Bh
 	UZ_DEFUSER		 equ 203Ch
@@ -190,6 +200,16 @@
 	UZ_MSG_TADDG 	 equ 2044h
   UZ_MSG_SCIREL  equ 2045h
 	UZ_MSG_REMITEM equ 2046h
+
+	UZ_REBUILD	equ 2047h
+	UZ_SET			equ 2048h
+	UZ_CTRL			equ 2049h
+	UZ_ALT			equ 204Ah
+	UZ_SHIFT		equ 204Bh
+	UZ_NOINV		equ 204Ch
+							;equ 204Eh
+	UZ_NOTASS		equ 204Fh
+	UZ_WZERO		equ 2050h
 
 	;--- hash equ for config/config.utf8 items
   macro @cfg_hash [argid]{
@@ -231,3 +251,4 @@
 	CFG_PROP_BKCOL 	equ 00DADADAh
 	CFG_TREE_LTRB		equ 0
 			
+ 

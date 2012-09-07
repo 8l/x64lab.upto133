@@ -23,6 +23,7 @@ section '.data' data readable writeable
 	pIo			dq sizeof.IODLG * 5
 	pHu			dq sizeof.HU
 	pEdit		dq sizeof.EDIT
+	pKdlg		dq sizeof.KEYDLG
 	pTime		dq sizeof.SYSTIME
 	pKeya		dq (MI_OTHER-MNU_X64LAB) * sizeof.KEYA
 	NUM_ITEMS = ($-curDir)/8
@@ -172,6 +173,7 @@ section '.data' data readable writeable
 			;--- MI_ED_REM,7,OWN,DIF
 			
 		@mnp MP_CONF,		0,0,ISS,\
+			MI_CONF_KEY,	0,OWN,DIF,\
 			UZ_MPWIN,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
 
 		@mnp MP_DEVT,		11,OWN,DIF or MIIM_SUBMENU,\

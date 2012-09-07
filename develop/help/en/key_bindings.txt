@@ -1,0 +1,18 @@
+
+ x64lab
+ Keyboard shortcuts and Key bindings.
+
+  Clicking on the menuitem Configure|"Key bindings" a dialogs opens and
+  allows developer to configure keyboard shortcuts. key bindings 
+  informations are stored in the file [config\accel.utf8].
+  
+  to Bind a command to a key sequence:
+   - choose an available command item in the list
+   - go in the edit box and press a key
+   - check/uncheck modifiers (Alt/Ctrl/Shift) on the right
+   - click on "Set" to accept the sequence.
+
+  the selected item will show the new customized sequence.
+  Click "Rebuild" to allow changes and activate them.
+  Clicking "Cancel" all modification are lost.
+

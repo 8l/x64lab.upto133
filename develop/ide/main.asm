@@ -105,6 +105,7 @@ start:
 		sizeof.HU+\
 		sizeof.CONFIG+\
 		sizeof.CONS+\
+		sizeof.KEYDLG+\
 		sizeof.MPURP+\
 		(sizeof.IODLG*5)+\
 		sizeof.EDIT
@@ -400,23 +401,7 @@ winproc:
 	jz	.wm_close
 	cmp edx,WM_QUERYENDSESSION
 	jz	.wm_close
-	cmp edx,WM_INITMENUPOPUP
-	jz	.wm_impup
 	jmp	.defwndproc
-
-.wm_impup:
-	;--- init menupopup
-	;cmp r8,[tMP_SCI_CLS]
-	;jnz	.ret0
-	;cmp r9,iMNP_SCI_CLS
-	;jz	.impup_sci_cls
-	;cmp r8,[tMP_DEVT]
-	;jnz	.ret0
-	;call devtool.load
-	jmp	.ret0
-
-;.impup_sci_cls:
-;	jmp	.ret0
 
 
 .wm_close:
@@ -484,7 +469,25 @@ winproc:
 	jz	.mi_pa_browse
 	cmp ax,MI_ED_RELSCICLS
 	jz	.mi_ed_relscicls
+	cmp ax,MI_CONF_KEY
+	jz	.mi_conf_key
 	jmp	.defwndproc
+
+	;ü------------------------------------------ö
+	;|     MI_CONF_KEY                          |
+	;#------------------------------------------ä
+
+.mi_conf_key:
+	;IN EDX= user param is an ID menuitem
+;@break
+	xor r10,r10
+	mov r9,accel.proc
+	mov r8,[hMain]
+	mov rdx,KEY_DLG
+	mov rcx,[hInst]
+	call apiw.dlgbp
+	jmp	.ret0
+
 
 	;ü------------------------------------------ö
 	;|     PA_BROWSE                            |

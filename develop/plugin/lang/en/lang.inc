@@ -17,7 +17,6 @@
 		UZ_ERR_NOFILE,0,U8+UR,db "Cannot find specified file",\
 		UZ_HOME,0,U8+UR,db "http://sites.google.com/site/x64lab/",\
 		UZ_CONS_WIN,0,U8+UR,db "Console",\
-    UZ_EXPR_WIN,0,U8+UR,db "xComp",\
     UZ_EDIT_PANE,0,U8+UR,db "Editor Panel",\
     UZ_EDIT_UNTL,0,U8+UR,db "00_buffer.untitled",\
     UZ_ERR_NODIR,0,U8+UR,db "Directory does not exist",\
@@ -82,6 +81,7 @@
 			MI_ED_REMITEM,0,U8+UR,db "Remove item from workspace",\
 			MI_ED_RELSCICLS,0,U8+UR,db "Reload Scintilla classes",\
 		MP_CONF,0,U8+UR,db "Configure",\
+		MI_CONF_KEY,0,U8+UR,db "Key bindings",\
 		MP_DEVT,0,U8+UR,db "Developer tools",\
 			MI_DEVT_ADD,0,U8+UR,db "Browse to add new tool",\
 			MI_DEVT_REM,0,U8+UR,db "Remove tool",\
@@ -113,7 +113,7 @@
 			BB_REG,0,U8+UR,db "Registers",\
 			BB_RET,0,U8+UR,db "Returns",\
 			BB_SYS,0,U8+UR,db "System",\
-			BB_KEY,0,U8+UR,db "Shortcuts and Keys",\
+			UZ_DESCR,0,U8+UR,db "Description",\
 			UZ_INFO_LNK,0,U8+UR,db "Create a new smartlink",\
 			UZ_LNK_NAME,0,U8+UR,db "smartlinkname",\
 			UZ_LNK_MAP,0,U8+UR,db "mapped by",\
@@ -140,7 +140,17 @@
 			UZ_MSG_REMITEM,0,U8+UR,<db \
 				"Warning: Item in workspace contains subitems. Removing it will",13,10,\
         "remove contained subitems too. This operation cannot be undone.",13,10,\
-        "Remove item and subitems too ?">
-
+        "Remove item and subitems too ?">,\
+			UZ_REBUILD,0,U8+UR,db "Rebuild",\
+			UZ_SET,0,U8+UR,db " Set",\
+			\;--- Courier New doesent have glyphs for the 3 circ. encl. c,a,s
+			\;--- http://en.wikipedia.org/wiki/Enclosed_alphanumerics
+			UZ_CTRL,0,U8+UR,db "(ⓒ) Ctrl",\
+			UZ_ALT,0,U8+UR,db "(ⓐ) Alt",\
+			UZ_SHIFT,0,U8+UR,db "(ⓢ) Shift",\
+			\;---------------------------------------------------------------------
+			UZ_NOINV,0,U8+UR,db "No invert",\
+			UZ_NOTASS,0,U8+UR,db "No assignment",\
+			UZ_WZERO,0,U8+UR,db "0000"
 
 

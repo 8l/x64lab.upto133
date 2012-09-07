@@ -60,7 +60,7 @@ mnu:
 	mov rcx,[hMnuMain]
 	call .mp_add
 
-		mov r9,1
+		mov r9,2
 		mov r8,rax
 		mov rdx,tMP_DEVT
 		mov rcx,[tMP_CONF]

@@ -464,6 +464,11 @@ lvw:
 	mov edx,LVM_INSERTCOLUMNW
 	jmp	apiw.sms
 
+.edit_lab:
+	xor r9,r9
+	mov edx,LVM_EDITLABELW
+	jmp	apiw.sms
+
 .set_xstyle:
 	mov edx,\
 	LVM_SETEXTENDEDLISTVIEWSTYLE

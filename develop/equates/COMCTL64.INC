@@ -135,6 +135,16 @@
 		pszText			dq ?
 		cchTextMax	dd ?
 		iSubItem		dd ?
+	;#if (_WIN32_IE >= 0x0300)
+		iImage	dd ?
+		iOrder	dd ?
+	;#endif 
+	;#if (_WIN32_WINNT >= 0x0600)
+		cxMin			dd ?		
+		cxDefault	dd ?
+		cxIdeal		dd ?
+							dd ?
+	;#endif 
 	ends
 	@sizea16 LVCOLUMNW
 
@@ -1565,12 +1575,32 @@ LVCF_WIDTH   = 2
 LVCF_TEXT    = 4
 LVCF_SUBITEM = 8
 
+LVCF_IMAGE 		= 0x10
+LVCF_ORDER 		= 0x20
+LVCF_MINWIDTH = 0x40
+LVCF_DEFAULTWIDTH = 0x80
+LVCF_IDEALWIDTH = 0x100
+
 ; List view column alignment values
 
 LVCFMT_LEFT	   = 0
 LVCFMT_RIGHT	   = 1
 LVCFMT_CENTER	   = 2
 LVCFMT_JUSTIFYMASK = 3
+
+LVCFMT_IMAGE  					= 0x800
+LVCFMT_BITMAP_ON_RIGHT  = 0x1000
+LVCFMT_COL_HAS_IMAGES   = 0x8000
+LVCFMT_FIXED_WIDTH   		= 0x100
+LVCFMT_NO_DPI_SCALE   	= 0x40000
+LVCFMT_FIXED_RATIO   		= 0x80000
+LVCFMT_LINE_BREAK   		= 0x100000
+LVCFMT_FILL   					= 0x200000
+LVCFMT_WRAP   					= 0x400000
+LVCFMT_NO_TITLE   			= 0x800000
+LVCFMT_SPLITBUTTON   		= 0x1000000
+LVCFMT_TILE_PLACEMENTMASK   = LVCFMT_LINE_BREAK or LVCFMT_FILL
+
 
 ; List view column width values
 

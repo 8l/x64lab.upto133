@@ -54,6 +54,26 @@
 		hOk		dq 0
 	ends
 
+	struct KEYDLG
+		rc				RECT
+		hDlg			dq ?
+		hHot			dq ?
+		hLvw			dq ?
+		hChkCtrl	dq ?
+
+		hChkAlt		dq ?
+		hChkShift	dq ?
+		hChkNoInv	dq ?
+		hBtnSet		dq ?
+
+		hOk			dq ?
+		hCanc		dq ?	
+		hStaId	dq ?
+		last		dq ?
+		oldKeya	dq ?
+						dq ?
+	ends
+
 	
 	struct IODLG
 		param		dq 0  ;--- IN param	
@@ -82,7 +102,7 @@
 	struct KEYA
 		fVirt	db 0
 					db 0
-		cmd		dw 0
+		key		dw 0
 		name	db 28 dup (0)
 	ends
 
@@ -176,27 +196,6 @@ ends
 	STATB_EOLPART	equ 3
 	STATB_PARTS		equ 4
 
-	MAX_PLUG	equ 15
-
-	;	struct PLUG
-	;		hPanel	dq 0
-	;		hDlg		dq 0
-	;		hTab		dq 0
-	;		selplug	db 0
-	;		cy_tab	db 0
-	;						dw 0
-	;						dd 0
-	;						dq 0
-	;		plugs		dq MAX_PLUG dup (0)
-	;	ends
-
-	;	struct XCOMP
-	;			dq 0
-	;			dq 0
-	;			dq 0
-	;			dq 0
-	;	ends
-
 	struct CONS
 		hCbx			dq 0
 		hSci			dq 0
@@ -271,21 +270,3 @@ ends
 
 	CX_GAP equ 3
 	CY_GAP equ 3
-
-	;struct CMD_STRUCT
-	;	hOutput		dd 0
-	;	pCommand 	dd 0
-	;	paramA		dd 0
-	;	retvalue	dd 0
-	;ends
-
-	;struct CUTITEM TV_ITEM
-	;	hChild			dd 0	;current window to disable
-	;	hText				dd 0	;current edit/hex disable window
-	;	fDragItem		dd 0	;flag if dragging 
-	;	cutItem			dd 0	;flag if cutting /it is an hItem or a pointer to hItems
-	;	pLabFile		dd 0
-	;	numitems		dd 0
-	;ends
-
-
