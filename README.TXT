@@ -231,3 +231,4 @@ Summary:
    - Scintilla in x64lab loads and stores files by default in utf-8
      encoding for now. we will be able in a near future version
      to choose/recall encodings and charsets for each of them.
+

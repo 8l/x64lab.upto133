@@ -1,4 +1,7 @@
 
+- version 0.0.120 (released on 08.09.2012 ) " ... " 
+  +BEH Devtool: default run tool in tool's directory
+
 - version 0.0.119 (released on 07.09.2012 ) " ... " 
   +GUI "Key Bindings" dialog
   +FIL [help\en\key_bindings.txt]

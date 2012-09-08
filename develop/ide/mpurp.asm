@@ -506,6 +506,10 @@ mpurp:
 	;--- in RDX iCat = param = MP_DEVT
 
 	mov rax,[pTopDevT]
+
+	mov rdi,[rcx+\
+		TITEM.param]	;--- dir slot
+
 	mov r8d,[rcx+\
 		TITEM.attrib]
 	add r8,rax
@@ -548,15 +552,29 @@ mpurp:
 	;	call wspace.spawn
 	;jmp	.lddE
 
+	mov rax,rdi
+	mov r8,[appDir]
+	test rdi,rdi
+	cmovz rax,r8
+	mov rdx,[rax+\
+		DIR.rdir]
+	test [rax+\
+		DIR.type],DIR_HASREF
+	cmovnz rax,rdx
+	
+	;call mnu.get_dir
+	;test edx,edx
+	;cmovnz rax,rdx
 
-	mov r11,SW_SHOWDEFAULT
-	xor r10,r10
+	mov r11,\
+		SW_SHOWDEFAULT
+	lea r10,[rax+\
+		DIR.dir]
 	xor r9,r9
 	lea r8,[rsp+\
 		FILE_BUFLEN]
 	xor edx,edx
-	;mov rcx,[hMain]
-	xor ecx,ecx
+	mov rcx,[hMain]
 	call apiw.shexec
 
 .lddE:

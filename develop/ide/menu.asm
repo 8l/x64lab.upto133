@@ -216,6 +216,42 @@ mnu:
 	ret 0
 
 	;#---------------------------------------------------ö
+	;|                GET_DIR                            |
+	;ö---------------------------------------------------ü
+
+;.get_dir:
+;	;--- RET RAX DIR,appdir
+;	;--- ret RDX 0,rdir
+;	sub rsp,\
+;		sizeof.MENUITEMINFOW
+;	xor eax,eax
+;	mov [rsp+\
+;		MENUITEMINFOW.fMask],\
+;		MIIM_DATA
+;	mov [rsp+\
+;		MENUITEMINFOW.dwItemData],\
+;		rax
+;	mov r9,rsp
+;	mov edx,MP_PATH
+;	mov rcx,[hMnuMain]
+;	call apiw.mni_get_byid
+;
+;	mov r8,[appDir]
+;	mov rax,[rsp+\
+;		MENUITEMINFOW.dwItemData]
+;	mov rdx,[r8+\
+;		DIR.rdir]
+;	test eax,eax
+;	cmovz rax,r8
+;
+;	add rsp,\
+;		sizeof.MENUITEMINFOW
+;	cmp rax,r8
+;	cmovnz rdx,[rax+\
+;		DIR.rdir]
+;	ret 0
+
+	;#---------------------------------------------------ö
 	;|                SET_DIR                            |
 	;ö---------------------------------------------------ü
 
