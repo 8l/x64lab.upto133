@@ -45,10 +45,17 @@
 ; lay64.resize
 
 @i_rva dock64,\
- dock64.init,\
- dock64.panel,\
- dock64.layout,\
- dock64.discard
+	dock64.init,\
+	dock64.info,\
+	dock64.id2panel,\
+	dock64.bind,\
+	dock64.order,\
+	dock64.layout,\
+	dock64.load,\
+	dock64.loadmem,\
+	dock64.save,\
+	dock64.panel,\
+	dock64.discard
 
 @i_rva lang,\
  lang.get_uz,\

@@ -224,9 +224,6 @@
    version,\
 	 session,\
 	 fshow,\
-   cons,\
-   docs,\
-   prop,\
    pos,\
    tree,\
    bkcol,\
@@ -244,11 +241,50 @@
 	CFG_FSPLASH			equ FALSE
 	CFG_UPDATE			equ FALSE
 	CFG_POS 				equ 2BC032000000000h
-	CFG_CONS_LTRB		equ 0
+
 	CFG_CONS_BKCOL	equ 0AABBCCh
 	CFG_TREE_BKCOL 	equ 0D9FFFFh
 	CFG_DOCS_BKCOL 	equ 00DADCD6h
-	CFG_PROP_BKCOL 	equ 00DADADAh
-	CFG_TREE_LTRB		equ 0
-			
+	CFG_MPURP_BKCOL equ 00DADADAh
+
+	;--- used for docking info default values ---
+	CFG_MPURP_DOCK_ID		equ 010D63AF1h
+	CFG_WSPACE_DOCK_ID	equ	060B7ACD9h
+	CFG_CONS_DOCK_ID		equ 03AB50C2Ah
+	CFG_DOCS_DOCK_ID		equ 04431B782h
+	CFG_EDIT_DOCK_ID		equ 01C06DAC8h
+
+	CFG_MPURP_POS		equ 200
+	CFG_WSPACE_POS	equ 200
+	CFG_CONS_POS 		equ 200
+	CFG_DOCS_POS		equ 150
+	CFG_EDIT_POS		equ 200
+
+	CFG_MPURP_FLAGS	equ \
+		ALIGN_LEFT or \
+		EXCLUDE_TOP or \
+		EXCLUDE_BOTTOM or\ 
+		EXCLUDE_CLIENT
+
+	CFG_WSPACE_FLAGS equ \
+		ALIGN_RIGHT or \
+		EXCLUDE_TOP or \
+		EXCLUDE_BOTTOM or\ 
+		EXCLUDE_CLIENT
+
+	CFG_CONS_FLAGS equ \
+		ALIGN_BOTTOM or \
+		EXCLUDE_LEFT or \
+		EXCLUDE_RIGHT
+
+	CFG_DOCS_FLAGS equ\
+		ALIGN_RIGHT or \
+		EXCLUDE_TOP or \
+		EXCLUDE_BOTTOM or\ 
+		EXCLUDE_CLIENT
+
+	CFG_EDIT_FLAGS equ\
+		ALIGN_CLIENT
+
+
  

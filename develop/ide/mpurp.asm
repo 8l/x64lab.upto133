@@ -475,12 +475,12 @@ mpurp:
 	mov rbx,[pConf]
 
 	mov r9d,\
-		[.conf.prop.bkcol]
+		[.conf.mpurp.bkcol]
 	mov rcx,rsi
 	call lvw.set_bkcol
 
 	mov r9d,\
-		[.conf.prop.bkcol]
+		[.conf.mpurp.bkcol]
 	mov rcx,rsi
 	call lvw.set_txtbkcol
 

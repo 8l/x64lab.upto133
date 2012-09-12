@@ -6,6 +6,7 @@ x64lab.exe.manifest
 x64lab.exe
 
 config\devtool.utf8
+config\docking.bin
 config\config.utf8
 config\accel.utf8
 config\x64lab.bmp

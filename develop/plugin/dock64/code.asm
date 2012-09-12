@@ -11,9 +11,7 @@
   ;| filename:
   ;ö-------------------------------------------------ä
 
-
 dock64:
-
 	virtual at rbx
 		.pnl PNL
 	end virtual
@@ -189,191 +187,139 @@ dock64:
 	;/----------------------------------------------------------
 	;|                  DOCK64.PANEL
 	;\----------------------------------------------------------
-
 .panel:
 	;--- in RCX hDocker/hShare
-	;--- in RDX control/tabc
-	;--- in R8 flags: type/exclude/alignment
-	;--- in R9 ratio (0 -> 256) / rect / cxy (0 -> 7FFh)
-	;--- in R10 caption
-	;--- in R11 menu
+	;--- in RDX flags: type/exclude/alignment
+	;--- in R8:
+  ;---   SHA_PA ---> ratio (0 -> 256)
+  ;---   SHA_FI ---> cx,cy (0 -> 7FFh)
+	;---   CHILD  ---> cx,cy (0 -> 7FFh)
+  ;---   FLOAT  ---> packed rect
+	;--- in R9 caption
+	;--- RET RAX PNL
+	;--- RET EDX pmc_id
 	push rbp
 	push rbx
-	push rdi
+	push rsi
+	push r12
+	push r13
 	mov rbp,rsp
 	and rsp,-16
-	sub rsp,\
-		sizeof.PNL
-;@break
 
-	mov rbx,rcx
-	mov rdi,rsp
 	xor eax,eax
-	mov ecx,sizeof.PNL / 8
-	rep stosq
-	mov rcx,rbx
-	mov rdi,uzPanelClass
-	test r10,r10
-	jz	.panelA2
-	mov rdi,r10
+	xor ebx,ebx
+	sub rsp,60h
 
-.panelA2:
-	test rcx,rcx
-	jz	.panelE
-	mov rbx,rsp
-	mov rax,r8
-	mov [.pnl.hMenu],r11
-
-	mov [.pnl.mdl],rcx
-	mov [.pnl.tmp],rcx
-	test [rcx+MDL.type],\
-		DOCKER
-	jnz	.panelA21
-	mov r11,[rcx+PNL.mdl]
-	mov [.pnl.mdl],r11
-	
-.panelA21:
-	xor r11,r11
-	and eax,\
+	and edx,\
 		ALIGN_ALL or\
 		EXCLUDE_ALL or\
 		FLAGS_ALL
-	mov [.pnl.alignment],al
-	mov [.pnl.exclude],ah
-	mov [.pnl.hControl],rdx
-	shr eax,16
-	test rdx,rdx
-	jnz	.panelA1
-	mov [.pnl.hControl],r11
-	and al,\
-		IS_FLO or \
-		HAS_MN or \
-		SHA_FI or \
-		SHA_PA
 
-.panelA1:
-	cmp r11,[.pnl.hMenu]
-	jnz	.panelA
-	and al,\
-		IS_FLO or \
-		SHA_FI or \
-		SHA_PA
-
-.panelA:
-	test al,IS_FLO
-	jz	.panelC
-
-.panelF:
-	mov r8,\
-		7FF'07FF'03FF'03FFh
-	and al,\
-		IS_FLO or \
-		HAS_CO or \
-		HAS_MN
-	and r9,r8
-	mov [.pnl.type],al
-	mov rcx,r9
-	test r9,r9
-	jnz	.panelF1
-
-.panelF2:
-	mov rcx,\
-		0100'0100'0010'0010h
-	jmp	.panelF3
-
-.panelF1:
-	ror r9,32
-	cmp ecx,r9d
-	jae	.panelF2
+	push r9
+	mov rsi,rcx
+	mov r12,rdx
+	mov r13,r8
 	
-.panelF3:
-	@reg2rect .pnl.wrc,rcx
-	jmp	.panelD
-
-.panelC:
-;@break
-	mov ah,al
-	and ah,\
-		HAS_CO or \
-		HAS_MN
-	and r9,1FFh
-	mov [.pnl.type],ah
-	test al,SHA_PA
-	jnz	.panelCPA
-	mov ah,[.pnl.alignment]
-	test al,SHA_FI
-	jz	.panelC1
-
-.panelCFI:
-	or [.pnl.type],SHA_FI
-
-.panelC1:
-	mov al,ah
-	and al,ALIGN_V
-	test al,ALIGN_V
-	jz	.panelC2
-	mov [.pnl.wrc.right],r9d
-	jmp	.panelD
-
-.panelC2:
-	mov al,ah
-	and al,ALIGN_H
-	test al,ALIGN_H
-	jz	.panelC3
-	mov [.pnl.wrc.bottom],r9d
-	jmp	.panelD
-
-.panelC3:
-	mov [.pnl.wrc.right],r9d
-	mov [.pnl.wrc.bottom],r9d
-	jmp	.panelD
-	
-.panelCPA:
-	and r9,07Fh
-	or [.pnl.type],SHA_PA
-	mov [.pnl.ratio],r9l
-	
-.panelD:
 	mov ecx,\
 		sizeof.PNL
-	mov ebx,ecx
 	call art.a16malloc
-	xchg r8,rbx
-	mov r11,rax
-	test rax,rax
+	pop rdx
+	test eax,eax
 	jz	.panelE
-
 	mov rbx,rax
-	mov rcx,rsp
-	mov rdx,rax
-	call art.xmmcopy
 
-	;	mov rcx,[.pnl.hMenu]
-	;	;--- check menu
-	;	mov rcx,[.pnl.hControl]
-	;	mov r11,rbx
-	;	mov rcx,rdi
-	;	call apiw.is_win
-	;	test rax,rax
-	;	jz	.panelA6
-	;	mov [.pnl.hControl],rdi
+	;--- set caption ---
+	mov r8,rdx
+	mov rcx,\
+		uzPanelClass
+	test edx,edx
+	cmovz r8,rcx
+	mov [rsp],r8
 
-	movzx eax,[.pnl.type]
+	;--- set MDL ------
+	mov [.pnl.mdl],rsi
+	mov [.pnl.tmp],rsi
+	test [.mdl.type],\
+		DOCKER
+	jnz	@f
+	mov rax,[rsi+\
+		PNL.mdl]
+	mov [.pnl.mdl],rax
+
+@@:
+	;--- set exclude/alignment
+	mov rax,r12
+	mov [.pnl.alignment],al
+	mov [.pnl.exclude],ah
+
+	;--- set type/rect -------
+	shr eax,16
+	mov [.pnl.type],al
+	mov r8,\
+		7FF'07FF'03FF'03FFh
+	mov rcx,\
+		0100'0100'0010'0010h
+	test al,IS_FLO
+	jz	@f
+
+	;--- set RECT for float
+	;and r13,r8
+	test r13,r13
+	cmovz r13,rcx
+	@reg2rect .pnl.wrc,r13
+	jmp .panelD
+
+@@:
+	and r8,1FFh
+	test al,SHA_PA
+	jz	@f
+
+	;--- set aligned size for SHA_PA
+	and r8,07Fh
+	and r13,r8
+	test r13,r13
+	cmovz r13,r8
+	mov [.pnl.ratio],r13l
+	jmp .panelD
+
+@@:
+	and r13,r8
+	mov cl,ah
+	and cl,ALIGN_V
+	test cl,ALIGN_V
+	jz	@f
+	mov [.pnl.wrc.right],r13d
+	jmp	.panelD
+
+@@:
+	mov cl,ah
+	and cl,ALIGN_H
+	test cl,ALIGN_H
+	jz	@f
+	mov [.pnl.wrc.bottom],r13d
+	jmp	.panelD
+
+@@:
+	mov [.pnl.wrc.right],r13d
+	mov [.pnl.wrc.bottom],r13d
+
+.panelD:
+	mov r8,[rsp]
 	mov r9d,CHILD_STYLE
 	test al,IS_FLO
 	jz	.panelD1
 	mov r9d,FLOAT_STYLE
 
 .panelD1:
-	mov rdx,[.pnl.mdl]
+	mov rsi,[.pnl.mdl]
+	xor r10,r10
+
 	mov [rsp+58h],rbx
-	mov rax,[rdx+MDL.hInst]
+	mov rax,[.mdl.hInst]
 	mov [rsp+50h],rax
+	mov [rsp+48h],r10
 
-	mov rax,[.pnl.hMenu]
-	mov [rsp+48h],rax
-
-	mov rax,[rdx+MDL.hwnd]
+	mov rax,[.mdl.hwnd]
 	mov [rsp+40h],rax
 
 	mov eax,[.pnl.wrc.bottom]
@@ -384,28 +330,496 @@ dock64:
 	mov [rsp+28h],eax
 	mov eax,[.pnl.wrc.left]
 	mov [rsp+20h],eax
-	mov r8,rdi
-	mov rdx,\
-		uzPanelClass
-	mov ecx,WS_EX_TOOLWINDOW\
-		or WS_EX_TOPMOST ;or WS_EX_MDICHILD
-	call [CreateWindowExW]
-	mov r11,rbx
-	test rax,rax
-	jnz	.panelE
 
-	;--- cannot create panel
+	mov rdx,uzPanelClass
+	mov ecx,WS_EX_TOOLWINDOW\
+		or WS_EX_TOPMOST
+	call [CreateWindowExW]
+	xor edx,edx
+	test rax,rax
+	jz	.panelF
+	mov edx,[.pnl.id]
+	jmp	.panelE
+	
+.panelF:
 	mov rcx,rbx
 	call art.a16free
-	xor r11,r11
+	xor ebx,ebx
 
 .panelE:
 	mov rsp,rbp
-	mov rax,r11
+	mov rax,rbx
+	pop r13
+	pop r12
+	pop rsi
+	pop rbx
+	pop rbp
+	ret 0
+
+.save:
+	;/----------------------------------------------------------
+	;|                  DOCK64.SAVE
+	;\----------------------------------------------------------
+	;--- save to binary path+filename
+	;--- in RCX hDocker
+	;--- in RDX path+filename
+	;--- RET 
+	push rbx
+	push rdi
+	push rsi
+
+	mov rdi,rdx
+	xor ebx,ebx
+	xor esi,esi
+
+	call .order
+	test eax,eax
+	jz	.saveE
+	mov rsi,rax	;--- malloc16
+
+	mov ebx,ecx	;--- panels
+	add ebx,edx	;--- floats
+	inc ebx			;--- MDL
+
+	mov rcx,rdi
+	call art.fcreate_rw
+	mov r8,rbx
+	shl r8,6		;--- 64 sizeof.DOCKITEM
+	xor ebx,ebx
+	inc eax
+	jz .saveF
+	dec eax
+	mov rbx,rax				;--- file handle
+
+	mov rdx,rsi
+	mov rcx,rax
+	call art.fwrite
+
+	mov rcx,rbx
+	call art.fclose
+	mov rbx,rax
+
+.saveF:
+	mov rcx,rsi
+	call art.a16free
+	
+.saveE:
+	mov rax,rbx
+	pop rsi
+	pop rdi
+	pop rbx
+	ret 0
+
+	;/----------------------------------------------------------
+	;|                  DOCK64.ORDER
+	;\----------------------------------------------------------
+.order:
+	;--- query and return info by pmc_id
+	;--- in RCX hDocker
+	;--- RET RCX 0,panels 
+	;--- RET RDX 0,floats
+	;--- RET RAX mallocED pointer to DOCKITEMs
+	;--- start floats DOCKITEM
+	;--- panels
+	push rbp
+	push rbx
+	push rdi
+	push rsi
+	push r12  ;--- num panels
+	push r13	;--- num floats
+
+	mov rbp,rsp
+	and rsp,-16
+
+	mov rsi,rcx
+	xor r12,r12
+	xor r13,r13
+	xor edi,edi
+	test rsi,rsi
+	jz	.orderE
+
+	movzx ecx,[.mdl.nslots]
+	inc ecx
+	shl ecx,6		;--- 64 sizeof.DOCKITEM
+	sub rsp,rcx
+	xor eax,eax
+	mov rdi,rsp
+	shr ecx,3
+	rep stosq
+	mov rdi,rsp
+
+	mov [rdi+\
+		DOCKITEM.id],16807
+
+	movzx eax,\
+		[.mdl.exclude]
+	and al,EXC_ALL
+	shl eax,8
+	mov [rdi+\
+		DOCKITEM.flags],eax
+	;--- calc info,popcount etc.
+	add rdi,\
+		sizeof.DOCKITEM
+
+	mov rbx,\
+		[.mdl.floats]
+
+.orderF:
+	test ebx,ebx
+	jz 	@f
+
+	inc r13
+	call .info_size
+	;--- RET ECX id
+	;--- RET EDX flags: type/exclude/alignment
+	;--- RET R8: size info	
+	mov [rdi+\
+		DOCKITEM.id],ecx
+	mov [rdi+\
+		DOCKITEM.flags],edx
+	mov [rdi+\
+		DOCKITEM.pack_rc],r8
+	add rdi,\
+		sizeof.DOCKITEM
+	mov rbx,[.pnl.next]
+	jmp	.orderF
+
+@@:
+	mov rbx,\
+		[.mdl.panels]
+
+.orderP:
+	test ebx,ebx
+	jnz .orderP1
+
+.orderM:
+	;--- 
+	movzx ecx,\
+		[.mdl.nslots]
+	inc ecx
+	shl ecx,6		;--- 64 sizeof.DOCKITEM
+	mov ebx,ecx
+	call art.a16malloc
+	xor edx,edx
+	xor ecx,ecx
+	test rax,rax
+	jz	.orderE1
+
+	mov rdi,rax
+	mov ecx,ebx
+	mov rdx,rax
+	shr ecx,3
+	mov rsi,rsp
+	rep movsq
+	mov rdi,rdx
+	jmp	.orderE
+
+.orderP1:
+	inc r12
+	call .info_size
+	;--- RET ECX id
+	;--- RET EDX flags: type/exclude/alignment
+	;--- RET R8: size info	
+	mov [rdi+\
+		DOCKITEM.id],ecx
+	mov [rdi+\
+		DOCKITEM.flags],edx
+	mov [rdi+\
+		DOCKITEM.pack_rc],r8
+	add rdi,\
+		sizeof.DOCKITEM
+	test [.pnl.type],\
+		SHA_FI or SHA_PA
+	jz	.orderP2
+	push rbx
+
+.orderS1:
+	mov rbx,\
+		[.pnl.share]
+	test rbx,rbx
+	jz	.orderS
+
+	inc r12
+	call .info_size
+	;--- RET ECX id
+	;--- RET EDX flags: type/exclude/alignment
+	;--- RET R8: size info	
+	mov [rdi+\
+		DOCKITEM.id],ecx
+	mov [rdi+\
+		DOCKITEM.flags],edx
+	mov [rdi+\
+		DOCKITEM.pack_rc],r8
+	add rdi,\
+		sizeof.DOCKITEM
+	jmp	.orderS1
+
+.orderS:
+	pop rbx
+
+.orderP2:
+	mov rbx,\
+		[.pnl.next]
+	jmp	.orderP
+
+.orderE:
+	mov rcx,r12
+	mov rdx,r13
+	mov rax,rdi
+
+.orderE1:
+	mov rsp,rbp
+	pop r13
+	pop r12
+	pop rsi
 	pop rdi
 	pop rbx
 	pop rbp
 	ret 0
+
+	
+	;/----------------------------------------------------------
+	;|                  DOCK64.INFO
+	;\----------------------------------------------------------
+.info:
+	;--- query and return info by pmc_id
+	;--- in RCX hDocker
+	;--- in RDX id
+	;--- RET RAX 0,PNL
+	;--- RET RCX id
+	;--- RET RDX flags: type/exclude/alignment
+	;--- RET R8: size info
+  ;---   SHA_PA ---> ratio (0 -> 256)
+  ;---   SHA_FI ---> cx,cy (0 -> 7FFh)
+	;---   CHILD  ---> cx,cy (0 -> 7FFh)
+  ;---   FLOAT  ---> packed rect
+	xor eax,eax
+	test ecx,ecx
+	jnz .infoA
+	ret 0
+
+.infoA:
+	push rbx
+	push rsi
+
+	xchg rcx,rdx
+	xor ebx,ebx
+	mov rsi,rdx
+	call .is_id
+	mov rbx,rax
+	test eax,eax
+	jz	@f
+	call .info_size
+@@:
+	mov rax,rbx
+	pop rsi
+	pop rbx
+	ret 0
+
+
+.info_size:
+	;--- uses (RBX PNL)
+	;--- uses (RSI MDL)
+	;--- RET RCX id
+	;--- RET RDX flags: type/exclude/alignment
+	;--- RET R8: size info	
+	sub rsp,\
+		sizeof.RECT
+	mov ecx,\
+		[.pnl.id]
+	movzx edx,\
+		[.pnl.type]
+	mov eax,edx
+	shl rdx,16
+	mov dh,\
+		[.pnl.exclude]
+	mov dl,\
+		[.pnl.alignment]
+	movzx r8d,\
+		[.pnl.cxy]
+	test al,\
+		IS_FLO
+	jz	@f
+	mov r8,rsp
+	push rcx
+	push rdx
+
+	mov rdx,r8
+	mov rcx,[.pnl.hwnd]
+	call apiw.get_winrect
+
+	pop rdx
+	pop rcx
+
+	mov eax,[rsp+\
+		RECT.top]
+	sub [rsp+\
+		RECT.bottom],eax
+	mov eax,[rsp+\
+		RECT.left]
+	sub [rsp+\
+		RECT.right],eax
+
+	@rect2reg r8,rsp
+	jmp	.info_sizeE
+@@:
+	test al,\
+		SHA_PA
+	jz	@f
+	movzx r8d,\
+		[.pnl.ratio]
+	jmp	.info_sizeE
+@@:
+	mov r8,rsp
+	push rcx
+	push rdx
+
+	mov rdx,r8
+	mov rcx,[.pnl.hwnd]
+	call apiw.get_winrect
+
+	pop rdx
+	pop rcx
+
+	mov r8,[rsp+8]
+	sub r8,[rsp]
+
+	test dl,ALIGN_V
+	jnz @f
+	shr r8,32
+@@:
+	and r8d,r8d
+
+.info_sizeE:
+	add rsp,\
+		sizeof.RECT
+	ret 0
+
+
+	;/----------------------------------------------------------
+	;|                  DOCK64.BIND
+	;\----------------------------------------------------------
+.bind:
+	;--- bind control to window
+	;--- in RCX hDocker 
+	;--- in RDX id
+	;--- in R8X hControl
+	;--- RET RAX PNL
+	xor eax,eax
+	test ecx,ecx
+	jnz .bindA
+	ret 0
+
+.bindA:
+	xchg rcx,rdx
+	push rbx
+	push rsi
+	push r8
+	
+	mov rsi,rdx
+	call .is_id
+	mov rbx,rax
+	pop rcx
+	test eax,eax
+	jz	.bindE
+
+	mov [.pnl.hControl],rcx
+	mov rdx,[.pnl.hwnd]
+	call apiw.set_parent
+	or [.pnl.type],\
+		HAS_CO
+	mov rax,rbx
+
+.bindE:
+	pop rsi
+	pop rbx
+	ret 0
+
+	;/----------------------------------------------------------
+	;|                  DOCK64.id2panel
+	;\----------------------------------------------------------
+
+.id2panel:
+	;--- in RCX MDL
+	;--- in RDX id
+	;--- get panel from id
+	mov r9,rsi
+	xchg rcx,rdx
+	mov rsi,rdx
+	call .is_id
+	xchg rsi,r9
+	ret 0
+	
+
+.is_id:
+	;--- in ECX id
+	;--- (uses RSI MDL) RAX,RDX,R8
+	;--- RET RAX 0,PNL
+	;--- RET RCX id
+	mov rdx,\
+		[.mdl.floats]
+	xor eax,eax
+	test rdx,rdx
+	jz	.is_idP
+
+.is_idF:
+	cmp ecx,[rdx+\
+		PNL.id]
+	jnz	.is_idF1
+
+.is_idE:
+	mov rax,rdx
+	ret 0
+
+.is_idF1:
+	cmp rax,[rdx+\
+		PNL.next]
+	jz .is_idP
+
+	mov rdx,[rdx+\
+		PNL.next]
+	jmp	.is_idF
+
+.is_idP:
+	mov rdx,\
+		[.mdl.panels]
+
+.is_idP0:
+	test edx,edx
+	jz .is_idE
+
+.is_idP1:
+	cmp ecx,[rdx+\
+		PNL.id]
+	jz .is_idE
+
+	test [rdx+\
+		PNL.type],\
+	SHA_FI or SHA_PA
+	jz	.is_idP2
+
+	mov r8,[rdx+\
+		PNL.share]
+
+.is_idP3:
+	test r8,r8
+	jz	.is_idP2
+
+	cmp ecx,[r8+\
+		PNL.id]
+	jnz	.is_idP4
+	mov rax,r8
+	ret
+
+.is_idP4:
+	mov r8,[r8+\
+		PNL.share]
+	jnz .is_idP3
+
+.is_idP2:
+	mov rdx,[rdx+\
+		PNL.next]
+	jmp	.is_idP0
 
 	;/----------------------------------------------------------
 	;|                  DOCK64.DISCARD
@@ -413,6 +827,154 @@ dock64:
 .discard:
 	;--- in RCX mdl
 	jmp	art.a16free
+
+
+	;/----------------------------------------------------------
+	;|                  DOCK64.LOAD
+	;\----------------------------------------------------------
+.load:
+	;--- load binary path+filename
+	;--- in RCX hwnd
+	;--- in RDX hInstance
+	;--- in R8 filename
+	;--- RET RAX 0,MDL
+	push rcx
+	push rdx
+
+	mov rcx,r8
+	call art.fload
+	mov r8,rax
+	mov r9,rcx
+	pop rdx
+	test rax,rax
+	pop rcx
+	jnz @f
+	ret 0
+@@:
+	push r8
+	shr r9,6		;--- 64 sizeof.DOCKITEM
+	call .loadmem
+	xchg rcx,[rsp]
+	xor edx,edx
+	mov [rsp],rax
+	call art.vfree
+	pop rax
+	ret 0
+
+	;/----------------------------------------------------------
+	;|                  DOCK64.LOAD_MEM
+	;\----------------------------------------------------------
+	
+.loadmem:
+	;--- load layout from memory struct of DOCKITEM
+	;--- in RCX hwnd
+	;--- in RDX hInstance
+	;--- in R8 mem
+	;--- in R9 num DOCKITEMS
+	;--- RET RAX 0,MDL
+	push rbx
+	push rsi
+	push r12
+	push r13	;--- share first handle of shared panels
+
+	mov rbx,r8
+	xor esi,esi
+	xor r13,r13
+	mov r12,r9
+
+	;--- check binary safety
+	mov r8d,[rbx+\
+		DOCKITEM.flags]
+	call .init
+
+	test rax,rax
+	jz	.loadmemE
+	mov rsi,rax
+	jmp	.loadmemN
+
+.loadmemA:
+	mov rcx,rsi
+	mov edx,[rbx+\
+		DOCKITEM.flags]
+
+	and edx,\
+		FLAGS_ALL or \
+		EXCLUDE_ALL or \
+		ALIGN_ALL
+
+	mov r8,[rbx+\
+		DOCKITEM.pack_rc]
+	xor r9,r9
+
+	test edx,\
+		SHARE_PANEL
+	jz	.loadmemB
+	
+	test r13,r13
+	jnz	.loadmemA1
+	
+	and edx,not (\
+		FLOAT_PANEL or \	
+		SHARE_PANEL or \	
+		SHARE_FIRST )
+
+	mov [rbx+\
+		DOCKITEM.flags],edx
+
+	jmp	.loadmemB
+
+.loadmemA1:
+	mov rcx,r13
+
+.loadmemB:
+	call .panel
+	;--- in RCX hDocker/hShare
+	;--- in RDX flags: type/exclude/alignment
+	;--- in R8:
+  ;---   SHA_PA ---> ratio (0 -> 256)
+  ;---   SHA_FI ---> cx,cy (0 -> 7FFh)
+	;---   CHILD  ---> cx,cy (0 -> 7FFh)
+  ;---   FLOAT  ---> packed rect
+	;--- in R9 caption
+	mov edx,[rbx+\
+		DOCKITEM.flags]
+	test rax,rax
+	jnz	.loadmemB1
+
+	;--- all may happen. but without dock system
+	;--- app cannot work -----------------------
+
+	;--- TODO: check for already created panels
+	;--- and destroy them
+	mov rcx,rsi
+	call .discard
+	xor esi,esi
+	jmp	.loadmemE
+
+.loadmemB1:
+	test edx,\
+		SHARE_FIRST
+	cmovnz r13,rax
+	mov edx,[rbx+\
+		DOCKITEM.id]
+	mov [rax+PNL.id],edx
+	mov [rbx+\
+		DOCKITEM.rt_hPanel],rax
+	
+.loadmemN:
+	add rbx,\
+		sizeof.DOCKITEM
+	dec r12
+	jnz	.loadmemA
+	
+.loadmemE:
+	mov rax,rsi
+	pop r13
+	pop r12
+	pop rsi
+	pop rbx
+	ret 0
+
 
 	;/----------------------------------------------------------
 	;|                  DOCK64.INIT
@@ -475,7 +1037,7 @@ dock64:
 		WS_EX_LAYERED \
 		or WS_EX_TRANSPARENT \
 		or WS_EX_TOOLWINDOW\
-		or WS_EX_TOPMOST
+		or 0;WS_EX_TOPMOST
 		;0;WS_EX_NOPARENTNOTIFY	
 
 ;@break
@@ -499,8 +1061,9 @@ dock64:
 	mov rcx,rax
 	call apiw.set_lwattr
 
-	call .get_setting
+	mov [.mdl.seed],16807
 
+	call .get_setting
 	mov rax,rsi
 
 .err_initA:
@@ -1402,6 +1965,10 @@ dock64:
 ;	cmp edx,\
 ;		WM_WINDOWPOSCHANGING
 ;	jz	.layout_float
+	test ecx,ecx
+	jnz	@f
+	ret 0
+@@:
 	cmp edx,\
 		WM_SYSCOMMAND
 	jz	.layout_float

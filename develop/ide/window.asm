@@ -86,64 +86,42 @@ win:
 	jz .controlsE
 	mov [hDocs],rax
 
-	xor r8,r8
+	;--- load [config\docking.bin]
+	push 0
+	push uzBinExt
+	push uzDocking
+	push uzSlash
+	push uzConfName
+	push rdi
+	push 0
+	call art.catstrw	
+
+	;--- in RCX hwnd
+	;--- in RDX hInstance
+	;--- in R8 filename
+
+	mov r8,rdi
 	mov rdx,rsi
 	mov rcx,rbx
-	call [dock64.init]
-	test rax,rax
-	jz	.controlsE
+	call [dock64.load]
 	mov [hDocker],rax
 
-	;------------ properties ---------------------
-	mov r8,rdi
-	mov edx,U16
-	mov ecx,UZ_MPWIN
-	call [lang.get_uz]
-
+	push 0
+	;---------------------
 	mov r10,0
-	mov r9,mpurp.proc
+	mov r9,edit.proc
 	mov r8,rbx
-	mov rdx,MPURP_DLG
+	mov rdx,EDIT_DLG
 	mov rcx,rsi
 	call apiw.cdlgp
 
-	xor r11,r11	
-	mov r10,rdi	;--- caption
-	mov r9,200	;--- ratio/rect/cx or cy
-	mov r8,\		;--- flags
-		ALIGN_LEFT or \
-		HAS_CONTROL or \
-		EXCLUDE_TOP or \
-		EXCLUDE_BOTTOM or\ 
-		EXCLUDE_CLIENT
-	mov rdx,rax
-	mov rcx,[hDocker]					;--- hDocker/hShare
-	call [dock64.panel]
+	push rax
+	push CFG_EDIT_DOCK_ID
+	push UZ_EDIT_PANE
 
-	;------------ workspace -----------------------
-	mov r8,rdi
-	mov edx,U16
-	mov ecx,UZ_WSPACE
-	call [lang.get_uz]
-
-	xor r11,r11
-	mov r10,rdi		;--- caption
-	mov r9,200		;--- ratio/rect/cx or cy
-	mov r8,\			;--- flags
-		ALIGN_RIGHT or \
-		HAS_CONTROL or\
-		EXCLUDE_TOP or \
-		EXCLUDE_BOTTOM or\ 
-		EXCLUDE_CLIENT
-	mov rdx,[hTree]
-	mov rcx,[hDocker]			;--- hDocker/hShare
-	call [dock64.panel]
-
-	;----------console -------------------------
-	mov r8,rdi
-	mov edx,U16
-	mov ecx,UZ_CONS_WIN
-	call [lang.get_uz]
+	push [hDocs]
+	push CFG_DOCS_DOCK_ID
+	push MI_FI_OPEN
 
 	mov r10,0
 	mov r9,console.proc
@@ -152,59 +130,52 @@ win:
 	mov rcx,rsi
 	call apiw.cdlgp
 
-	xor r11,r11	
-	mov r10,rdi	;--- caption
-	mov r9,200	;--- ratio/rect/cx or cy
-	mov r8,\		;--- flags
-		ALIGN_BOTTOM or \
-		HAS_CONTROL or \
-		EXCLUDE_LEFT or \
-		EXCLUDE_RIGHT
-	mov rdx,rax
-	mov rcx,[hDocker]	;--- hDocker/hShare
-	call [dock64.panel]
+	push rax
+	push CFG_CONS_DOCK_ID
+	push UZ_CONS_WIN
 
-	;------------open documents--------------------
-	mov r8,rdi
-	mov edx,U16
-	mov ecx,MI_FI_OPEN
-	call [lang.get_uz]
+	push [hTree]
+	push CFG_WSPACE_DOCK_ID
+	push UZ_WSPACE
 
-	xor r11,r11
-	mov r10,rdi		;--- caption
-	mov r9,150		;--- ratio/rect/cx or cy
-	mov r8,\			;--- flags
-		ALIGN_RIGHT or \
-		HAS_CONTROL or \
-		EXCLUDE_TOP or \
-		EXCLUDE_BOTTOM or\ 
-		EXCLUDE_CLIENT
-	mov rdx,[hDocs]
-	mov rcx,[hDocker]					;--- hDocker/hShare
-	call [dock64.panel]
-
-	;--------------- editor dialog ---------------
 	mov r10,0
-	mov r9,edit.proc
+	mov r9,mpurp.proc
 	mov r8,rbx
-	mov rdx,EDIT_DLG
+	mov rdx,MPURP_DLG
 	mov rcx,rsi
 	call apiw.cdlgp
 
-	xor r11,r11				;--- menu
-	mov r10,uzDefault	;--- caption
-	mov r9,200				;--- ratio/rect/cx or cy
-	mov r8,\					;--- flags
-		ALIGN_CLIENT or \
-		HAS_CONTROL
-	mov rdx,rax
-	mov rcx,[hDocker]					;--- hDocker/hShare
-	call [dock64.panel]
+	push rax
+	push CFG_MPURP_DOCK_ID
+	mov ecx,UZ_MPWIN
+
+.controlsA:
+	mov r8,rdi
+	mov edx,U16
+	call [lang.get_uz]
+
+	pop rdx
+	pop r8
+	mov rcx,[hDocker]
+	call [dock64.bind]
+	mov r13,rax
+	
+	mov r9,rdi
+	mov rcx,[rax+\
+		PNL.hwnd]
+	call .set_text
+
+	pop rcx
+	test rcx,rcx
+	jnz	.controlsA
+
+	;--- last is the Editor Panel
 	mov rdx,[pEdit]
-	mov [rdx+EDIT.pPanel],rax
+	mov [rdx+\
+		EDIT.pPanel],r13
 
 	call wspace.setup
-
+	
 .controlsE:
 	mov rsp,rbp
 	pop r13
@@ -231,23 +202,28 @@ iml:
 .set_bkcol:
 	;--- in RCX hImagelist
 	;--- in RDX color
-	mov rax,[ImageList_SetBkColor]
+	mov rax,\
+		[ImageList_SetBkColor]
 	jmp	apiw.prolog0
 
 .create:
-	mov rax,[ImageList_Create]
+	mov rax,\
+		[ImageList_Create]
 	jmp	apiw.prologP
 
 .destroy:
-	mov rax,[ImageList_Destroy]
+	mov rax,\
+		[ImageList_Destroy]
 	jmp	apiw.prologP
 
 .add_masked:
-	mov rax,[ImageList_AddMasked]
+	mov rax,\
+		[ImageList_AddMasked]
 	jmp	apiw.prolog0
 
 .get_count:
-	mov rax,[ImageList_GetImageCount]
+	mov rax,\
+		[ImageList_GetImageCount]
 	jmp	apiw.prolog0
 
 .load_bmp:
@@ -257,12 +233,14 @@ iml:
 	and rsp,-16
 	push 0			;--- hold align 16
 	push r11
-	mov rax,[ImageList_LoadImageW]
+	mov rax,\
+		[ImageList_LoadImageW]
 	xor r11,r11	;--- uType IMAGE_BITMAP = 0
 	jmp	apiw.prologQ
 
 .draw:
-	mov rax,[ImageList_Draw]
+	mov rax,\
+		[ImageList_Draw]
 	jmp	apiw.prologP
 	
    ;ü------------------------------------------ö

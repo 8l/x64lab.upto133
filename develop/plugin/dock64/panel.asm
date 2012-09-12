@@ -42,8 +42,10 @@ panel:
 	jz	.wm_mmove
 	cmp edx,WM_LBUTTONUP
 	jz	.wm_lbutup
-	cmp rdx,WM_LBUTTONDOWN
+	cmp edx,WM_LBUTTONDOWN
 	jz	.wm_lbutdw
+	cmp edx,WM_SYSCOMMAND
+	jz	.wm_syscomm
 ;	cmp rdx,WM_MOUSEACTIVATE
 ;	jz	.wm_mactivate
 	cmp edx,WM_CREATE
@@ -61,6 +63,19 @@ panel:
 	mov rsi,[.pnl.mdl]
 .err_gs:
 	ret 0
+
+.wm_syscomm:
+	call .get_struct
+	jz	.defwndproc
+	mov eax,[.wparam]
+	and eax,0FFF0h
+	cmp eax,SC_CLOSE
+	jnz	.defwndproc
+	or [.pnl.type],IS_HID
+	mov rdx,SW_HIDE
+	mov rcx,[.pnl.hwnd]
+	call apiw.show
+	jmp	.defwndproc
 
 .lbutdw_part:
 ;	push rax
@@ -118,14 +133,13 @@ panel:
 	mov rcx,\
 		[.mdl.hShadow]
 	call apiw.set_wpos
-	
 	jmp	.defwndproc
 
 
 	;--- button down from a panel
 .wm_lbutdw:
 	call .get_struct
-	jz	.defwndproc;.ret0
+	jz	.defwndproc
 
 	sub rsp,20h
 	mov rcx,rsp
@@ -154,6 +168,7 @@ panel:
 	lea rdx,[.pnl.wrc]
 	mov rcx,[.hwnd]
 	call apiw.get_winrect
+
 
 	;3) --- set style as FLOAT
 	mov r8d,FLOAT_STYLE
@@ -214,31 +229,13 @@ panel:
 	sub [.mdl.phit.x],eax
 	mov eax,[.pnl.wrc.top]
 	sub [.mdl.phit.y],eax
-
 	jmp	.wm_nclbutdwA
 
 .wm_nclbutdw:
 	mov eax,[.wparam]
 	cmp eax,HTCAPTION
-	jz	.wm_nclbutdwB
-	cmp eax,HTCLOSE
 	jnz	.defwndproc
-	push rax
-	call .get_struct
-	jz	.wm_nclbutdwC
-	or [.pnl.type],IS_HID
-	;	mov r8,rax
-	;	mov rdx,[.hwnd]
-	;	call art.cout2XX
-	mov rdx,SW_HIDE
-	mov rcx,[.pnl.hwnd]
-	call apiw.show
 
-.wm_nclbutdwC:
-	pop rax
-	jmp	.defwndproc
-
-.wm_nclbutdwB:
 	call .get_struct
 	jz	.defwndproc;.ret0
 
@@ -260,6 +257,7 @@ panel:
 	call apiw.set_capt
 	mov [.mdl.flags],\
 		F_MOVE
+
 	jmp	.defwndproc;.ret0
 
 .wm_nclbutup:
@@ -746,9 +744,6 @@ panel:
 	;|                  WM_DESTROY (PANEL)
 	;*----------------------------------------------------------
 .wm_destroy:
-	nop
-	nop
-	nop
 	call .get_struct
 	jz	.ret0
 	mov rcx,[.pnl.hControl]
@@ -778,84 +773,31 @@ panel:
 	mov rcx,rbx
 	call dock64.lo_set
 
-	sub rsp,110h
-	mov r9,rsp
-	mov r8,100h
-	mov rdx,WM_GETTEXT
-	mov rcx,[.hwnd]
-	call apiw.sms
+	;--------------- debugging 
+	;sub rsp,110h
+	;mov r9,rsp
+	;mov r8,100h
+	;mov rdx,WM_GETTEXT
+	;mov rcx,[.hwnd]
+	;call apiw.sms
+	;mov r8,rsp
+	;mov rdx,rbx
+	;call art.cout2XU
+	;add rsp,110h
+	;------------------------
 
-	mov r8,rsp
-	mov rdx,rbx
-	call art.cout2XU
-	add rsp,110h
+	;mov rax,[.pnl.hControl]
+	;test rax,rax
+	;jz	.ret0
 
-	mov rax,[.pnl.hControl]
-	test rax,rax
-	jz	.ret0
-
-	mov rdx,[.pnl.hwnd]
-	mov rcx,rax
-	call apiw.set_parent
+	;mov rdx,[.pnl.hwnd]
+	;mov rcx,rax
+	;call apiw.set_parent
 	inc [.mdl.nslots]
-
-	test[.pnl.type],\
-		HAS_MN
-	jz	.ret0
-
-;@break
-;	mov rdx,[.pnl.hMenu]
-;	mov rcx,[.mdl.hInst]
-;	call apiw.mnu_load
-
-;	mov rdx,[.pnl.hMenu]
-;	mov rcx,[.pnl.hwnd]
-;	call apiw.mnu_set
-
-;	call apiw.mnu_create
-;	mov rdi,rax
-;	call apiw.mnp_create
-;	mov rsi,rax
-
-;	mov r9,uzClass
-;	mov r8,1000
-;	mov rdx,MF_STRING	
-;	mov rcx,rsi
-;	sub rsp,20h
-;	call [AppendMenuW]
-;	add rsp,20h
-
-;	mov r9,uzClass
-;	mov r8,rsi
-;	mov rdx,MF_POPUP
-;	mov rcx,rdi
-;	sub rsp,20h
-;	call [AppendMenuW]
-
-;	sub rsp,sizeof.MENUITEMINFOW
-;	mov r9,rsp
-;	;mov rax,[.pnl.hMenu]
-;	mov [r9+MENUITEMINFOW.hSubMenu],rsi
-;	mov [r9+MENUITEMINFOW.dwTypeData],uzClass
-;	mov [r9+MENUITEMINFOW.fType],MFT_STRING
-;	mov [r9+MENUITEMINFOW.fMask],\
-;		MIIM_SUBMENU or MIIM_TYPE	or MIIM_STRING 
-;	mov rdx,0
-;	mov rcx,rdi
-;	call apiw.mni_ins_bypos
-;	mov r8,WS_CHILD or WS_OVERLAPPED or WS_VISIBLE
-;	mov rcx,[.pnl.hwnd]
-;	call apiw.set_wlstyle
-
-;	mov rdx,[.pnl.hMenu]
-;	mov rcx,[.pnl.hwnd]
-;	call apiw.mnu_set
-
-;	mov r8,WS_CHILD or WS_VISIBLE
-;	mov rcx,[.pnl.hwnd]
-;	call apiw.set_wlstyle
-
-	;call [GetLastError]
+	mov eax,[.mdl.seed]
+	call art.pmc_fuerst
+	mov [.pnl.id],eax
+	mov [.mdl.seed],eax
 
 .ret0:
 	xor rax,rax

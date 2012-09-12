@@ -43,12 +43,13 @@
 
 	include "macro\mrk_macrow.inc"
 	include "macro\com_macro.inc"
+	include "plugin\dock64\equates.inc"
+	include "plugin\top64\equates.inc"
+	include "plugin\bk64\equates.inc"
+
 	include "x64lab.equ"
 	include "structs.inc"
 	include "shared\art.equ"
-	include "plugin\top64\equates.inc"
-	include "plugin\bk64\equates.inc"
-	include "plugin\dock64\equates.inc"
 	include "plugin\lang\lang.inc"
 	include "shared\shobjidl.inc"
 
@@ -83,7 +84,6 @@ start:
 	;	call get_version
 	;	call win.ask_tar
 	;	call win.err_notar
-
 	push rbp
 	push rbx
 	push rdi
@@ -151,9 +151,7 @@ start:
 	jz	.err_start
 
 	call config.setup_gui
-
 	call ext.setup
-
 
 .winmain:
 	mov ecx,\
@@ -413,6 +411,29 @@ winproc:
 	call wspace.check
 	test eax,eax
 	jle .ret0
+
+	sub rsp,\
+		FILE_BUFLEN
+
+	xor edx,edx
+	mov rax,rsp
+
+	;--- write [config\docking.bin]
+	push rdx
+	push uzBinExt
+	push uzDocking
+	push uzSlash
+	push uzConfName
+	push rax
+	push rdx
+	call art.catstrw	
+
+	mov rdx,rsp
+	mov rcx,[hDocker]
+	call [dock64.save]
+
+	xor eax,eax
+	inc eax
 	jmp	.defwndproc
 
 .wm_syscomm:
@@ -487,7 +508,6 @@ winproc:
 	mov rcx,[hInst]
 	call apiw.dlgbp
 	jmp	.ret0
-
 
 	;ü------------------------------------------ö
 	;|     PA_BROWSE                            |
@@ -1138,7 +1158,8 @@ winproc:
 
 	sub rsp,\
 		FILE_BUFLEN*2
-	lea rcx,[rax+CONFIG.wsp]
+	lea rcx,[rax+\
+		CONFIG.wsp]
 	mov rdx,rsp
 	call apiw.exp_env
 	mov rcx,rdx

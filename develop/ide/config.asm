@@ -265,7 +265,7 @@ config:
 	push rbp
 	push rbx
 	push rsi
-	push rdi
+	push rdi	;--- pConf
 	push r12
 	push r13	;--- for lang.dll
 
@@ -303,14 +303,48 @@ config:
 	mov [.conf.cons.bkcol],\
 		CFG_CONS_BKCOL
 
-	mov [.conf.tree.bkcol],\
+	mov [.conf.wspace.bkcol],\
 		CFG_TREE_BKCOL
 
 	mov [.conf.docs.bkcol],\
 		CFG_DOCS_BKCOL
 
-	mov [.conf.prop.bkcol],\
-		CFG_PROP_BKCOL
+	mov [.conf.mpurp.bkcol],\
+		CFG_MPURP_BKCOL
+
+	;-------------------------
+	mov [.conf.cons.pos],\
+		CFG_CONS_POS
+
+	mov [.conf.wspace.pos],\
+		CFG_WSPACE_POS
+
+	mov [.conf.mpurp.pos],\
+		CFG_MPURP_POS
+
+	mov [.conf.docs.pos],\
+		CFG_DOCS_POS
+
+	mov [.conf.edit.pos],\
+		CFG_EDIT_POS
+
+	;-------------------------
+	mov [.conf.cons.flags],\
+		CFG_CONS_FLAGS
+
+	mov [.conf.wspace.flags],\
+		CFG_WSPACE_FLAGS
+
+	mov [.conf.mpurp.flags],\
+		CFG_MPURP_FLAGS
+
+	mov [.conf.docs.flags],\
+		CFG_DOCS_FLAGS
+
+	mov [.conf.edit.flags],\
+		CFG_EDIT_FLAGS
+
+	;-------------------------
 
 	xor eax,eax
 	mov edx,uzConfName
@@ -372,8 +406,10 @@ config:
 		TITEM.type],\
 		TNUMBER
 	jnz	.openB
-	mov eax,[rdx+TITEM.lo_dword]
-	and eax,SW_SHOWMAXIMIZED
+	mov eax,[rdx+\
+		TITEM.lo_dword]
+	and eax,\
+		SW_SHOWMAXIMIZED
 	mov [.conf.fshow],al
 	jmp	.openB
 	
@@ -384,10 +420,12 @@ config:
 		TITEM.len]
 	jz	.openB
 
-	cmp [r8+TITEM.type],\
+	cmp [r8+\
+		TITEM.type],\
 		TNUMBER
 	jnz	.openB
-	mov eax,[r8+TITEM.lo_dword]
+	mov eax,[r8+\
+		TITEM.lo_dword]
 	mov [.conf.session],eax
 	jmp	.openB
 
@@ -406,7 +444,8 @@ config:
 		TQUOTED
 	jnz	.openB
 
-	cmp [r8+TITEM.len],\
+	cmp [r8+\
+		TITEM.len],\
 		FILE_BUFLEN-10h
 	ja	.openB
 
@@ -424,7 +463,8 @@ config:
 		TITEM.len]
 	jz	.openB
 
-	cmp [r8+TITEM.len],7
+	cmp [r8+\
+		TITEM.len],7
 	ja	.openB
 
 	lea rcx,[r8+\
@@ -458,18 +498,21 @@ config:
 	jmp	.openB
 
 .open_wsp:
-	lea rcx,[rdx+TITEM.value]
-	lea rdx,[rsp+FILE_BUFLEN]
+	lea rcx,[rdx+\
+		TITEM.value]
+	lea rdx,[rsp+\
+		FILE_BUFLEN]
 	call utf8.to16
-	mov r12,rax
+	;mov r12,rax
 	;--- CF error
 
 	;	lea rcx,[rsp+FILE_BUFLEN]
 	;	call art.is_file
 	;	jz	.openB
 
-	mov r8,r12
-	lea rcx,[rsp+FILE_BUFLEN]
+	mov r8,rax
+	lea rcx,[rsp+\
+		FILE_BUFLEN]
 	lea rdx,[.conf.wsp]
 	call art.xmmcopy
 	jmp	.openB
@@ -532,6 +575,8 @@ config:
 	push rbx
 	push rdi
 	push rsi
+	push r12
+	push r13
 	mov rbp,rsp
 
 	xor rax,rax
@@ -769,6 +814,8 @@ config:
 
 .writeE:
 	mov rsp,rbp
+	pop r13
+	pop r12
 	pop rsi
 	pop rdi
 	pop rbx

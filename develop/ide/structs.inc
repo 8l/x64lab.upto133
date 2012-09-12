@@ -239,21 +239,29 @@ ends
 		;-------------------------
 		lang16  db 16 dup (?)
 		;-------------------------
-		update			dd FALSE
-		session			dd 0
-		tree.bkcol	dd 0D9FFFFh
-		cons.bkcol	dd 0AABBCCh
+		update				dd FALSE
+		session				dd 0
+		wspace.bkcol	dd 0D9FFFFh
+		cons.bkcol		dd 0AABBCCh
 
+		;-------------------------
 		docs.bkcol	dd 0CCBBAAh
-		prop.bkcol  dd	0DADADAh
-						dd 0
-						dd 0
+		mpurp.bkcol dd 0DADADAh
+		pos			 		dq 0
 		;-------------------------
-		pos			 dq 0
-		cons.pos dq 0
-		tree.pos dq 0
-						 dq 0
+		mpurp.flags		dq 0	;--- LOCKED
+		wspace.flags	dq 0	;--- LOCKED
+		cons.flags		dq 0	;--- LOCKED
+		docs.flags		dq 0	;--- LOCKED
 		;-------------------------
+		edit.flags	dq 0	;--- LOCKED
+		mpurp.pos		dq 0	;--- LOCKED
+		wspace.pos 	dq 0	;--- LOCKED
+		cons.pos 		dq 0	;--- LOCKED
+		;-------------------------
+		docs.pos		dq 0	;--- LOCKED
+		edit.pos		dq 0	;--- LOCKED
+
 		owner	db FILE_BUFLEN dup (?)
 		cdate db FILE_BUFLEN dup (?)
 		ctime db 128 dup (0)

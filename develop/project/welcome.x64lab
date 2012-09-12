@@ -3,18 +3,18 @@
 	;--- Copyright Marc Rainer Kranz 2009-2012
 
 	k:(
-		.:"%X64LABD%"
-		.:"%X64LABD%\help"
 		.:"%X64LABD%\help\en"
-		.:"%X64LABD%\config"
+		.:"%X64LABD%\help"
 		.:"%X64LABD%\config\ext"
+		.:"%X64LABD%\config"
+		.:"%X64LABD%"
+		.:"E:\x64lab\develop\project"
 	)
 
 	04:0402E79AC91795914h,"README.TXT"
 	04:0402E79AC91795914h,"WHATSNEW.TXT"
-
 	03:01005ADEF3F97C6CAh,"config"(
-		03:0782F12244955FD4Fh,"ext" (
+		03:0782F12244955FD4Fh,"ext"(
 			04:0782F12244955FD4Fh,"assembly.utf8"
 		)
 	)

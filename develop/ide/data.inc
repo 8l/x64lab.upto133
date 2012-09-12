@@ -97,6 +97,7 @@ section '.data' data readable writeable
 		uzDevTName	du "devtool",0
 		uzMenuName	du "menu",0
 		uzExplore		du "explore",0
+		uzDocking		du "docking",0
 
 		uzDefault  du "default"		;<--- follows
 		uzLabExt   du "."

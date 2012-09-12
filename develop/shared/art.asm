@@ -18,6 +18,25 @@
 
 art:
 
+@using .pmc_fuerst
+	;--- in RAX seed
+	;--- RET RAX rnd
+	;--- Fuerst's improvements on Park-Miller-Carta prng
+	;--- http://sites.google.com/site/x64lab/home/reloaded-algorithms
+.pmc_fuerst:
+    mov ecx,16807
+    mul ecx
+    add eax,eax
+    adc edx,edx
+    add edx,edx
+    add eax,edx
+    sbb edx,edx
+    shr eax,1
+    sub eax,edx
+    ret 0
+@endusing
+
+
 @using .xmmcopy
 .xmmcopy:
 	;--- in RCX source

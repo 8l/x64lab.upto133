@@ -2512,7 +2512,7 @@ wspace:
 	mov rdi,rsp
 
 	mov rbx,[pConf]
-	mov r9d,[.conf.tree.bkcol]
+	mov r9d,[.conf.wspace.bkcol]
 	mov rcx,[hTree]
 	call tree.set_bkcol
 

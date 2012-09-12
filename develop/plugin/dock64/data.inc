@@ -18,7 +18,7 @@ startdata:
 	uzThmRebarClass du "REBAR",0
 	uzShadowClass		du "x64Shad",0
 	uzPanelClass		du "x64Pane",0
-	uzStatic		du "STATIC",0
+	uzStatic				du "STATIC",0
 	uzClass	du MAINCLASS,0
 	copyright	du "Copyright (c) Marc Rainer Kranz 2009-2011",0
 
@@ -59,4 +59,5 @@ startdata:
 	hColActText		dq 0
 	hBrInactCapt	dq 0
 	hColInactText	dq 0
+
 

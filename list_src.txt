@@ -16,6 +16,7 @@ develop\x64labd.exe.manifest
 
 develop\config\config.utf8
 develop\config\devtool.utf8
+develop\config\docking.bin
 develop\config\accel.utf8
 develop\config\x64lab.bmp
 develop\config\ext\*

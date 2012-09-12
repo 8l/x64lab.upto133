@@ -32,10 +32,11 @@ struct MDL
 		sside		db 0 ;--- splitting on choosen side
 	ends
 	flags		db 0
-	nslots		dw 0	
-	cx_grip		db CX_SPLITTER
-	cy_grip		db CY_SPLITTER
-						dq 0
+	nslots	dw 0	
+	cx_grip	db CX_SPLITTER
+	cy_grip	db CY_SPLITTER
+	seed		dd 0
+					dd 0
 	;------------------------------------------------
 	src			RECT	;--- final client rect/0
 	wrc			RECT	;--- window rect
@@ -76,7 +77,7 @@ struct PNL
 	alignment	db 0	;--- side which the panel resides on
 	ttype			db 0	;--- transition type
 						db 0
-						dd 0
+	id				dd 0
 	;----------------------------------------------
 		crc	RECT
 		frc	RECT
@@ -88,17 +89,32 @@ struct PNL
 	ratio	db 0
 				db 0
 	style	dd 0
-	union
-		hControl	dq 0
-		hTab			dq 0
-	ends
+	hControl	dq 0
 	;<------------------
 	mdl	 	 dq 0
-	hMenu	 dq 0
+				 dq 0
 	caprc	 RECT
 	ctrc	 RECT
-	
 ends
+
+	;--- using .get_order
+	struct DOCKITEM
+		id			dd 0
+		flags		dd 0
+		union
+			pack_rc	dq 0	;--- packed rect for PNL
+			info		dq 0	;--- run-time info from bin file,popcount etc. for safety
+		ends
+		;-----------
+		rt_hPanel	dq 0		;--- runtime stored internally on static data
+							dq 0
+		;-----------
+				dq 0
+				dq 0
+				dq 0
+				dq 0
+	ends
+
 
 ;display_hex 16, sizeof.PNL
 
@@ -108,14 +124,13 @@ ends
 	CX_SPLITTER = 3
 	CY_SPLITTER = 3
 
-
 	IS_FLO	equ 0000'0001b
 	SHA_FI	equ 0000'0010b
 	SHA_PA	equ 0000'0100b
 	HAS_CO	equ 0000'1000b
-	HAS_MN	equ 0001'0000b
-	IS_HID	equ 0010'0000b		
-	dummy		equ 0100'0000b
+	IS_HID	equ 0001'0000b		
+	dummy0	equ 0010'0000b
+	dummy1	equ 0100'0000b
 	DOCKER	equ 1000'0000b
 
 
@@ -150,14 +165,16 @@ ends
 	HAS_CONTROL		equ HAS_CO shl 16
 	SHARE_PANEL		equ SHA_PA shl 16
 	SHARE_FIRST		equ SHA_FI shl 16
-	HAS_MENU			equ HAS_MN shl 16
+	IS_HIDDEN			equ IS_HID shl 16
 	
 	FLAGS_ALL	equ \
 		FLOAT_PANEL or \	
-		HAS_CONTROL or \	
 		SHARE_PANEL or \	
-		SHARE_FIRST or \	
-		HAS_MENU				
+		SHARE_FIRST or \
+		IS_HIDDEN	
+
+		;HAS_CONTROL or \	
+
 
 	;--- internal --------------------
 	EXC_LEFT		equ ALIGN_LEFT

@@ -57,8 +57,15 @@ APIEXPORT equ ;\
 
 APIBRIDGE equ \
 	dock64.init,\
-	dock64.panel,\
+	dock64.info,\
+	dock64.id2panel,\
+	dock64.bind,\
+	dock64.order,\
 	dock64.layout,\
+	dock64.load,\
+	dock64.loadmem,\
+	dock64.save,\
+	dock64.panel,\
 	dock64.discard
 
 
