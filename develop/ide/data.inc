@@ -80,6 +80,11 @@ section '.data' data readable writeable
 		lfMnuSize	SIZE 18,16
 		szCharExt 	db "_999999",0
 
+		rexpSOL1	db "^.*\S" 	;--- comment line SOL
+		rexpSOL2a	db "^\(\s*"	;--- follow needle for SOL+patt
+		rexpSOL2b	db "\)\(.*\)"
+		rexpTAG2	db "\2",0
+
 		align 2
 		uzExtName		du "ext",0
 		uzBackName	du "backup",0
@@ -98,7 +103,7 @@ section '.data' data readable writeable
 		uzMenuName	du "menu",0
 		uzExplore		du "explore",0
 		uzDocking		du "docking",0
-
+	
 		uzDefault  du "default"		;<--- follows
 		uzLabExt   du "."
 		uzAppName  du TITLE,0
@@ -110,15 +115,13 @@ section '.data' data readable writeable
 		uzExeExt   du ".exe",0
 		uzSciExt   du ".sci",0
 		uzBmpExt	 du ".bmp",0
-
-
+	
 		uzTreeClass	du "SysTreeView32",0
 		uzLViewClass	du "SysListView32",0
 		uzCbexClass	du "ComboBoxEx32",0
 		uzStbClass	du "msctls_statusbar32",0
 		uzSciDll		du "Scilexer64.dll",0
 		uzSciClass	du "Scintilla",0
-
 		uzCourierN	db "Courier New",0
 		
 		;--- menu -----------------------------------------
@@ -186,6 +189,13 @@ section '.data' data readable writeable
 			-1,\
 			MI_DEVT_MAN,	0,OWN,DIF,\
 			MI_DEVT_REL,	0,OWN,DIF
+
+		@mnp MP_SCI,		0,OWN,DIF or MIIM_SUBMENU,\
+			MI_SCI_COMML,	0,OWN,DIF,\
+			MI_SCI_UNCOMML,	0,OWN,DIF
+
+		;	MI_SCI_COMMB,	0,OWN,DIF,\
+		;	MI_SCI_UNCOMMB,	0,OWN,DIF
 
 		@mnp MP_PATH,		0,RJU,ISS or MIIM_FTYPE,\
 			MI_PA_BROWSE,	0,OWN,DIF

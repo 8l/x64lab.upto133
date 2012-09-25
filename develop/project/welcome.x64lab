@@ -8,7 +8,6 @@
 		.:"%X64LABD%\config\ext"
 		.:"%X64LABD%\config"
 		.:"%X64LABD%"
-		.:"E:\x64lab\develop\project"
 	)
 
 	04:0402E79AC91795914h,"README.TXT"
@@ -16,6 +15,7 @@
 	03:01005ADEF3F97C6CAh,"config"(
 		03:0782F12244955FD4Fh,"ext"(
 			04:0782F12244955FD4Fh,"assembly.utf8"
+			04:0782F12244955FD4Fh,"topfile.utf8"
 		)
 	)
 	03:048FFF5BB543AAAC9h,"help"(

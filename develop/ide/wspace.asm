@@ -514,9 +514,21 @@ wspace:
 	mov rcx,[hDocs]
 	call lvw.set_itext
 
-	;--- set new view for previously LF_BLANK
+	;--- set new view for prev LF_BLANK
 	mov rcx,rbx
 	call edit.view
+
+	;--- apply Sci class on prev LF_BLANK
+	mov rcx,rbx
+	add rcx,\
+		sizeof.LABFILE
+	call ext.load
+	test eax,eax
+	jz	.save_file1
+	
+	mov rdx,rbx
+	mov rcx,rax
+	call ext.apply
 
 .save_file1:
 	xor eax,eax

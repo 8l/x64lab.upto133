@@ -40,7 +40,7 @@ ext:
 
 	mov rax,rdi
 
-	;--- check for config\ext\*.utf8 files
+	;--- check for [config\ext\*.utf8] files
 	push rdx
 	push uzExtName
 	push uzSlash
@@ -77,11 +77,12 @@ ext:
 	;--- in RDX w32fnd 
 	;--- in R8h lenpath
 	;--- in R9 uparam
-	;--- ret RAX = 1 continue search, 0 stop search
+	;--- ret RAX = 1 continue, 0 stop search
 
 	test rdx,rdx
 	jz	.cb_classesA
 
+	;--- TODO: overflow on max len of .extc.name
 	lea rcx,[rdx+\
 		WIN32_FIND_DATA.cFileName]
 	call .setup_class
@@ -127,6 +128,7 @@ ext:
 		EXT_CLASS.next]
 	mov [pExtClass],rax
 	mov [.extc.id],rdx
+
 	mov rcx,rdi
 	lea rdx,[.extc.name]
 	call utf16.copyz
@@ -438,6 +440,9 @@ ext:
 	ret 0
 
 
+	;#---------------------------------------------------ö
+	;|             EXT.DISCARD_SLOT                      |
+	;ö---------------------------------------------------ü
 
 .discard_slot:
 	push rbx
@@ -587,20 +592,25 @@ ext:
 	jz .apply_fontsize
 
 	cmp eax,\
-		HASH_clearall
-	jz .apply_clearall
-
-	cmp eax,\
-		HASH_keyword
-	jz .apply_keyword
-
-	cmp eax,\
 		HASH_bold
 	jz .apply_bold
 
 	cmp eax,\
 		HASH_italic
 	jz .apply_italic
+
+	cmp eax,\
+		HASH_keyword
+	jz .apply_keyword
+
+	;-------------------
+	cmp eax,\
+		HASH_commline
+	jz	.set_commline
+
+	cmp eax,\
+		HASH_clearall
+	jz .apply_clearall
 
 	cmp eax,\
 		HASH_stylebits
@@ -624,6 +634,28 @@ ext:
 	jmp	.applyN
 
 	;--------------------
+.set_commline:
+	mov r8,rdx
+	test edx,edx
+	jz .applyN
+
+	add rdx,r12
+	xor eax,eax
+
+	cmp [rdx+\
+		TITEM.type],TQUOTED
+	jnz	.applyN
+
+	cmp ax,[rdx+\
+		TITEM.len]
+	jz	.applyN
+
+	mov [.extc.top_comml],eax
+	cmp [rdx+\
+		TITEM.len],MAX_COMMLINE_LEN
+	ja .applyN
+	mov [.extc.top_comml],r8d
+	jmp	.applyN
 
 .apply_font:
 	mov r10,\
@@ -774,7 +806,6 @@ ext:
 	mov r9d,[rax+\
 		TITEM.lo_dword]
 	jmp	.apply_call
-	
 
 .apply_keyword:
 	mov r10,\

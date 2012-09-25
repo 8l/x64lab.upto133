@@ -32,9 +32,10 @@
 	match =FALSE,DEBUG	{
 		format PE64 GUI 5.0
 	}
-
+	STACK_SIZE equ 1000'0000h
+	STACK_LIMIT equ 11000h
 	heap	1000000h
-	stack	100000h
+	stack	STACK_SIZE
 	entry start
 
 	;#----------------------------------------ö
@@ -177,6 +178,7 @@ start:
 	xor edx,edx
 	mov rcx,\
 		ICC_BAR_CLASSES or \
+		ICC_PROGRESS_CLASS or \
 		ICC_TREEVIEW_CLASSES or \
 		ICC_TAB_CLASSES or \
 		ICC_USEREX_CLASSES or \
@@ -492,8 +494,70 @@ winproc:
 	jz	.mi_ed_relscicls
 	cmp ax,MI_CONF_KEY
 	jz	.mi_conf_key
+	cmp ax,MI_SCI_COMML
+	jz	.mi_sci_comml
+	cmp ax,MI_SCI_UNCOMML
+	jz	.mi_sci_uncomml
 	jmp	.defwndproc
 
+	;ü------------------------------------------ö
+	;|     MI_SCI_UNCOMMLine                      |
+	;#------------------------------------------ä
+	;ü------------------------------------------ö
+	;|     MI_SCI_COMMLine                      |
+	;#------------------------------------------ä
+.mi_sci_uncomml:
+	mov rdi,\
+		sci.uncommline
+	jmp	.mi_sci_commlA
+
+.mi_sci_comml:
+	mov rdi,\
+		sci.commline
+
+.mi_sci_commlA:
+
+	mov rsi,[pEdit]
+	mov rbx,\
+		[rsi+EDIT.curlabf]
+	cmp rbx,\
+		[rsi+EDIT.deflabf]
+	jz	.ret0
+	test [rbx+\
+		LABFILE.type],LF_TXT
+	jz	.ret0
+
+	lea rcx,[rbx+\
+		sizeof.LABFILE]
+
+	;--- get "ext" hash from [myfile.ext]
+	call ext.fe2hash
+	test eax,eax
+	jz	.ret0
+
+	;--- check for EXT_SLOT of "ext" hash
+	mov rcx,rax
+	call ext.is_ext
+	test eax,eax
+	jz	.ret0
+
+	;--- check for class hash id
+	mov rcx,[rax+\
+		EXT_SLOT.clsid]
+	test rcx,rcx
+	jz	.ret0
+	call ext.is_class
+	test rax,rax
+	jz	.ret0
+
+	mov rdx,rax
+	mov r8,rdi
+	mov rcx,[rbx+\
+		LABFILE.hSci]
+	call sci.comment
+
+
+	jmp	.ret0
 	;ü------------------------------------------ö
 	;|     MI_CONF_KEY                          |
 	;#------------------------------------------ä
@@ -1295,24 +1359,6 @@ winproc:
 	jmp	.ret1
 
 .wm_dis_mnuA:
-;	cmp eax,MP_DEVT
-;	jnz	.wm_dis_mnuA2
-;@break
-;	jmp	.ret0
-
-
-.wm_dis_mnuA2:
-	cmp eax,MI_FIRSTOOL
-	jb	.wm_dis_mnuA1
-	cmp eax,MI_LASTTOOL
-	ja	.wm_dis_mnuA1
-
-.wm_dis_mnuDT:
-	;--- devtool item -----------
-	;@break
-	jmp	.ret0
-
-.wm_dis_mnuA1:
 	push r12
 	push r13
 

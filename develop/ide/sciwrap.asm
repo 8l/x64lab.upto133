@@ -28,12 +28,9 @@ sci:
 	fontsize,\
 	italic,\
 	clearall,\
-	sci,\
-	env,\
-	exec,\
-	cmd,\
-	class
-	
+	commline,\
+	commstart,\
+	commend
 
 	;#---------------------------------------------------ö
 	;|                CREATE                             |
@@ -436,89 +433,168 @@ sci:
 
 .set_selback:
 	;--- R8
-	mov edx,SCI_SETSELBACK
+	mov edx,\
+		SCI_SETSELBACK
 	jmp	apiw.sms
 
 .set_fontsize:
-	mov edx,SCI_STYLESETSIZE
+	mov edx,\
+		SCI_STYLESETSIZE
 	jmp	apiw.sms
 
 .set_font:
-	mov edx,SCI_STYLESETFONT
+	mov edx,\
+		SCI_STYLESETFONT
 	jmp	apiw.sms
 
 .set_keyword:
-	mov edx,SCI_SETKEYWORDS
+	mov edx,\
+		SCI_SETKEYWORDS
 	jmp	apiw.sms
 
 .set_backcolor:
-	mov edx,SCI_STYLESETBACK
+	mov edx,\
+		SCI_STYLESETBACK
 	jmp	apiw.sms
 
 .set_forecolor:
-	mov edx,SCI_STYLESETFORE
+	mov edx,\
+		SCI_STYLESETFORE
 	jmp	apiw.sms
 
 .set_tabwidth:
 	;--- in R8 value
-	mov edx,SCI_SETTABWIDTH
+	mov edx,\
+		SCI_SETTABWIDTH
 	jmp	apiw.sms
 
 .set_multisel:
 	;--- in R8 value
-	mov edx,SCI_SETMULTIPLESELECTION
+	mov edx,\
+		SCI_SETMULTIPLESELECTION
 	jmp	apiw.sms
 
 .set_stylebits:
-	mov edx,SCI_SETSTYLEBITS
+	mov edx,\
+		SCI_SETSTYLEBITS
 	jmp	apiw.sms
 
 .set_lexer:
 	;--- in R8 lexer
-	mov edx,SCI_SETLEXER
+	mov edx,\
+		SCI_SETLEXER
 	jmp	apiw.sms
 
 .get_lexer:
-	mov edx,SCI_GETLEXER
+	mov edx,\
+		SCI_GETLEXER
 	jmp	apiw.sms
 
 .style_clearall:
-	mov edx,SCI_STYLECLEARALL
+	mov edx,\
+		SCI_STYLECLEARALL
 	jmp	apiw.sms
 
 .set_bold:
-	mov edx,SCI_STYLESETBOLD
+	mov edx,\
+		SCI_STYLESETBOLD
 	jmp	apiw.sms
 
 .set_italic:
-	mov edx,SCI_STYLESETITALIC
+	mov edx,\
+		SCI_STYLESETITALIC
 	jmp	apiw.sms
 
+.is_selrect:
+	mov edx,\
+		SCI_SELECTIONISRECTANGLE
+	jmp	apiw.sms
+
+.get_sels:
+	mov edx,\
+		SCI_GETSELECTIONS
+	jmp	apiw.sms
+
+.get_mainsel:
+	mov edx,\
+		SCI_GETMAINSELECTION
+	jmp	apiw.sms
+
+.get_selnstart:
+	mov edx,\
+		SCI_GETSELECTIONNSTART
+	jmp	apiw.sms
+
+.get_selnend:
+	mov edx,\
+		SCI_GETSELECTIONNEND
+	jmp	apiw.sms
+
+.get_seltxt:
+	mov edx,\
+		SCI_GETSELTEXT
+	jmp	apiw.sms
+
+.repl_sel:
+	mov edx,\
+		SCI_REPLACESEL
+	jmp	apiw.sms
+
+.set_mpaste:
+	mov edx,\
+	SCI_SETMULTIPASTE
+	jmp	apiw.sms
+
+
+.tgtfromsel:
+	mov edx,\
+		SCI_TARGETFROMSELECTION
+	jmp	apiw.sms
+
+.set_sflags:
+	mov edx,\
+		SCI_SETSEARCHFLAGS
+	jmp	apiw.sms
+
+.set_tgtstart:
+	mov edx,\
+		SCI_SETTARGETSTART
+	jmp	apiw.sms
+
+.set_tgtend:
+	mov edx,\
+		SCI_SETTARGETEND
+	jmp	apiw.sms
+
+.search_tgt:
+	mov edx,\
+		SCI_SEARCHINTARGET
+	jmp	apiw.sms
+
+.repl_tgtre:
+	mov edx,\
+		SCI_REPLACETARGETRE
+	jmp	apiw.sms
+
+.repl_tgt:
+	mov edx,\
+		SCI_REPLACETARGET
+	jmp	apiw.sms
+
+.linefrompos:
+	mov edx,\
+		SCI_LINEFROMPOSITION
+	jmp	apiw.sms
+
+.get_lineendpos:
+	mov edx,\
+		SCI_GETLINEENDPOSITION
+	jmp	apiw.sms
 
 ;	;#---------------------------------------------------ö
 ;	;|                helper wraps                       |
 ;	;ö---------------------------------------------------ü
 
-;.get_selstart:
-;	mov eax,SCI_GETSELECTIONSTART
-;	jmp	.sci_param2
-
-;.get_selend:
-;	mov eax,SCI_GETSELECTIONEND
-;	jmp	.sci_param2
-
-;.get_mainsel:
-;	mov eax,SCI_GETMAINSELECTION
-;	jmp	.sci_param2
-
-;.get_sels:
-;	mov eax,SCI_GETSELECTIONS
-;	jmp	.sci_param2
-
-
-;.is_selrect:
-;	mov eax,SCI_SELECTIONISRECTANGLE
-;	jmp	.sci_param2
 
 ;	;------------------------
 ;.sci_param2:
@@ -561,24 +637,459 @@ sci:
 ;	mov eax,SCI_INSERTTEXT
 ;	jmp	.sci_message0
 
-;.linefrompos:
-;	xor edx,edx
-;	mov eax,SCI_LINEFROMPOSITION
-;	jmp	.sci_message0
-
 ;.posfromline:
 ;	xor edx,edx
 ;	mov eax,SCI_POSITIONFROMLINE
 ;	jmp	.sci_message0
 
-;.get_lineendpos:
-;	xor edx,edx
-;	mov eax,SCI_GETLINEENDPOSITION
-;	jmp	.sci_message0
 
-;	;#---------------------------------------------------ö
-;	;|                  COMMENT                          |
-;	;ö---------------------------------------------------ü
+	;#---------------------------------------------------ö
+	;|                  COMMENT                          |
+	;ö---------------------------------------------------ü
+.comment:
+	;--- in RCX hSci
+	;--- in RDX class
+	;--- in R8 command procedure
+	push rbp
+	push rbx
+	push rdi
+	push rsi
+	push r12
+	push r13
+	push r14
+	push r15
+
+	mov rbp,rsp
+	and rsp,-16
+
+	sub rsp,2+10h+\
+		MAX_COMMLINE_LEN	
+
+	mov r15,rsp	;--- buf format regexp
+	xor r12,r12	;--- num selections
+
+	mov rbx,rcx
+	mov rdi,rdx
+	mov rsi,r8
+	
+	mov rcx,rbx
+	call .is_selrect
+	test eax,eax
+	jnz	.commentE
+
+	mov rax,[rdi+\
+		EXT_CLASS.top]
+	test rax,rax
+	jz	.commentE
+
+	mov ecx,[rdi+\
+		EXT_CLASS.top_comml]
+	test ecx,ecx
+	jz	.commentE
+	mov r13,rcx
+	add r13,rax
+
+	mov r8,\
+		SCFIND_REGEXP
+	mov rcx,rbx
+	call .set_sflags
+	
+	mov rcx,rbx
+	call .get_sels
+	dec eax
+	js	.commentE
+	mov r12,rax
+
+	movzx edx,[r13+\
+		TITEM.len] 	;--- len needle ";--- "
+
+	push rdi
+	push rsi
+
+	cmp rsi,\
+		.commline
+	jz	.commentLL
+	cmp rsi,\
+		.uncommline
+	jz	.commentUL
+
+	pop rsi
+	pop rdi
+	jnz	.commentE
+
+.commentUL:
+	;--- format for uncomment line
+	mov rdi,r15
+	mov ecx,\
+		rexpSOL2a.size
+	mov rsi,rexpSOL2a
+	push r15	;--- find start
+	push rcx	;--- len 2a
+	rep movsb
+	
+	mov rdx,rdi
+	lea rcx,[r13+\
+		TITEM.value]
+	call utf8.copyz
+
+	push rax		;--- len needle
+	add rdi,rax
+
+	mov ecx,\
+		rexpSOL2b.size
+	mov rsi,rexpSOL2b
+	push rcx		;--- len 2b
+	rep movsb
+	
+	mov r15,rdi
+	mov ecx,\
+		rexpTAG2.size
+	mov rsi,rexpTAG2
+	rep movsb
+
+	pop rax
+	mov r14,rax
+	pop rax
+	add r14,rax
+	pop rax
+	add r14,rax
+	ror r14,8
+	pop rax
+	or r14,rax
+	jmp	.commentF
+
+.commentLL:
+	;--- format for comment line	
+	mov rdi,r15
+	mov rsi,rexpSOL1
+	mov ecx,\
+		rexpSOL1.size
+	mov r14,rcx
+	ror r14,8
+	or r14,rdi
+	rep movsb
+	mov r15,rdi
+
+	lea rcx,[r13+\
+		TITEM.value]
+	mov rdx,rdi
+	call utf8.copyz
+
+.commentF:
+	pop rsi
+	pop rdi
+	call rsi
+
+.commentE:
+	mov rsp,rbp
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop rsi
+	pop rdi
+	pop rbx
+	pop rbp
+	ret 0
+
+	;#---------------------------------------------------ö
+	;|                  COMMLINE                         |
+	;ö---------------------------------------------------ü
+
+.commline:
+	;--- (uses RBX hSci)
+	;--- (uses R12 num selections)
+	;--- (uses R14 buff find R14 msb = len)
+	;--- (uses r15 buffer replace)
+	push rbp
+	mov rbp,rsp
+
+.commlineA7:
+	mov r8,[pMp]
+	mov rdi,\
+		[r8+MPURP.hPrg]
+	
+.commlineA3:
+	;--- get sel start end
+	mov rcx,r12
+	call .get_selstartend
+	mov r13,rdx
+	call .get_lines
+
+	push rax
+	push rdx
+
+	mov r9,rcx
+	xor r8,r8
+	mov rcx,rdi
+	call pbar.setrange
+
+	xor r8,r8
+	mov rcx,rdi
+	call pbar.pos
+
+	xor r8,r8
+	inc r8
+	mov rcx,rdi
+	call pbar.setstep
+	
+	pop rdx
+	pop rax
+
+;@break
+	or ecx,-1
+	sub rsp,4
+	mov esi,\
+		STACK_LIMIT
+	mov [rsp],ecx
+
+.commlineA2:
+	cmp rsp,rsi
+	ja	.commlineA4
+
+	;--- notify out of stack:
+	jmp	.commlineA6
+
+.commlineA4:
+	mov rdx,r13
+	call .set_tgtstartend
+
+	mov r9,r14
+	and r9d,r9d
+	mov r8,r14
+	rol r8,8
+	and r8d,0FFh
+	mov rcx,rbx
+	call .search_tgt
+
+	sub rsp,8
+	mov [rsp],eax
+	mov [rsp+4],eax
+
+	mov rcx,rdi
+	call pbar.step
+	mov eax,[rsp]
+	add rsp,4
+	inc eax
+	jnz	.commlineA2
+	add rsp,4
+
+.commlineA6:
+	mov r9,rbp
+	sub r9,rsp
+	shr r9,2
+	xor r8,r8
+	mov rcx,rdi
+	call pbar.setrange
+
+	xor r8,r8
+	mov rcx,rdi
+	call pbar.pos
+
+.commlineA1:
+	mov eax,[rsp]
+	add rsp,4
+	inc eax
+	jz	.commlineA5
+
+	dec eax
+	mov edx,eax
+	call .set_tgtstartend
+
+	mov r9,r15
+	mov r8,-1
+	mov rcx,rbx
+	call .repl_tgt	
+
+	mov rcx,rdi
+	call pbar.step
+	jmp	.commlineA1
+
+.commlineA5:
+	mov rsp,rbp
+	dec r12
+	jns	.commlineA3
+
+	xor r8,r8
+	mov rcx,rdi
+	call pbar.pos
+
+	pop rbp
+	ret 0
+
+
+	;#---------------------------------------------------ö
+	;|                UNCOMMLINE                         |
+	;ö---------------------------------------------------ü
+
+.uncommline:
+	;--- in RDX len of needle
+	;--- (uses RBX hSci)
+	;--- (uses R12 num selections)
+	;--- (uses r14 buffer find)
+	
+	push rbp
+	mov rbp,rsp
+
+	mov r8,[pMp]
+	mov rdi,\
+		[r8+MPURP.hPrg]
+
+.uncommlineA3:
+	;--- get sel start end
+	mov rcx,r12
+	call .get_selstartend
+	mov r13,rdx
+	call .get_lines
+
+	push rax
+	push rdx
+
+	mov r9,rcx
+	xor r8,r8
+	mov rcx,rdi
+	call pbar.setrange
+
+	xor r8,r8
+	mov rcx,rdi
+	call pbar.pos
+
+	xor r8,r8
+	inc r8
+	mov rcx,rdi
+	call pbar.setstep
+	
+	pop rdx
+	pop rax
+;@break
+
+.uncommlineA2:
+	mov rdx,r13
+	call .set_tgtstartend
+
+	mov r9,r14
+	and r9d,r9d
+	mov r8,r14
+	rol r8,8
+	and r8d,0FFh
+	mov rcx,rbx
+	call .search_tgt
+
+	inc eax
+	jz .uncommlineA5
+	dec eax
+
+	push rax
+	push rax
+
+	mov r8,rax
+	mov rcx,rbx
+	call .linefrompos
+
+	mov r8,rax
+	mov rcx,rbx
+	call .get_lineendpos
+	mov r15,rax
+	mov edx,eax
+	pop rax
+	sub r15,rax
+	call .set_tgtstartend
+	
+	mov r9,r14
+	mov rax,r14
+	rol rax,8
+	and eax,0FFh
+	and r9d,r9d
+	add r9,rax
+
+	mov r8,-1
+	mov rcx,rbx
+	call .repl_tgtre
+	sub r15,rax
+	sub r13,r15
+
+	mov rcx,rdi
+	call pbar.step
+	pop rax
+	inc eax
+	jz	.uncommlineA5
+	dec eax
+	add rax,r15
+	jmp	.uncommlineA2
+
+.uncommlineA5:
+	mov rsp,rbp
+	dec r12
+	jns	.uncommlineA3
+
+	xor r8,r8
+	mov rcx,rdi
+	call pbar.pos
+
+	pop rbp
+	ret 0
+
+
+.get_lines:
+	;--- IN EAX start pos
+	;--- IN EDX end pos
+	;--- (uses RBX hSci)
+	;--- RET RCX lines
+	;--- RAX,RDX untouched
+	push rax
+	push rdx
+	push rax
+
+	mov r8,rdx
+	mov rcx,rbx
+	call .linefrompos
+	xchg rax,[rsp]
+
+	mov rcx,rbx
+	mov r8,rax
+	call .linefrompos
+	pop rcx
+	sub rcx,rax
+	pop rdx
+	pop rax
+	ret 0
+
+
+.set_tgtstartend:
+	;--- IN EAX start
+	;--- IN EDX end
+	;--- (uses RBX hSci)
+	mov rcx,rbx
+	push rax
+	mov r8,rdx
+	call .set_tgtend
+	pop r8
+	mov rcx,rbx
+	push rax
+	call .set_tgtstart
+	pop rdx
+	ret 0
+
+	
+	
+.get_selstartend:
+	;--- in RCX line/block
+	;--- (uses RBX hSci)
+	;--- RET ECX len of line/block
+	;--- RET EAX start
+	;--- RET EDX end
+	push rcx
+	mov r8,rcx
+	mov rcx,rbx
+	call .get_selnend
+	xchg rax,[rsp]
+	mov rcx,rbx
+	mov r8,rax
+	call .get_selnstart
+	pop rdx
+	mov rcx,rdx
+	sub rcx,rax
+	ret 0
 
 ;proc .comment\
 ;	_hsci,\

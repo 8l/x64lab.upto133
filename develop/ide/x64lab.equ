@@ -66,10 +66,6 @@
 	MI_USER    equ 1100h
 	MI_OTHER	 equ 1200h
 
-	MI_FIRSTOOL equ 1400h
-	MI_LASTTOOL	equ 1500h
-	MAX_TOOLS		equ MI_LASTTOOL - MI_FIRSTOOL
-
 	MP_WSPACE      equ 1001h
    MI_WS_LOAD    equ 1002h
    MI_WS_NEW     equ 1003h
@@ -95,12 +91,12 @@
    MI_FI_BACK   equ 102Ah
 
 	MP_EDIT   				equ 1040h
-   MI_ED_LNK  			equ 1041h
+	 MI_ED_LNK  			equ 1041h
    MI_ED_REMITEM		equ 1042h
 	 MI_ED_RELSCICLS	equ 1043h
 
 	MP_CONF   		equ 1060h
-	MI_CONF_KEY		equ 1061h
+	 MI_CONF_KEY		equ 1061h
 	
   MP_DEVT   		equ 1070h
 	 MI_DEVT_ADD	equ 1071h
@@ -109,7 +105,13 @@
 	 MI_DEVT_REMG equ 1074h
 	 MI_DEVT_MAN  equ 1075h
 	 MI_DEVT_REL  equ 1076h
-	
+
+	MP_SCI				equ 1077h
+	 MI_SCI_COMML	equ 1078h
+	 MI_SCI_COMMB	equ 1079h
+	 MI_SCI_UNCOMML	equ 107Ah
+	 MI_SCI_UNCOMMB	equ 107Bh
+
 
 	MP_PATH        equ 10A0h
 	 MI_PA_CONS    equ 10A1h

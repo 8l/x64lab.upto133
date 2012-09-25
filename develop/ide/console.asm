@@ -31,7 +31,8 @@ console:
 .wm_poschged:
 	mov rbx,[pCons]
 	sub rsp,sizeof.RECT*3
-	lea rdi,[rsp+sizeof.RECT*2]
+	lea rdi,[rsp+\
+		sizeof.RECT*2]
 	mov rdx,rdi
 	mov rcx,[.hwnd]
 	call apiw.get_clirect

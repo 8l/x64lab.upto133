@@ -46,6 +46,9 @@
 	fontsize   font size
 	italic     set italic
 	clearall   applies settings as default
+	commline   define string to un/comment a single line
+	commstart  define string to comment-start a block of lines
+	commend    define string to comment-end a block of lines
 
   
 	- Reload Scintilla Classes

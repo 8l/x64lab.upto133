@@ -565,7 +565,6 @@ mpurp:
 	;call mnu.get_dir
 	;test edx,edx
 	;cmovnz rax,rdx
-
 	mov r11,\
 		SW_SHOWDEFAULT
 	lea r10,[rax+\

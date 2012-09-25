@@ -17,6 +17,7 @@
 	03:0C1DCA5E40C09F92Ch,"config"(
 		03:09DF3F8806B4A8DB1h,"ext" (
 			04:09DF3F8806B4A8DB1h,"assembly.utf8"
+			04:09DF3F8806B4A8DB1h,"topfile.utf8"
 		)
 	)
 

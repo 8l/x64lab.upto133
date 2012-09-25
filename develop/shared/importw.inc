@@ -294,7 +294,7 @@
 		SHGetFileInfoW,"SHGetFileInfoW",\
 		SHGetKnownFolderPath,"SHGetKnownFolderPath",\
 		Shell_GetImageLists,"Shell_GetImageLists",\
-		ShellExecuteW,"ShellExecuteW"
+		ShellExecuteExW,"ShellExecuteExW"
 
 	import SHLWAPI,\
 		IUnknown_QueryService,"IUnknown_QueryService"

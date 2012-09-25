@@ -1,4 +1,18 @@
 
+- version 0.0.129 (released on 25.09.2012 ) Pre-Beta 
+  +MNU add Edit|Scintilla|Comment line/s using regexp
+  +MNU add Edit|Scintilla|Uncomment line/s  using regexp
+  +CFG [config\ext\*.utf8] "commend" param (see syntax_colouring.txt)
+  +CFG [config\ext\*.utf8] "commstart" param (see syntax_colouring.txt)
+  +CFG [config\ext\*.utf8] "commline" param (see syntax_colouring.txt)
+
+- version 0.0.127 (released on 17.09.2012 ) " ... " 
+  +BEH Apply colourizing to previous blank file
+  +FIL [config\ext\topfile.utf8] Class for TOP files
+  +FIL [config\ext\utf8.topfile] Extension file
+  +FIL [config\ext\top.topfile] Extension file
+  +MNU add Edit|Scintilla
+
 - version 0.0.126 (released on 12.09.2012 ) " ... " 
   +API Adding	[dock64.load],[dock64.save]
   +FIL [config\docking.bin] must be there, for now.

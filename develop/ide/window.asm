@@ -39,7 +39,6 @@ win:
 	mov rcx,rax
 	call iml.set_bkcol
 
-;@break
 	xor eax,eax
 	mov [rdi+58h],rax
 	mov [rdi+50h],rsi
@@ -294,6 +293,34 @@ statb:
 	mov edx,SB_GETTEXTW
 	jmp	apiw.sms
 
+   ;ü------------------------------------------ö
+   ;|   PROGRESSBAR                            |
+   ;#------------------------------------------ä
+
+pbar:
+.setstep:
+	;--- in R8 step
+	mov edx,\
+		PBM_SETSTEP
+	jmp	apiw.sms
+
+.step:
+	mov edx,\
+		PBM_STEPIT 
+	jmp	apiw.sms
+
+.pos:
+	;--- in R8 pos
+	mov edx,\
+		PBM_SETPOS
+	jmp	apiw.sms
+
+.setrange:
+	;--- in R8 min
+	;--- in R9 max
+	mov edx,\
+		PBM_SETRANGE32
+	jmp	apiw.sms
 
 
    ;ü------------------------------------------ö

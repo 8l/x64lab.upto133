@@ -120,11 +120,10 @@ edit:
 	call ext.load
 	test eax,eax
 	jz	.openB2
-
+	
 	mov rdx,rbx
 	mov rcx,rax
 	call ext.apply
-
 
 .openB2:
 	test r12,r12

@@ -80,7 +80,7 @@
 			MI_ED_LNK,0,U8+UR,db "Insert new smartlink",\
 			MI_ED_REMITEM,0,U8+UR,db "Remove item from workspace",\
 			MI_ED_RELSCICLS,0,U8+UR,db "Reload Scintilla classes",\
-		MP_CONF,0,U8+UR,db "Configure",\
+		MP_CONF,0,U8+UR,db "C&onfigure",\
 		MI_CONF_KEY,0,U8+UR,db "Key bindings",\
 		MP_DEVT,0,U8+UR,db "Developer tools",\
 			MI_DEVT_ADD,0,U8+UR,db "Browse to add new tool",\
@@ -89,6 +89,11 @@
 			MI_DEVT_REMG,0,U8+UR,db "Remove GROUP",\
 			MI_DEVT_MAN,0,U8+UR,db "Manage tools file (expert user)",\
 			MI_DEVT_REL,0,U8+UR,db "Reload tools",\
+		MP_SCI,0,U8+UR,db "Scintilla",\
+			MI_SCI_COMML,0,U8+UR,db "Comment by line/s",\
+			MI_SCI_COMMB,0,U8+UR,db "Comment block/s",\
+			MI_SCI_UNCOMML,0,U8+UR,db "Uncomment by line/s",\
+			MI_SCI_UNCOMMB,0,U8+UR,db "Uncomment block/s",\
 		MP_PATH,0,U8+UR,db "[?]",\
 			MI_PA_CONS,0,U8+UR,db "Open console here",\
 			MI_PA_BROWSE,0,U8+UR,db "Browse",\

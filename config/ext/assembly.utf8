@@ -8,6 +8,7 @@
 	multisel:1
 	tabwidth:2
 	selback:1,0BABEBAh
+	commline:";---"
 
 	;--- IDX_CPUINSTRUCTION = 0
 	keyword:0,"aaa aad aam aas adc add and call cbw" \

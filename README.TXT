@@ -17,11 +17,13 @@
   the last octet to 255. i will try to do my best in max 40 days
   from the current date. from now up to that beta-date 
   something may change completely. this is especially intended for
-  those user configuration files in the [config] directory,
-  respectively,
+  dll plugins in the [plugin\*.*] and those user configuration 
+  files in the [config] directory, respectively,
 
  - [config\accel.utf8]   keyboard accelerators
  - [config\config.utf8]  general config file
+ - [config\devtool.utf8] config file for tools
+ - [config\docking.bin]  repositional infos
  - [config\ext\*.*]      classes and file-extensions
  
   please, save them before unpacking a new build.
@@ -206,14 +208,14 @@ Summary:
      and use it in x64lab whatever its internal code may be: 
      open source or not, freeware, shareware etc.
 
-   - x64lab uses config files in a proprietary format called
-     TOP (Text Object Parser) format. i invented that format and
+   - x64lab uses config files in a open source new format called
+     TOP (Text Object Parser). i invented that format and
      that tecnology myself because i was bored of standard .ini files 
      and the redundancy of .xml & C. formats. i needed something
      powerful like CSV files, but capable to store nesting objects too.
 
      a TOP format file is always an utf-8 encoded file. also
-     forget ANSI on editing it ! x64lab doesent write into 
+     forget ANSI on editing it ! x64lab doesnt read/write into 
      Windows registry.
 
    - x64lab creates/uses some subdirectories to work.

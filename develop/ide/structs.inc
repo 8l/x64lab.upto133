@@ -106,15 +106,20 @@
 		name	db 28 dup (0)
 	ends
 
+	MAX_COMMLINE_LEN equ 62
 
 	struct EXT_CLASS
 		top		dq ?	;--- TOP mem of [config\ext\name.utf8]
 		next	dq ?	;--- next top class
 		id		dq ?	;--- hash class ID
-
 		dsize	dd ?	;--- top
 		items	dd ?	;--- top
-		name	db (128-32) dup (0)
+		;-------------------
+		top_comml	dd 0
+		top_comms	dd 0
+		top_comme	dd 0
+							dd 0
+		name	db 128 dup (0)
 	ends
 
 	struct EXT_SLOT
@@ -145,31 +150,37 @@
 	
 
 	struct LABFILE
-		dq 0
+						dq 0
 		union
 			hItem	dq 0	;--- treeitem
 			hRoot	dq 0	;--- treeroot
 		ends
+
+		;-------------------------------------
 		union
 			hSci	dq 0	;--- scintilla win
 			hBin	dq 0	;--- hex container
 			hView	dq 0	;--- generic view window
 		ends
-		dir		dq 0	;--- slot dir
+		dir			dq 0	;--- slot dir
 
-		alen	dw 0	;--- total available following len
+		;-------------------------------------
+		alen	dw 0	;--- total avail following len
 		cpts	dw 0	;--- cpts, text following item
 		idx		dw 0	;--- index slot
 					db 0	;---
 		state	db 0	;--- treitem state 
-							;--- TVE_COLLAPSE	= 0001h
-							;--- TVE_EXPAND  	= 0002h
-		ext		dq 0	;--- extension slot
-		type	dw 0	;--- LF_?
+			;--- TVE_COLLAPSE	= 0001h
+			;--- TVE_EXPAND  	= 0002h
+					dq 0	;---
+
+		;-------------------------------------
+		type		dw 0	;--- LF_?
 						db 0	;---
 		iBlank	db 0 	;--- index blank
 		iIcon		dd 0	;--- index icon
 		hIcon		dq 0	;--- icon handle
+		;-------------------------------------
 ends
 
 	struct EDIT

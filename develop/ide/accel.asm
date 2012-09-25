@@ -698,6 +698,14 @@ accel:
 	push 0
 	push MI_CONF_KEY
 	push [hMP_CONF]
+
+	push 0
+	;push MI_SCI_UNCOMMB
+	;push MI_SCI_COMMB
+	push MI_SCI_UNCOMML
+	push MI_SCI_COMML
+	push [hMP_SCI]
+
 	push 0
 	push MI_DEVT_ADD
 	push MI_DEVT_REM
@@ -706,14 +714,17 @@ accel:
 	push MI_DEVT_MAN
 	push MI_DEVT_REL
 	push [hMP_DEVT]
+
 	push 0
 	push MI_PA_BROWSE
 	push [hMP_PATH]
+
 	push 0
 	push MI_ED_LNK
 	push MI_ED_REMITEM
 	push MI_ED_RELSCICLS
 	push [hMP_EDIT]
+
 	push 0
 	push MI_FI_OPEN
 	push MI_FI_IMP
@@ -722,6 +733,7 @@ accel:
 	push MI_FI_SAVE
 	push MI_FI_CLOSE
 	push [hMP_FILE]
+
 	push 0
 	push MI_WS_LOAD
 	push MI_WS_NEW

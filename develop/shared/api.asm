@@ -1186,15 +1186,64 @@ apiw:
 
 @using .shexec
 .shexec:
+	push rbp
+	mov rbp,rsp
+	and rsp,-16
+
+	sub rsp,\
+		sizeof.SHELLEXECUTEINFOW+10h
+
+	xor eax,eax
+	mov [rsp],rcx
+	mov [rsp+8],rdi
+
+	mov rcx,\
+		sizeof.SHELLEXECUTEINFOW / 8
+	lea rdi,[rsp+10h]
+	rep stosq
+
+	pop rcx
+	pop rdi
+
   ;--- in RCX hwnd handle to parent window
 	;--- in RDX lpOperation   pointer to string that specifies operation to perform
 	;--- in R8  lpFile	      pointer to filename or folder name string
 	;--- in R9  lpParameters  pointer to string that specifies executable-file parameters 
 	;--- in R10 lpDirectory 	pointer to string that specifies default directory
 	;--- in R11 nShowCmd 	    whether file is shown when opened
-	mov rax,[ShellExecuteW]
-	jmp .prologP
+	mov [rsp+\
+		SHELLEXECUTEINFOW.cbSize],\
+		sizeof.SHELLEXECUTEINFOW
+
+	mov [rsp+\
+		SHELLEXECUTEINFOW.fMask],\
+		SEE_MASK_DOENVSUBST or \
+		SEE_MASK_FLAG_NO_UI
+	
+	mov [rsp+\
+		SHELLEXECUTEINFOW.hwnd],rcx
+
+	mov [rsp+\
+		SHELLEXECUTEINFOW.lpVerb],rdx
+	
+	mov [rsp+\
+		SHELLEXECUTEINFOW.lpFile],r8
+
+	mov [rsp+\
+		SHELLEXECUTEINFOW.lpParameters],r9
+
+	mov [rsp+\
+		SHELLEXECUTEINFOW.lpDirectory],r10
+
+	mov [rsp+\
+		SHELLEXECUTEINFOW.nShow],r11d
+
+	mov rax,[ShellExecuteExW]
+	mov rcx,rsp
+
+	jmp .epilog0
 @endusing
+
 
 @using .shget_kfpath
 .shget_kfpath:
