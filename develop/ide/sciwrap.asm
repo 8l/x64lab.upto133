@@ -591,6 +591,16 @@ sci:
 		SCI_GETLINEENDPOSITION
 	jmp	apiw.sms
 
+.beg_undo:
+	mov edx,\
+		SCI_BEGINUNDOACTION
+	jmp	apiw.sms
+
+.end_undo:
+	mov edx,\
+		SCI_ENDUNDOACTION
+	jmp	apiw.sms
+
 ;	;#---------------------------------------------------ö
 ;	;|                helper wraps                       |
 ;	;ö---------------------------------------------------ü
@@ -671,7 +681,10 @@ sci:
 	mov rbx,rcx
 	mov rdi,rdx
 	mov rsi,r8
-	
+
+	mov rcx,rbx
+	call .beg_undo
+
 	mov rcx,rbx
 	call .is_selrect
 	test eax,eax
@@ -781,6 +794,9 @@ sci:
 	call rsi
 
 .commentE:
+	mov rcx,rbx
+	call .end_undo
+
 	mov rsp,rbp
 	pop r15
 	pop r14

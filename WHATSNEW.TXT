@@ -1,4 +1,8 @@
 
+- version 0.0.131 (released on 29.09.2012 ) Pre-Beta 
+  +FIL add [develop\ide\x64lab.svg] SVG logo
+  +BEH group undoS in a single operation on un/commenting
+
 - version 0.0.129 (released on 25.09.2012 ) Pre-Beta 
   +MNU add Edit|Scintilla|Comment line/s using regexp
   +MNU add Edit|Scintilla|Uncomment line/s  using regexp

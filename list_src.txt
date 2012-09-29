@@ -53,7 +53,8 @@ develop\ide\wspace.asm
 develop\ide\x64lab.equ 
 develop\ide\x64lab.ico 
 develop\ide\x64lab.inc 
-develop\ide\x64lab.rc  
+develop\ide\x64lab.rc
+develop\ide\x64lab.svg
 
 develop\macro\com_macro.inc
 develop\macro\EXPORT.INC

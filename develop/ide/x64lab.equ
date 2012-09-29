@@ -96,7 +96,7 @@
 	 MI_ED_RELSCICLS	equ 1043h
 
 	MP_CONF   		equ 1060h
-	 MI_CONF_KEY		equ 1061h
+	 MI_CONF_KEY	equ 1061h
 	
   MP_DEVT   		equ 1070h
 	 MI_DEVT_ADD	equ 1071h
