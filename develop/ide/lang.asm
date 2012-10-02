@@ -84,12 +84,19 @@ lang:
 	call mnu.reset
 
 	sub rsp,\
-	 FILE_BUFLEN+10h
+	 FILE_BUFLEN+20h
 	
 	xor edx,edx
 	mov rdi,rsp
 
+	mov al,"*"
+	stosw
+	mov rax,qword[uzDll]
+	stosq
 	xor eax,eax
+	stosw
+	stosd
+
 	stosq
 	stosq
 
@@ -109,13 +116,12 @@ lang:
 	;---	in R10 ucback   ;--- address of a calback
 	;---	in R11 uparam   ;--- user param
 	;---------------------------------------------------
-;@break
-	mov r11,rsp
+	lea r11,[rsp+10h]
 	mov r10,.cb_lang
 	xor r8,r8
-	xor r9,r9
-	mov edx,\
-		FILE_ATTRIBUTE_DIRECTORY
+	inc r8
+	mov r9,rsp
+	mov edx,FILE_ATTRIBUTE_DIRECTORY
 	mov rcx,rdi
 	call [bk64.listfiles]
 
@@ -132,7 +138,7 @@ lang:
 	;--- in R8h lenpath
 	;--- in R9 uparam
 	;--- ret RAX = 1 continue, 0 stop search
-;@break
+
 	test rdx,rdx
 	jz	.cb_langA
 
@@ -277,10 +283,10 @@ lang:
 	mov rcx,[tMP_LANG]
 	call apiw.mni_ins_bypos
 
-;---	lea r8,[rsp+\
-;---		sizeof.MENUITEMINFOW]
-;---	mov rdx,r13
-;---	call art.cout2XU
+	lea r8,[rsp+\
+		sizeof.MENUITEMINFOW]
+	mov rdx,r13
+	call art.cout2XU
 
 .set_itemE:
 	mov rsp,rbp

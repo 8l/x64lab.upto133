@@ -1,5 +1,6 @@
 
 - version 0.0.133 (released on 02.10.2012 ) " ... " 
+  +ALG corrected flaw by loading one language
   +FIL [develop\equates\nls.inc]
   +FIL [develop\ide\lang.asm]
   +BEH After changing language ask to restart
