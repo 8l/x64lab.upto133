@@ -12,7 +12,7 @@
   ;ö-------------------------------------------------ä
 
 	
-	@make_lang LANG
+	@make_lang LANG,LCID
 	@make_uz \
 		UZ_ERR_NOFILE,0,U8+UR,db "Cannot find specified file",\
 		UZ_HOME,0,U8+UR,db "http://sites.google.com/site/x64lab/",\
@@ -81,7 +81,8 @@
 			MI_ED_REMITEM,0,U8+UR,db "Remove item from workspace",\
 			MI_ED_RELSCICLS,0,U8+UR,db "Reload Scintilla classes",\
 		MP_CONF,0,U8+UR,db "C&onfigure",\
-		MI_CONF_KEY,0,U8+UR,db "Key bindings",\
+			MI_CONF_KEY,0,U8+UR,db "Key bindings",\
+		MP_LANG,0,U8+UR,db "Language",\
 		MP_DEVT,0,U8+UR,db "Developer tools",\
 			MI_DEVT_ADD,0,U8+UR,db "Browse to add new tool",\
 			MI_DEVT_REM,0,U8+UR,db "Remove tool",\
@@ -156,6 +157,7 @@
 			\;---------------------------------------------------------------------
 			UZ_NOINV,0,U8+UR,db "No invert",\
 			UZ_NOTASS,0,U8+UR,db "No assignment",\
-			UZ_WZERO,0,U8+UR,db "0000"
+			UZ_WZERO,0,U8+UR,db "0000",\
+			UZ_RESTART,0,U8+UR,db "Please restart x64lab to apply change. Close it now ?"
 
 

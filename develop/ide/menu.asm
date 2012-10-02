@@ -32,6 +32,12 @@ mnu:
 	mov rbp,rsp
 	and rsp,-16
 
+;---	mov rcx,[hMnuMain]
+;---	test rcx,rcx
+;---	jz	@f
+;---	call apiw.mnu_destroy
+	
+;---@@:
 	;--- create main menu
 	call apiw.mnu_create
 	mov [hMnuMain],rax
@@ -66,7 +72,13 @@ mnu:
 	mov rcx,[hMnuMain]
 	call .mp_add
 
-		mov r9,2
+	mov r9,1
+	mov r8,rax
+	mov rdx,tMP_LANG
+	mov rcx,[tMP_CONF]
+	call .mp_add
+
+		mov r9,3
 		mov r8,rax
 		mov rdx,tMP_DEVT
 		mov rcx,[tMP_CONF]
@@ -153,11 +165,15 @@ mnu:
 
 	lodsw	
 	stosw	;--- store icon
+
+	add rdi,4
 	mov [.mii.dwTypeData],rdi
 
 	mov r8,rdi
 	mov edx,U16
 	call [lang.get_uz]
+
+	mov word[rdi-2],ax	;--- len
 	add rdi,rax
 	xor eax,eax
 	stosw
@@ -194,6 +210,7 @@ mnu:
 		or MIIM_BITMAP
 
 .mp_addD:
+
 	mov [.mii.fMask],eax
 	mov r9,rbx
 	mov rdx,r15
@@ -258,6 +275,37 @@ mnu:
 ;	ret 0
 
 	;#---------------------------------------------------ö
+	;|                RESET                              |
+	;ö---------------------------------------------------ü
+
+.reset:
+	;--- in RCX hMenuPopup
+	push rbx
+	push rdi
+
+	mov rbx,rcx
+	call apiw.get_mnuicount
+	test eax,eax
+	jz	.resetE
+	mov rdi,rax
+	jmp	.resetB
+
+.resetA:	
+	mov r8,MF_BYPOSITION	
+	mov rdx,rdi
+	mov rcx,rbx
+	call apiw.mnu_del
+
+.resetB:
+	dec rdi
+	jns .resetA
+	
+.resetE:	
+	pop rdi
+	pop rbx
+	ret 0
+
+	;#---------------------------------------------------ö
 	;|                SET_DIR                            |
 	;ö---------------------------------------------------ü
 
@@ -315,3 +363,5 @@ mnu:
 	pop rbx
 	pop rbp
 	ret 0
+
+

@@ -1,4 +1,14 @@
 
+- version 0.0.133 (released on 02.10.2012 ) " ... " 
+  +FIL [develop\equates\nls.inc]
+  +FIL [develop\ide\lang.asm]
+  +BEH After changing language ask to restart
+  +DIR [plugin\lang\en-US] english language dll is there now.
+       folder name follows the "Culture Name" (no neutral name allowed for Vista)
+       from the IETF language tag http://en.wikipedia.org/wiki/IETF_language_tag
+       http://www.microsoft.com/resources/msdn/goglobal/default.mspx
+  +GUI improved font spacing on menuitems
+
 - version 0.0.131 (released on 29.09.2012 ) Pre-Beta 
   +FIL add [develop\ide\x64lab.svg] SVG logo
   +BEH group undoS in a single operation on un/commenting

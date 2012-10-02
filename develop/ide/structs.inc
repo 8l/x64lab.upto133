@@ -36,6 +36,15 @@
 		dir		db FILE_BUFLEN dup (?)
 	ends
 
+	struct LANG
+		lcid	dw 0
+					dw 0
+					dd 0
+					dq 0
+		lang8	 db 16 dup (0)
+		lang16 db 32 dup (0)
+	ends
+
 	struct HU
 		rc		RECT
 					dq 0
@@ -95,6 +104,8 @@
 	struct OMNI	
 		id			dw 0
 		iIcon		dw 0
+						dw 0
+		len			dw 0
 		;--- follow menu text --
 	ends
 	
@@ -235,20 +246,17 @@ ends
 
 	struct CONFIG
 		version	dw 64h
+		lcid		dw 0		;--- lang cultural id
 		flags		db 0
-						db 0
-						dd ?
-						dd ?
 		fshow		db 1
 		flog		db FALSE
 		fsplash	db FALSE
-						db 0
+						dd ?
+						dd ?
 		;-------------------------
-		lang8		db 8 dup (0)
-						dd 0
-						dd 0
+		lang8		db 16 dup (0)
 		;-------------------------
-		lang16  db 16 dup (?)
+		lang16  db 32 dup (?)
 		;-------------------------
 		update				dd FALSE
 		session				dd 0

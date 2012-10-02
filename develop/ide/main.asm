@@ -80,6 +80,7 @@ section '.code' code readable executable
 	include "iodlg.asm"
 	include "devtool.asm"
 	include "ext.asm"
+	include "lang.asm"
 
 start:
 	;	call get_version
@@ -192,21 +193,6 @@ start:
 	mov	[.wcx.hIcon],rax
 	mov	[.wcx.hIconSm],rax
 
-	;	mov rdx,MNU_X64LAB
-	;	mov rcx,rsi
-	;	call apiw.mnu_load
-	;	mov [hMnuMain],rax
-
-	;	mov rdx,MPOS_WIN
-	;	mov rcx,rax
-	;	call apiw.get_submnu
-	;	mov [hMnuWin],rax
-
-	;	mov rdx,MPOS_WIN_UNB
-	;	mov rcx,rax
-	;	call apiw.get_submnu
-	;	mov [hMnuUnb],rax
-
 	call mnu.setup
 
 	mov edx,IDC_ARROW
@@ -237,6 +223,7 @@ start:
 	mov [rbx+58h],rcx
 	mov rax,[hInst]
 	mov [rbx+50h],rax
+
 	mov rax,[hMnuMain]
 	mov [rbx+48h],rax
 	mov [rbx+40h],rcx
@@ -264,12 +251,11 @@ start:
 	call [CreateWindowExW]
 	test rax,rax
 	jz .err_startD
-
 	mov rdi,rax
 
 	movzx rdx,\
 		[.conf.fshow]
-	mov rcx,rax
+	mov rcx,rdi
 	call apiw.show
 
 	mov rcx,rdi
@@ -397,12 +383,30 @@ winproc:
 	jz	.wm_measitem
 	cmp edx,WM_SYSCOMMAND
 	jz	.wm_syscomm
+	cmp edx,WM_INITMENUPOPUP
+	jz	.wm_init_mnp
 	cmp edx,WM_CLOSE
 	jz	.wm_close
-	cmp edx,WM_QUERYENDSESSION
+	cmp edx,\
+		WM_QUERYENDSESSION
 	jz	.wm_close
 	jmp	.defwndproc
 
+.wm_init_mnp:
+	cmp r8,[tMP_LANG]
+	jnz	.ret0
+
+	;ü------------------------------------------ö
+	;|     MP_LANG                             |
+	;#------------------------------------------ä
+
+.mp_lang:
+	call lang.enum
+	jmp	.ret0
+
+	;ü------------------------------------------ö
+	;|     WM_CLOSE                             |
+	;#------------------------------------------ä
 
 .wm_close:
 	mov rcx,ASK_SAVE
@@ -450,8 +454,6 @@ winproc:
 
 .wm_command:
 	mov eax,r8d
-;	cmp ax,MI_WI_CLOSEALL
-;	jz	.mi_wi_closeall
 	cmp ax,MI_FI_OPEN
 	jz	.mi_fi_open
 	cmp ax,MI_FI_SAVE
@@ -498,7 +500,40 @@ winproc:
 	jz	.mi_sci_comml
 	cmp ax,MI_SCI_UNCOMML
 	jz	.mi_sci_uncomml
-	jmp	.defwndproc
+
+	;--- language items
+	cmp ax,MI_LANG
+	jb	.defwndproc
+	cmp ax,MI_LANG+255
+	ja	.defwndproc
+
+.mi_lang:
+	sub rsp,\
+		sizea16.MENUITEMINFOW
+
+	mov r9,rsp
+	mov [r9+\
+		MENUITEMINFOW.fMask],\
+		MIIM_DATA
+	mov edx,eax
+	mov rcx,[tMP_LANG]
+	call apiw.mni_get_byid
+
+	mov rcx,[rsp+\
+		MENUITEMINFOW.dwItemData]
+	test rcx,rcx
+	jz	.ret0
+
+	mov rdx,[pConf]
+	cmp cx,[rdx+\
+		CONFIG.lcid]
+	jz	.ret0
+
+	call lang.reload
+	cmp eax,IDNO
+	jnz	.mi_ws_exit
+	jmp	.ret0
+
 
 	;ü------------------------------------------ö
 	;|     MI_SCI_UNCOMMLine                      |
@@ -555,16 +590,13 @@ winproc:
 	mov rcx,[rbx+\
 		LABFILE.hSci]
 	call sci.comment
-
-
 	jmp	.ret0
+
 	;ü------------------------------------------ö
 	;|     MI_CONF_KEY                          |
 	;#------------------------------------------ä
 
 .mi_conf_key:
-	;IN EDX= user param is an ID menuitem
-;@break
 	xor r10,r10
 	mov r9,accel.proc
 	mov r8,[hMain]
@@ -1214,6 +1246,7 @@ winproc:
 
 .wm_create:
 	mov [hMain],rcx
+	mov rcx,[hMain]
 	call win.controls
 
 	call devtool.load
@@ -1399,10 +1432,10 @@ winproc:
 	call iml.draw
 
 .wm_dis_mnuB1:	
-	;	mov rdx,[hMnuFont]
-	;	mov rcx,[rbx+DRAWITEMSTRUCT.hDC]
-	;	call apiw.selobj
-	;	mov r12,rax
+;---	mov rdx,[hMnuFont]
+;---	mov rcx,[.dis.hDC]
+;---	call apiw.selobj
+;---	mov r12,rax
 
 	mov rdx,TRANSPARENT
 	mov rcx,[.dis.hDC]
@@ -1445,7 +1478,7 @@ winproc:
 
 	test rdi,rdi
 	jz	.wm_dis_mnuE
-	add rdi,4
+	add rdi,sizeof.OMNI
 
 	mov r10,DT_NOCLIP\
 		or DT_VCENTER	\
@@ -1458,9 +1491,9 @@ winproc:
 	mov rcx,[.dis.hDC]
 	call apiw.drawtext
 
-	;	mov rdx,r12
-	;	mov rcx,[rbx+DRAWITEMSTRUCT.hDC]
-	;	call apiw.selobj
+;---	mov rdx,r12
+;---	mov rcx,[.dis.hDC]
+;---	call apiw.selobj
 
 .wm_dis_mnuE:
 	pop r13
@@ -1478,22 +1511,27 @@ winproc:
 	cmp [.mis.CtlType],\
 		ODT_MENU
 	jnz	.ret0
-	
-	mov eax,10;[lfMnuSize.cx]
-	mov ecx,18		;--- numchars
+
+	mov rdi,[.mis.itemData]
+	test rdi,rdi
+	jz .ret1
+
+	movzx eax,[rdi+OMNI.len]
+	shr eax,1
+	inc eax
+
+	add eax,10	;--- eventual chars for accel
+	mov ecx,[tmMnuSize.cx]
 	mul ecx
-	add eax,16		;--- size of an icon
-	add eax,1			;--- rx pixel after icon
-	add eax,5			;--- last pixel+4 pixel space
+	add eax,16	;--- size of an icon
+	add eax,1+1	;--- lx,rx pixel icon
+	add eax,4		;--- last pixel+4 pixel space
 	mov [.mis.itemWidth],eax
-	mov eax,10;[lfMnuSize.cy]
-	add ecx,1			;--- up 1 pixel gap
-	add ecx,8			;--- Ysize of an icon /2; why so complex ?
-	mov [.mis.itemHeight],ecx
-	;	cmp [.mis.itemID],MP_WSPACE
-	;	jnz	.ret1
-	;	add [.mis.itemHeight],ecx
-	;	mov [.mis.itemWidth],90
+
+	mov eax,[tmMnuSize.cy]
+	add eax,2+2	;--- 2*2 pixel gap
+	add eax,3+3	;--- 2*(border)
+	mov [.mis.itemHeight],eax
 	jmp	.ret1
 
 

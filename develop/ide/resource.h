@@ -38,3 +38,5 @@
 #define KEY_CHK_SHIFT  1105
 #define KEY_CHK_NOINV  1106
 #define KEY_STA_ID  1108
+
+

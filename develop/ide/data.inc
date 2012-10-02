@@ -77,15 +77,16 @@ section '.data' data readable writeable
 	match v,VERSION {
     uzVers du `v,0 }
 
-		lfMnuSize	SIZE 18,16
 		szCharExt 	db "_999999",0
 
 		rexpSOL1	db "^.*\S" 	;--- comment line SOL
 		rexpSOL2a	db "^\(\s*"	;--- follow needle for SOL+patt
 		rexpSOL2b	db "\)\(.*\)"
 		rexpTAG2	db "\2",0
+		szDefLang	db "en-US",0
 
 		align 2
+		tmMnuSize	SIZE 6,28
 		uzExtName		du "ext",0
 		uzBackName	du "backup",0
 		uzAccelName du "accel",0
@@ -103,7 +104,8 @@ section '.data' data readable writeable
 		uzMenuName	du "menu",0
 		uzExplore		du "explore",0
 		uzDocking		du "docking",0
-	
+		uzDefLang		du "en-US",0
+
 		uzDefault  du "default"		;<--- follows
 		uzLabExt   du "."
 		uzAppName  du TITLE,0
@@ -175,27 +177,28 @@ section '.data' data readable writeable
 			UZ_EDIT_PANE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
 			MI_ED_RELSCICLS,	0,OWN,DIF
 			;--- MI_ED_REM,7,OWN,DIF
+
+			@mnp MP_SCI,		0,OWN,DIF or MIIM_SUBMENU,\
+				MI_SCI_COMML,	0,OWN,DIF,\
+				MI_SCI_UNCOMML,	0,OWN,DIF
+				;	MI_SCI_COMMB,	0,OWN,DIF,\
+				;	MI_SCI_UNCOMMB,	0,OWN,DIF
 			
 		@mnp MP_CONF,		0,0,ISS,\
 			MI_CONF_KEY,	0,OWN,DIF,\
-			UZ_MPWIN,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
+				UZ_MPWIN,			1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
+	
+		@mnp MP_LANG,	0,OWN,DIF or MIIM_SUBMENU
 
-		@mnp MP_DEVT,		11,OWN,DIF or MIIM_SUBMENU,\
-			MI_DEVT_ADD,	10,OWN,DIF,\
-			MI_DEVT_REM,	12,OWN,DIF,\
-			-1,\
-			MI_DEVT_ADDG,	0,OWN,DIF,\
-			MI_DEVT_REMG,	0,OWN,DIF,\
-			-1,\
-			MI_DEVT_MAN,	0,OWN,DIF,\
-			MI_DEVT_REL,	0,OWN,DIF
-
-		@mnp MP_SCI,		0,OWN,DIF or MIIM_SUBMENU,\
-			MI_SCI_COMML,	0,OWN,DIF,\
-			MI_SCI_UNCOMML,	0,OWN,DIF
-
-		;	MI_SCI_COMMB,	0,OWN,DIF,\
-		;	MI_SCI_UNCOMMB,	0,OWN,DIF
+			@mnp MP_DEVT,		11,OWN,DIF or MIIM_SUBMENU,\
+				MI_DEVT_ADD,	10,OWN,DIF,\
+				MI_DEVT_REM,	12,OWN,DIF,\
+				-1,\
+				MI_DEVT_ADDG,	0,OWN,DIF,\
+				MI_DEVT_REMG,	0,OWN,DIF,\
+				-1,\
+				MI_DEVT_MAN,	0,OWN,DIF,\
+				MI_DEVT_REL,	0,OWN,DIF
 
 		@mnp MP_PATH,		0,RJU,ISS or MIIM_FTYPE,\
 			MI_PA_BROWSE,	0,OWN,DIF

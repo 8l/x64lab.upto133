@@ -60,6 +60,11 @@ apiw:
 	add rsp,rdx
 	jmp	rcx
 
+@using .mnu_del
+.mnu_del:
+	mov rax,[DeleteMenu]
+	jmp	.prolog0
+@endusing
 
 
 @using .mnu_create
@@ -515,6 +520,11 @@ apiw:
 	jmp	.prolog0
 @endusing
 
+@using .get_devcaps
+.get_devcaps:
+	mov rax,[GetDeviceCaps]
+	jmp	.prolog0
+@endusing
 
 @using .rel_dc
 .rel_dc:
@@ -536,60 +546,64 @@ apiw:
 
 @using .cfonti
 .cfonti:
-	;--- in RCX bold-wi-hi <----
-	;--- in RDX st-un-it-ch <---
-	;--- in R8	font name
-	;--- in R9 pitch
-	sub rsp,sizea16.LOGFONTW
-	movzx eax,cl
-	mov [rsp+LOGFONTW.lfHeight],eax
-	movzx eax,ch
-	mov [rsp+LOGFONTW.lfWidth],eax
-	xor eax,eax
-	shr rcx,16
-	mov [rsp+LOGFONTW.lfEscapement],eax
-	mov [rsp+LOGFONTW.lfOrientation],eax
-	mov [rsp+LOGFONTW.lfWeight],ecx
-
-	;-------------------------------------
-	mov [rsp+LOGFONTW.lfCharSet],dl
-	mov [rsp+LOGFONTW.lfItalic],dh
-	shr edx,16
-	mov [rsp+LOGFONTW.lfUnderline],dl
-	mov [rsp+LOGFONTW.lfStrikeOut],dh
-	;-------------------------------------
-	or r9,FF_DONTCARE
-	mov [rsp+LOGFONTW.lfPitchAndFamily],\
-		r9l
-;		DEFAULT_PITCH or FF_DONTCARE	
-
-	mov [rsp+LOGFONTW.lfOutPrecision],\
-		OUT_DEFAULT_PRECIS	
-
-	mov [rsp+LOGFONTW.lfClipPrecision],\
-		CLIP_DEFAULT_PRECIS	
-
-	mov [rsp+LOGFONTW.lfQuality],\
-		DEFAULT_QUALITY
-
-
-	mov r9,rdi
-	xchg r8,rsi
-	lea rdi,[rsp+LOGFONTW.lfFaceName]
-@@:
-	lodsw
-	stosw
-	test ax,ax
-	jnz	@b
-
-	xchg r9,rdi
-	xchg r8,rsi
-	mov rcx,rsp
 	mov rax,[CreateFontIndirectW]
-	call .prolog0
-	add rsp,sizea16.LOGFONTW
-	ret 0
+	jmp .prolog0
 @endusing
+	
+;---	;--- in RCX bold-wi-hi <----
+;---	;--- in RDX st-un-it-ch <---
+;---	;--- in R8	font name
+;---	;--- in R9 pitch
+;---	sub rsp,sizea16.LOGFONTW
+;---	movzx eax,cl
+;---	mov [rsp+LOGFONTW.lfHeight],eax
+;---	movzx eax,ch
+;---	mov [rsp+LOGFONTW.lfWidth],eax
+;---	xor eax,eax
+;---	shr rcx,16
+;---	mov [rsp+LOGFONTW.lfEscapement],eax
+;---	mov [rsp+LOGFONTW.lfOrientation],eax
+;---	mov [rsp+LOGFONTW.lfWeight],ecx
+
+;---	;-------------------------------------
+;---	mov [rsp+LOGFONTW.lfCharSet],dl
+;---	mov [rsp+LOGFONTW.lfItalic],dh
+;---	shr edx,16
+;---	mov [rsp+LOGFONTW.lfUnderline],dl
+;---	mov [rsp+LOGFONTW.lfStrikeOut],dh
+;---	;-------------------------------------
+;---	or r9,FF_DONTCARE
+;---	mov [rsp+LOGFONTW.lfPitchAndFamily],\
+;---		r9l
+;---;		DEFAULT_PITCH or FF_DONTCARE	
+
+;---	mov [rsp+LOGFONTW.lfOutPrecision],\
+;---		OUT_DEFAULT_PRECIS	
+
+;---	mov [rsp+LOGFONTW.lfClipPrecision],\
+;---		CLIP_DEFAULT_PRECIS	
+
+;---	mov [rsp+LOGFONTW.lfQuality],\
+;---		DEFAULT_QUALITY
+
+
+;---	mov r9,rdi
+;---	xchg r8,rsi
+;---	lea rdi,[rsp+LOGFONTW.lfFaceName]
+;---@@:
+;---	lodsw
+;---	stosw
+;---	test ax,ax
+;---	jnz	@b
+
+;---	xchg r9,rdi
+;---	xchg r8,rsi
+;---	mov rcx,rsp
+;---	mov rax,[CreateFontIndirectW]
+;---	call .prolog0
+;---	add rsp,sizea16.LOGFONTW
+;---	ret 0
+;---@endusing
 
 @using .get_tep32
 ;	in R9 LPSIZE lpSize 	// address of structure for string size  
@@ -628,6 +642,12 @@ apiw:
 @using .get_syscolbr
 .get_syscolbr:
 	mov rax,[GetSysColorBrush]
+	jmp	.prolog0
+@endusing
+
+@using .sysparinfo
+.sysparinfo:
+	mov rax,[SystemParametersInfoW]
 	jmp	.prolog0
 @endusing
 
@@ -1372,7 +1392,51 @@ apiw:
 	jmp	.prolog0
 @endusing
 
+	;#---------------------------------------------------ö
+	;|           LANG LOCALE                             |
+	;ö---------------------------------------------------ü
+
+@using .is_locname
+.is_locname:
+	mov rax,[IsValidLocaleName]
+	jmp	.prolog0
+@endusing
 	
+@using .get_sysdeflocname
+.get_sysdeflocname:
+	mov rax,[GetSystemDefaultLocaleName]
+	jmp	.prolog0
+@endusing
+	
+@using .get_locinfox
+	;---  in RCX LPCWSTR lpLocaleName
+	;---  in RDX LCTYPE LCType
+	;---  in R8 LPWSTR lpLCData
+	;---  in R9 int cchData
+.get_locinfox:
+	mov rax,\
+		[GetLocaleInfoEx]
+	jmp	.prolog0
+@endusing
 
 
+@using .lcid2name
+.lcid2name:
+	;--- LCID Locale,
+	;--- LPWSTR lpName,
+	;--- int cchName,
+	;--- DWORD dwFlags
+	mov rax,\
+		[LCIDToLocaleName]
+	jmp	.prolog0
+@endusing
+	
+@using .name2lcid
+.name2lcid:
+	;--- DWORD dwFlags
+	;--- LPWSTR lpName,
+	mov rax,\
+		[LocaleNameToLCID]
+	jmp	.prolog0
+@endusing
 

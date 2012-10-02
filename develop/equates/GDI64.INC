@@ -20,6 +20,26 @@
 	ends
 	@sizea16 LOGFONTW
 
+	struct NONCLIENTMETRICSW
+		cbSize              dd ?
+		iBorderWidth        dd ?
+		iScrollWidth        dd ?    
+		iScrollHeight       dd ?    
+		iCaptionWidth       dd ?    
+		iCaptionHeight      dd ?    
+		lfCaptionFont       LOGFONTW
+		iSmCaptionWidth     dd ?
+		iSmCaptionHeight    dd ?
+		lfSmCaptionFont     LOGFONTW
+		iMenuWidth          dd ?
+		iMenuHeight					dd ?
+		lfMenuFont          LOGFONTW
+		lfStatusFont        LOGFONTW
+		lfMessageFont       LOGFONTW
+		iPaddedBorderWidth  dd ? ;--- > WIN 600
+	ends
+	@sizea16 NONCLIENTMETRICSW
+
 
 struct TEXTMETRIC
   tmHeight           dd ?
@@ -166,6 +186,11 @@ struct PIXELFORMATDESCRIPTOR
   dwVisibleMask   dd ?
   dwDamageMask    dd ?
 ends
+
+;--- device capabilities
+
+	define LOGPIXELSX 88 
+	define LOGPIXELSY 90
 
 ; General constants
 

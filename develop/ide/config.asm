@@ -120,13 +120,117 @@ config:
 .setup_gui:
 	push rbp
 	push rbx
+	push rdi
+	push rsi
+	push r12
 
 	mov rbp,rsp
 	sub rsp,\
-		FILE_BUFLEN
+		FILE_BUFLEN*2
+
+	;---	mov rcx,SM_CXSMICON
+	;---	call apiw.get_sysmet
+
+	;---	;--- cxFont = ((x/4) + (x/2) )/2
+	;---	mov edx,eax
+	;---	shr eax,2
+	;---	shr edx,1
+	;---	add eax,edx
+	;---	shr eax,1
+	;---	adc eax,0
+	;---	mov [ptMnuSize.cx],eax
+		;--- menuitem cy = SM_CYMENU + 4 * SM_CYEDGE
+
+	;---	xor ecx,ecx
+	;---	call apiw.get_dc
+	;---	push rax
+	;---	push rax
+
+	;---	mov rdx,LOGPIXELSY
+	;---	mov rcx,rax
+	;---	call apiw.get_devcaps
+	;---	mov r12,rax
+
+	;---	pop rcx
+	;---	shl r12,32
+	;---	mov rdx,LOGPIXELSX
+	;---	call apiw.get_devcaps
+	;---	or r12,rax
+
+	;---	pop rdx
+	;---	xor ecx,ecx
+	;---	call apiw.rel_dc
+
+	xor r9,r9
+	mov r8,rsp
+	mov edx,\
+		sizeof.NONCLIENTMETRICSW
+	mov [rsp+\
+		NONCLIENTMETRICSW.cbSize],edx
+	mov rcx,\
+		SPI_GETNONCLIENTMETRICS	
+	call apiw.sysparinfo
+	
+	lea rcx,[rsp+\
+		NONCLIENTMETRICSW.lfMenuFont]
+	call apiw.cfonti
+	mov [hMnuFont],rax
+
+	xor ecx,ecx
+	call apiw.get_dc
+	mov rdi,rax
+
+	mov rdx,[hMnuFont]
+	mov rcx,rdi
+	call apiw.selobj
+	mov rsi,rax
+
+	mov rdx,rsp
+	mov rcx,rdi
+	call apiw.get_txtmetr
+
+	mov eax,[rsp+\
+		TEXTMETRIC.tmHeight]
+	add eax,[rsp+\
+		TEXTMETRIC.tmExternalLeading]
+	inc eax
+	mov [tmMnuSize.cy],eax
+
+	mov eax,[rsp+\
+		TEXTMETRIC.tmAveCharWidth]
+	
+	;--- pt = -LU * 72 / capsY
+	;--- LU = - (pt * capsY / 72)
+	;--------------------------------------
+	;--- pt = - nLU * 72 / CAPS
+	;--------------------------------------
+	;--- 1pt = (1 / 6) LU
+	;--- 12 pt = 16 pix      at 96dpi
+	;--- 1 pix = (3 / 4) pt  at 96dpi
+	;--- 1 LU = 96 pix
+	;--- size pt = num LU * (3 / 4)
+  ;--- example: nPt = 11 * (3 / 4) = 8.25
+	;--- 12 : 16 = xPix : nPt
+	;--- nPix = (4 / 3) * nPt
+
+	;---	mov edx,eax
+	;---	shl eax,1
+	;---	add eax,edx
+	;---	mov ecx,3
+	;---	xor edx,edx
+	;---	div ecx			;--- 
+	;---	inc eax
+	mov [tmMnuSize.cx],eax
+
+	mov rdx,rsi
+	mov rcx,rdi
+	call apiw.selobj
+	mov rdx,rdi
+	mov rcx,[hMain]
+	call apiw.rel_dc
+
 	xor edx,edx
 	mov rax,rsp
-
 	;--- check for config\menu.utf8 file 
 	push rdx
 	push uzBmpExt
@@ -137,14 +241,14 @@ config:
 	push rdx
 	call art.catstrw
 
-	mov rax,[lfMnuSize]
-	movzx ecx,al
-	shr rax,32
-	mov ch,al
-	xor edx,edx
-	mov r8,uzCourierN
-	call apiw.cfonti
-	mov [hMnuFont],rax
+;---	mov rax,[lfMnuSize]
+;---	movzx ecx,al
+;---	shr rax,32
+;---	mov ch,al
+;---	xor edx,edx
+;---	mov r8,uzCourierN
+;---	call apiw.cfonti
+;---	mov [hMnuFont],rax
 
 	mov r11,LR_LOADFROMFILE\
 		or LR_LOADTRANSPARENT\
@@ -158,6 +262,9 @@ config:
 	mov [hBmpIml],rax
 
 	mov rsp,rbp
+	pop r12
+	pop rsi
+	pop rdi
 	pop rbx
 	pop rbp
 	ret 0
@@ -276,17 +383,36 @@ config:
 		FILE_BUFLEN*2
 
 	mov rdi,[pConf]
-	lea rcx,[.conf.lang16]
-	mov qword[rcx],\
-		CFG_DEF_LANG16
+
+	mov eax,\
+		CFG_DEF_LCID
+	mov [.conf.lcid],ax
+
+	mov rsi,\
+		uzDefLang
+	mov ecx,\
+		uzDefLang.size
+	mov rdx,rdi
+	lea rdi,[.conf.lang16]
+	mov r8,rdi
+	rep movsb
+
+	xchg rcx,r8
+	xchg rdi,rdx
 	call .def_lang
 	mov r13,rax
 
 	mov rax,CFG_POS
 	mov [.conf.pos],rax
 
-	mov qword[.conf.lang8],\
-		CFG_DEF_LANG8     ;--- utf8
+	mov rsi,\
+		szDefLang
+	mov ecx,\
+		szDefLang.size
+	mov rdx,rdi
+	lea rdi,[.conf.lang8]
+	rep movsb
+	xchg rdx,rdi
 
 	mov [.conf.fshow],\
 		CFG_FSHOW
@@ -470,8 +596,12 @@ config:
 	lea rcx,[r8+\
 		TITEM.value]
 
-	cmp word[rcx],\
-		CFG_DEF_LANG8
+	mov r10,szDefLang
+	mov eax,[r10]
+	cmp eax,[rcx]
+	jnz	.open_langA
+	movzx eax,word[r10+4]
+	cmp ax,word[rcx+4]
 	jz	.openB
 
 	;--- TODO: exaustive check on user language
@@ -495,6 +625,7 @@ config:
 	
 	lea rdx,[.conf.lang8]
 	call utf8.copyz
+
 	jmp	.openB
 
 .open_wsp:
@@ -540,6 +671,8 @@ config:
 	test r13,r13
 	jz .openE
 	call [lang.info_uz]
+	mov [.conf.lcid],r10w
+
 	@nearest 16,eax			;<--- ave size 16 aligned
 	add eax,sizeof.OMNI
 	@nearest 16,eax			

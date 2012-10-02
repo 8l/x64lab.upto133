@@ -14,7 +14,9 @@
 
 define RAWMOD lang
 define MODULE "lang"
-define LANG	"en"
+
+define LANG	"en-US"	;--- culture name
+define LCID 0409h		;--- culture id
 
 define VERBOSE TRUE
 define WORKDIR "%x64devdir%\plugin"

@@ -17,11 +17,12 @@
 	U16	equ 16	;--- utf16
 
 	struct RESTABLE
-		lang db 8 dup (0)
+		lang db 16 dup (0)
+		lcid dw 0			;--- culture name
 		ids	 dw 0
 		tlen dw 0	;--- total len inclusive RESDEF struc
 		ulen dw 0 ;--- total len only zero-string
-			dw 9090h
+			 dw 4 dup (9090h)
 	ends
 
 	struct RESDEF
@@ -34,15 +35,16 @@
 		;--- follow utf8+0+0 aligned 2 string
 	ends
 
-	macro @make_lang argidname{
+	macro @make_lang argidname,arglcid{
 	align 16
 		label res_h		;--- header
 		.lang db argidname,0
-		@align 8,0
+		@align 16,0
+		.lcid	dw arglcid
 		.ids	dw 0
 		.tlen	dw 0
 		.ulen	dw 0
-					dw 9090h
+					dw 4 dup (9090h)
 		label res_i		;--- indexes
 			dw 256 dup (-1)
 		label res_r		;--- resource utf8 str

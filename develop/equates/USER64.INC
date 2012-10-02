@@ -110,6 +110,9 @@
 	ends
 	@sizea16  MENUINFO
 
+
+
+
 	struct RECT
 		left		dd ?
 		top			dd ?

@@ -13,7 +13,7 @@ config\x64lab.bmp
 config\ext\*
 
 plugin\bk64.dll
-plugin\lang\en\lang.dll
+plugin\lang\en-US\lang.dll
 plugin\dock64.dll
 plugin\top64.dll
 plugin\License.txt

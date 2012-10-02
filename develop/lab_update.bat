@@ -10,7 +10,7 @@ copy README.TXT ..\ /Y
 
 copy config\x64lab.bmp ..\config /Y
 xcopy config\ext ..\config\ext\ /E /Y
-copy plugin\lang\en\lang.dll ..\plugin\lang\en /Y
+xcopy plugin\lang\en-US\lang.dll ..\plugin\lang\en-US\ /Y
 copy plugin\dock64.dll ..\plugin /Y
 copy plugin\bk64.dll ..\plugin /Y
 copy plugin\top64.dll ..\plugin /Y

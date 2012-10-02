@@ -68,6 +68,7 @@
 		FillRgn,"FillRgn",\
 		FrameRgn,"FrameRgn",\
 		GetClipBox,"GetClipBox",\
+		GetDeviceCaps,"GetDeviceCaps",\
 		GetEnhMetaFileW,"GetEnhMetaFileW",\
 		GetPixel,"GetPixel",\
 		GetRegionData,"GetRegionData",\
@@ -126,6 +127,7 @@
 		DefFrameProcW,"DefFrameProcW",\
 		DefMDIChildProcW,"DefMDIChildProcW",\
 		DefWindowProcW,"DefWindowProcW",\
+		DeleteMenu,"DeleteMenu",\
 		DestroyAcceleratorTable,"DestroyAcceleratorTable",\
 		DestroyIcon,"DestroyIcon",\
 		DestroyMenu,"DestroyMenu",\
@@ -221,6 +223,7 @@
 		SetWindowRgn,"SetWindowRgn",\
 		ShowWindow,"ShowWindow",\
 		SubtractRect,"SubtractRect",\
+		SystemParametersInfoW,"SystemParametersInfoW",\
 		TrackPopupMenu,"TrackPopupMenu",\
 		TranslateAcceleratorW,"TranslateAcceleratorW",\
 		TranslateMessage,"TranslateMessage",\
@@ -265,14 +268,19 @@
 		GetFileSize,"GetFileSize",\
 		GetFileSizeEx,"GetFileSizeEx",\
 		GetLastError,"GetLastError",\
+		GetLocaleInfoEx,"GetLocaleInfoEx",\
 		GetLocalTime,"GetLocalTime",\
 		GetModuleFileNameW,"GetModuleFileNameW",\
 		GetModuleHandleW,"GetModuleHandleW",\
 		GetStdHandle,"GetStdHandle",\
+		GetSystemDefaultLocaleName,"GetSystemDefaultLocaleName",\
 		GetSystemTime,"GetSystemTime",\
 		GetVersionExW,"GetVersionExW",\
+		IsValidLocaleName,"IsValidLocaleName",\
+		LCIDToLocaleName,"LCIDToLocaleName",\
 		LoadLibraryExW,"LoadLibraryExW",\
 		LoadResource,"LoadResource",\
+		LocaleNameToLCID,"LocaleNameToLCID",\
 		QueryPerformanceCounter,"QueryPerformanceCounter",\
 		QueryPerformanceFrequency,"QueryPerformanceFrequency",\
 		ReadFile,"ReadFile",\

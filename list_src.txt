@@ -88,8 +88,8 @@ develop\plugin\dock64\shadow.asm
 develop\plugin\lang\code.asm
 develop\plugin\lang\data.inc
 develop\plugin\lang\lang.inc
-develop\plugin\lang\en\lang.asm
-develop\plugin\lang\en\lang.inc
+develop\plugin\lang\en-US\lang.asm
+develop\plugin\lang\en-US\lang.inc
 
 develop\plugin\top64\code.asm
 develop\plugin\top64\equates.inc

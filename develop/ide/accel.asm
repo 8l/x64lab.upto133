@@ -875,7 +875,7 @@ accel:
 	mov al,'"'
 	stosw
 	
-	lea rcx,[rbx+4] ;--- menu text
+	lea rcx,[rbx+sizeof.OMNI];4] ;--- menu text
 	mov rdx,rdi
 	call utf16.copyz
 	add rdi,rax

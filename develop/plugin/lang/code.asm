@@ -29,6 +29,7 @@ lang:
 	;--- ret RDX lang
 	;--- ret R8 header
 	;--- ret R9 ulen
+	;--- ret R10 lcid
 	mov r8,res_h
 	movzx ecx,[r8+\
 		RESTABLE.ids]
@@ -37,6 +38,8 @@ lang:
 	xor edx,edx
 	test ecx,ecx
 	mov r9,rax
+	movzx r10,[r8+\
+		RESTABLE.lcid]
 	jz	.info_uzE
 	div ecx
 
@@ -75,7 +78,8 @@ lang:
 	jz	.get_uzE
 	dec ax
 	lea r11,[rax+r10]
-	cmp cx,[r11+RESDEF.id]
+	cmp cx,[r11+\
+		RESDEF.id]
 	jnz	.get_uzN1
 
 	test edx,edx

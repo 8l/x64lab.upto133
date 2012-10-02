@@ -49,5 +49,6 @@
 	include "equates\comctl64.inc"
 	include 'equates/comdlg64.inc'
 	include 'equates/shell64.inc'
+	include 'equates/nls.inc'
 
 	include "ide\main.asm"  

@@ -58,14 +58,13 @@
 		;--- %X64LAB%\config equ 0C1DCA5E40C09F92Ch
 		;--- %X64LAB%\config\ext equ 09DF3F8806B4A8DB1h
 
-
-
 	iCAT_CBX_DEVT	equ 1
 
 	MNU_X64LAB equ 1000h
 	MI_USER    equ 1100h
 	MI_OTHER	 equ 1200h
-
+	MI_LANG		 equ 1300h
+	
 	MP_WSPACE      equ 1001h
    MI_WS_LOAD    equ 1002h
    MI_WS_NEW     equ 1003h
@@ -97,7 +96,8 @@
 
 	MP_CONF   		equ 1060h
 	 MI_CONF_KEY	equ 1061h
-	
+  MP_LANG 			equ 1062h
+	 
   MP_DEVT   		equ 1070h
 	 MI_DEVT_ADD	equ 1071h
 	 MI_DEVT_ADDG equ 1072h
@@ -209,9 +209,10 @@
 	UZ_ALT			equ 204Ah
 	UZ_SHIFT		equ 204Bh
 	UZ_NOINV		equ 204Ch
-							;equ 204Eh
+	UZ_RESTART  equ 204Eh
 	UZ_NOTASS		equ 204Fh
 	UZ_WZERO		equ 2050h
+
 
 	;--- hash equ for config/config.utf8 items
   macro @cfg_hash [argid]{
@@ -238,8 +239,7 @@
 
 	CFG_FSHOW				equ TRUE
 	CFG_FLOG				equ FALSE
-	CFG_DEF_LANG8   equ "en"
-  CFG_DEF_LANG16  equ 006E0065h ;--- "en" utf16
+	CFG_DEF_LCID		equ 0409h
 	CFG_FSPLASH			equ FALSE
 	CFG_UPDATE			equ FALSE
 	CFG_POS 				equ 2BC032000000000h
